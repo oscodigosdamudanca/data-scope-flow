@@ -284,6 +284,8 @@ export type CompositeTypes<
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
+export type AppRole = Database["public"]["Enums"]["app_role"]
+
 export const Constants = {
   public: {
     Enums: {

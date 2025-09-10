@@ -4,10 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Companies from "./pages/Companies";
-import NotFound from "./pages/NotFound";
+import ProtectedRoute from "@/components/core/ProtectedRoute";
+import Dashboard from "@/features/dashboard/pages/Dashboard";
+import Auth from "@/features/auth/pages/Auth";
+import Companies from "@/features/companies/pages/Companies";
+import NotFound from "@/features/misc/pages/NotFound";
+import Unauthorized from "@/features/misc/pages/Unauthorized";
 
 const queryClient = new QueryClient();
 
@@ -20,8 +22,16 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<Index />} />
-            <Route path="/companies" element={<Companies />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']} />}>
+              <Route path="/" element={<Dashboard />} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />}>
+              <Route path="/companies" element={<Companies />} />
+            </Route>
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

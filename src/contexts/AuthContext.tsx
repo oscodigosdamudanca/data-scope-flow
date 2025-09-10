@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { AppRole } from '@/integrations/supabase/types';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  userRole: AppRole | null;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -25,28 +27,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<AppRole | null>(null);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    const fetchUserRole = async (userId: string) => {
+      try {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching user role:', error);
+          setUserRole(null);
+          return;
+        }
+        
+        if (data) {
+          setUserRole(data.role as AppRole);
+        }
+      } catch (error) {
+        console.error('Error in fetchUserRole:', error);
+        setUserRole(null);
+      }
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
 
-        // Handle profile creation on signup
-        if (event === 'SIGNED_IN' && session?.user) {
-          setTimeout(() => {
-            createOrUpdateProfile(session.user);
-          }, 0);
+        if (currentUser) {
+          fetchUserRole(currentUser.id);
+          if (event === 'SIGNED_IN') {
+            setTimeout(() => {
+              createOrUpdateProfile(currentUser);
+            }, 0);
+          }
+        } else {
+          setUserRole(null);
         }
+        
+        setLoading(false);
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        await fetchUserRole(currentUser.id);
+      }
+      
       setLoading(false);
     });
 
@@ -121,12 +157,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setUserRole(null);
   };
 
   const value = {
     user,
     session,
     loading,
+    userRole,
     signUp,
     signIn,
     signOut,
