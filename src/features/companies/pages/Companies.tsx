@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from '@/components/core/ProtectedRoute';
 import MainLayout from '@/components/layout/MainLayout';
-import CompanyList from '@/components/companies/CompanyList';
-import CompanyForm from '@/components/companies/CompanyForm';
+import CompanyList from '@/features/companies/components/CompanyList';
+import CompanyForm from '@/features/companies/components/CompanyForm';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
