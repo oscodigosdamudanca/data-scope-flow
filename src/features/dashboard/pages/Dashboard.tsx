@@ -27,7 +27,7 @@ const Index = () => {
   });
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']}>
       <MainLayout>
         <div className="space-y-6">
           {/* Welcome Header */}

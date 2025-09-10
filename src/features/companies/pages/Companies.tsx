@@ -33,7 +33,7 @@ const Companies = () => {
   };
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={['developer', 'organizer']}>
       <MainLayout>
         <div className="space-y-6">
           {viewMode !== 'list' && (
