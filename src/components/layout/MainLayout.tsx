@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Building, Home } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, signOut } = useAuth();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -30,11 +32,31 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-primary">DataScope</h1>
-            <span className="text-sm text-muted-foreground">
-              Hub de Inteligência de Mercado
-            </span>
+          <div className="flex items-center space-x-6">
+            <Link to="/" className="flex items-center space-x-2">
+              <h1 className="text-2xl font-bold text-primary">DataScope</h1>
+            </Link>
+            
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link 
+                to="/" 
+                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Home className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
+              <Link 
+                to="/companies" 
+                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === '/companies' ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Building className="h-4 w-4" />
+                <span>Empresas</span>
+              </Link>
+            </nav>
           </div>
           
           <div className="flex items-center space-x-4">
