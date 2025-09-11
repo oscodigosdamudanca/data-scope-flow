@@ -134,7 +134,7 @@ CREATE POLICY "Company admins can insert candidates" ON public.candidates
   FOR INSERT WITH CHECK (
     company_id IN (
       SELECT company_id FROM public.company_memberships 
-      WHERE user_id = auth.uid() AND role IN ('admin', 'owner')
+      WHERE user_id = auth.uid() AND role IN ('admin')
     )
   );
 
@@ -142,7 +142,7 @@ CREATE POLICY "Company admins can update candidates" ON public.candidates
   FOR UPDATE USING (
     company_id IN (
       SELECT company_id FROM public.company_memberships 
-      WHERE user_id = auth.uid() AND role IN ('admin', 'owner')
+      WHERE user_id = auth.uid() AND role IN ('admin')
     )
   );
 
@@ -150,7 +150,7 @@ CREATE POLICY "Company admins can delete candidates" ON public.candidates
   FOR DELETE USING (
     company_id IN (
       SELECT company_id FROM public.company_memberships 
-      WHERE user_id = auth.uid() AND role IN ('admin', 'owner')
+      WHERE user_id = auth.uid() AND role IN ('admin')
     )
   );
 
@@ -176,7 +176,7 @@ CREATE POLICY "Interviewers and admins can update interviews" ON public.intervie
     interviewer_id = auth.uid() OR
     company_id IN (
       SELECT company_id FROM public.company_memberships 
-      WHERE user_id = auth.uid() AND role IN ('admin', 'owner')
+      WHERE user_id = auth.uid() AND role IN ('admin')
     )
   );
 
@@ -184,7 +184,7 @@ CREATE POLICY "Company admins can delete interviews" ON public.interviews
   FOR DELETE USING (
     company_id IN (
       SELECT company_id FROM public.company_memberships 
-      WHERE user_id = auth.uid() AND role IN ('admin', 'owner')
+      WHERE user_id = auth.uid() AND role IN ('admin')
     )
   );
 
@@ -230,7 +230,7 @@ CREATE POLICY "Interviewers can manage responses" ON public.interview_responses
       WHERE interviewer_id = auth.uid() OR
       company_id IN (
         SELECT company_id FROM public.company_memberships 
-        WHERE user_id = auth.uid() AND role IN ('admin', 'owner')
+        WHERE user_id = auth.uid() AND role IN ('admin')
       )
     )
   );
