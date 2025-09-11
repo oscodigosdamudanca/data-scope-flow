@@ -1,4 +1,3 @@
-import ProtectedRoute from '@/components/core/ProtectedRoute';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,8 +26,7 @@ const Index = () => {
   });
 
   return (
-    <ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']}>
-      <MainLayout>
+    <MainLayout>
         <div className="space-y-6">
           {/* Welcome Header */}
           <div className="space-y-2">
@@ -149,7 +147,6 @@ const Index = () => {
           </Card>
         </div>
       </MainLayout>
-    </ProtectedRoute>
   );
 };
 

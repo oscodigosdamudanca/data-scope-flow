@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ProtectedRoute from '@/components/core/ProtectedRoute';
+
 import MainLayout from '@/components/layout/MainLayout';
 import CompanyList from '@/features/companies/components/CompanyList';
 import CompanyForm from '@/features/companies/components/CompanyForm';
@@ -33,8 +33,7 @@ const Companies = () => {
   };
 
   return (
-    <ProtectedRoute allowedRoles={['developer', 'organizer']}>
-      <MainLayout>
+    <MainLayout>
         <div className="space-y-6">
           {viewMode !== 'list' && (
             <div className="flex items-center gap-4">
@@ -65,7 +64,6 @@ const Companies = () => {
           )}
         </div>
       </MainLayout>
-    </ProtectedRoute>
   );
 };
 
