@@ -72,7 +72,7 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
   const getStatusActions = () => {
     const actions = [];
     
-    if (interview.status === 'agendada' && onStart) {
+    if (interview.status === 'scheduled' && onStart) {
       actions.push(
         <Button key="start" onClick={onStart} className="flex items-center gap-2">
           <Play className="h-4 w-4" />
@@ -81,7 +81,7 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
       );
     }
     
-    if (interview.status === 'em_andamento' && onFinish) {
+    if (interview.status === 'in_progress' && onFinish) {
       actions.push(
         <Button key="finish" onClick={onFinish} className="flex items-center gap-2">
           <Square className="h-4 w-4" />
@@ -90,7 +90,7 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
       );
     }
     
-    if (['agendada', 'em_andamento'].includes(interview.status) && onCancel) {
+    if (['scheduled', 'in_progress'].includes(interview.status) && onCancel) {
       actions.push(
         <Button key="cancel" onClick={onCancel} variant="outline" className="flex items-center gap-2 text-orange-600 border-orange-600 hover:bg-orange-50">
           <XCircle className="h-4 w-4" />
@@ -111,8 +111,8 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
             {getInterviewTypeIcon(interview.interview_type)}
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{interview.position}</h2>
-            <p className="text-gray-600">{interview.candidate?.name || 'Candidato não encontrado'}</p>
+            <h2 className="text-2xl font-bold text-gray-900">{interview.title}</h2>
+            <p className="text-gray-600">{interview.candidates?.name || 'Candidato não encontrado'}</p>
             <Badge className={INTERVIEW_STATUS_COLORS[interview.status]}>
               {INTERVIEW_STATUS_LABELS[interview.status]}
             </Badge>
@@ -144,33 +144,7 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Clock className="h-4 w-4 text-gray-500" />
-              <div>
-                <p className="text-sm text-gray-500">Duração</p>
-                <p className="font-medium">{formatDuration(interview.duration_minutes)}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {getInterviewTypeIcon(interview.interview_type)}
-              <div>
-                <p className="text-sm text-gray-500">Tipo</p>
-                <p className="font-medium">{INTERVIEW_TYPES[interview.interview_type]}</p>
-              </div>
-            </div>
-
-            {interview.interview_type === 'presencial' && interview.location && (
-              <div className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Local</p>
-                  <p className="font-medium">{interview.location}</p>
-                </div>
-              </div>
-            )}
-
-            {interview.interview_type === 'online' && interview.meeting_url && (
+            {interview.meeting_url && (
               <div className="flex items-center gap-3">
                 <Video className="h-4 w-4 text-gray-500" />
                 <div>
@@ -199,11 +173,11 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {interview.candidate ? (
+            {interview.candidates ? (
               <>
                 <div>
                   <p className="text-sm text-gray-500">Nome</p>
-                  <p className="font-medium">{interview.candidate.name}</p>
+                  <p className="font-medium">{interview.candidates.name}</p>
                 </div>
 
                 <Separator />
@@ -211,50 +185,23 @@ export const InterviewDetails: React.FC<InterviewDetailsProps> = ({
                 <div>
                   <p className="text-sm text-gray-500">Email</p>
                   <a 
-                    href={`mailto:${interview.candidate.email}`}
+                    href={`mailto:${interview.candidates.email}`}
                     className="text-blue-600 hover:underline"
                   >
-                    {interview.candidate.email}
+                    {interview.candidates.email}
                   </a>
                 </div>
 
-                {interview.candidate.phone && (
+                {interview.candidates.phone && (
                   <>
                     <Separator />
                     <div>
                       <p className="text-sm text-gray-500">Telefone</p>
                       <a 
-                        href={`tel:${interview.candidate.phone}`}
+                        href={`tel:${interview.candidates.phone}`}
                         className="text-blue-600 hover:underline"
                       >
-                        {interview.candidate.phone}
-                      </a>
-                    </div>
-                  </>
-                )}
-
-                <Separator />
-
-                <div>
-                  <p className="text-sm text-gray-500">Status do Candidato</p>
-                  <Badge variant="outline">
-                    {interview.candidate.status}
-                  </Badge>
-                </div>
-
-                {interview.candidate.resume_url && (
-                  <>
-                    <Separator />
-                    <div>
-                      <p className="text-sm text-gray-500">Currículo</p>
-                      <a 
-                        href={interview.candidate.resume_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline flex items-center gap-1"
-                      >
-                        Ver Currículo
-                        <ExternalLink className="h-3 w-3" />
+                        {interview.candidates.phone}
                       </a>
                     </div>
                   </>

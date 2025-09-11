@@ -153,15 +153,15 @@ export const InterviewForm: React.FC<InterviewFormProps> = ({
               </div>
 
               <div>
-                <Label htmlFor="position">Cargo *</Label>
+                <Label htmlFor="title">Título da Entrevista *</Label>
                 <Input
-                  id="position"
-                  {...register('position')}
-                  placeholder="Ex: Desenvolvedor Frontend"
-                  className={errors.position ? 'border-red-500' : ''}
+                  id="title"
+                  {...register('title')}
+                  placeholder="Ex: Entrevista - João Silva"
+                  className={errors.title ? 'border-red-500' : ''}
                 />
-                {errors.position && (
-                  <p className="text-sm text-red-500 mt-1">{errors.position.message}</p>
+                {errors.title && (
+                  <p className="text-sm text-red-500 mt-1">{errors.title.message}</p>
                 )}
               </div>
 
@@ -210,49 +210,9 @@ export const InterviewForm: React.FC<InterviewFormProps> = ({
                 )}
               </div>
 
-              <div>
-                <Label htmlFor="duration_minutes">Duração *</Label>
-                <Select
-                  value={watchedDuration.toString()}
-                  onValueChange={(value) => setValue('duration_minutes', parseInt(value))}
-                >
-                  <SelectTrigger className={errors.duration_minutes ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Selecione a duração" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DURATION_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value.toString()}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.duration_minutes && (
-                  <p className="text-sm text-red-500 mt-1">{errors.duration_minutes.message}</p>
-                )}
-              </div>
 
-              <div>
-                <Label htmlFor="interview_type">Tipo de Entrevista *</Label>
-                <Select
-                  value={watchedInterviewType}
-                  onValueChange={(value) => setValue('interview_type', value as any)}
-                >
-                  <SelectTrigger className={errors.interview_type ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Selecione o tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(INTERVIEW_TYPES).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.interview_type && (
-                  <p className="text-sm text-red-500 mt-1">{errors.interview_type.message}</p>
-                )}
-              </div>
+
+
             </div>
           </CardContent>
         </Card>
@@ -263,36 +223,17 @@ export const InterviewForm: React.FC<InterviewFormProps> = ({
         <CardContent className="pt-6">
           <h3 className="text-lg font-semibold mb-4">Local e Acesso</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {watchedInterviewType === 'presencial' && (
-              <div className="md:col-span-2">
-                <Label htmlFor="location">Local da Entrevista</Label>
-                <Input
-                  id="location"
-                  {...register('location')}
-                  placeholder="Ex: Sala de reuniões 1, Escritório Central"
-                  className={errors.location ? 'border-red-500' : ''}
-                />
-                {errors.location && (
-                  <p className="text-sm text-red-500 mt-1">{errors.location.message}</p>
-                )}
-              </div>
-            )}
-
-            {watchedInterviewType === 'online' && (
-              <div className="md:col-span-2">
-                <Label htmlFor="meeting_url">Link da Reunião</Label>
-                <Input
-                  id="meeting_url"
-                  type="url"
-                  {...register('meeting_url')}
-                  placeholder="https://meet.google.com/xxx-xxxx-xxx"
-                  className={errors.meeting_url ? 'border-red-500' : ''}
-                />
-                {errors.meeting_url && (
-                  <p className="text-sm text-red-500 mt-1">{errors.meeting_url.message}</p>
-                )}
-              </div>
+          <div>
+            <Label htmlFor="meeting_url">URL da Reunião (Opcional)</Label>
+            <Input
+              id="meeting_url"
+              type="url"
+              {...register('meeting_url')}
+              placeholder="https://meet.google.com/xxx-xxxx-xxx"
+              className={errors.meeting_url ? 'border-red-500' : ''}
+            />
+            {errors.meeting_url && (
+              <p className="text-sm text-red-500 mt-1">{errors.meeting_url.message}</p>
             )}
           </div>
         </CardContent>

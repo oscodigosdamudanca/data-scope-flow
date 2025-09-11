@@ -121,13 +121,14 @@ export const InterviewsManager: React.FC = () => {
 
   const getStatusIcon = (status: InterviewStatus) => {
     switch (status) {
-      case 'agendada':
+      case 'scheduled':
         return <Calendar className="h-4 w-4" />;
-      case 'em_andamento':
+      case 'in_progress':
         return <Play className="h-4 w-4" />;
-      case 'finalizada':
+      case 'completed':
         return <Square className="h-4 w-4" />;
-      case 'cancelada':
+      case 'cancelled':
+      case 'no_show':
         return <XCircle className="h-4 w-4" />;
       default:
         return <Clock className="h-4 w-4" />;
@@ -211,7 +212,7 @@ export const InterviewsManager: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Candidato</TableHead>
-                    <TableHead>Cargo</TableHead>
+                    <TableHead>Título</TableHead>
                     <TableHead>Data/Hora</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Duração</TableHead>
@@ -230,7 +231,7 @@ export const InterviewsManager: React.FC = () => {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>{interview.position}</TableCell>
+                      <TableCell>{interview.title}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-gray-500" />
@@ -261,28 +262,28 @@ export const InterviewsManager: React.FC = () => {
                               Ver Detalhes
                             </DropdownMenuItem>
                             
-                            {interview.status === 'agendada' && (
+                            {interview.status === 'scheduled' && (
                               <DropdownMenuItem onClick={() => handleStartInterview(interview.id)}>
                                 <Play className="h-4 w-4 mr-2" />
                                 Iniciar Entrevista
                               </DropdownMenuItem>
                             )}
                             
-                            {interview.status === 'em_andamento' && (
+                            {interview.status === 'in_progress' && (
                               <DropdownMenuItem onClick={() => handleFinishInterview(interview.id)}>
                                 <Square className="h-4 w-4 mr-2" />
                                 Finalizar Entrevista
                               </DropdownMenuItem>
                             )}
                             
-                            {['agendada', 'em_andamento'].includes(interview.status) && (
+                            {['scheduled', 'in_progress'].includes(interview.status) && (
                               <DropdownMenuItem onClick={() => handleEditInterview(interview)}>
                                 <Edit className="h-4 w-4 mr-2" />
                                 Editar
                               </DropdownMenuItem>
                             )}
                             
-                            {interview.status === 'agendada' && (
+                            {interview.status === 'scheduled' && (
                               <DropdownMenuItem 
                                 onClick={() => handleCancelInterview(interview.id)}
                                 className="text-orange-600"

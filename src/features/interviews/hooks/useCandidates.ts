@@ -33,6 +33,10 @@ export const useCandidates = (filters?: CandidateFilters) => {
         query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
       }
 
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
+
       const { data, error } = await query;
 
       if (error) {

@@ -20,12 +20,10 @@ import { CANDIDATE_STATUS_LABELS } from '@/types/interviews';
 const candidateSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   email: z.string().email('Email inválido'),
-  phone: z.string().optional(),
-  position: z.string().min(2, 'Cargo deve ter pelo menos 2 caracteres'),
-  experience_level: z.enum(['junior', 'pleno', 'senior', 'especialista']),
-  status: z.enum(['novo', 'em_analise', 'aprovado', 'reprovado', 'contratado']),
+  phone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos').optional().or(z.literal('')),
+  status: z.enum(['applied', 'screening', 'interview', 'offer', 'hired', 'rejected']).optional(),
   resume_url: z.string().url('URL inválida').optional().or(z.literal('')),
-  linkedin_url: z.string().url('URL inválida').optional().or(z.literal('')),
+  portfolio_url: z.string().url('URL inválida').optional().or(z.literal('')),
   notes: z.string().optional(),
 });
 
@@ -63,17 +61,14 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
       name: candidate?.name || '',
       email: candidate?.email || '',
       phone: candidate?.phone || '',
-      position: candidate?.position || '',
-      experience_level: candidate?.experience_level || 'junior',
-      status: candidate?.status || 'novo',
+      status: candidate?.status || 'applied',
       resume_url: candidate?.resume_url || '',
-      linkedin_url: candidate?.linkedin_url || '',
+      portfolio_url: candidate?.portfolio_url || '',
       notes: candidate?.notes || '',
     },
   });
 
   const watchedStatus = watch('status');
-  const watchedExperienceLevel = watch('experience_level');
 
   const handleFormSubmit = (data: CandidateFormData) => {
     // Remove empty strings for optional fields
@@ -145,40 +140,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
             <h3 className="text-lg font-semibold mb-4">Informações Profissionais</h3>
             
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="position">Cargo Pretendido *</Label>
-                <Input
-                  id="position"
-                  {...register('position')}
-                  placeholder="Ex: Desenvolvedor Frontend"
-                  className={errors.position ? 'border-red-500' : ''}
-                />
-                {errors.position && (
-                  <p className="text-sm text-red-500 mt-1">{errors.position.message}</p>
-                )}
-              </div>
 
-              <div>
-                <Label htmlFor="experience_level">Nível de Experiência *</Label>
-                <Select
-                  value={watchedExperienceLevel}
-                  onValueChange={(value) => setValue('experience_level', value as any)}
-                >
-                  <SelectTrigger className={errors.experience_level ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Selecione o nível" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(EXPERIENCE_LEVELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.experience_level && (
-                  <p className="text-sm text-red-500 mt-1">{errors.experience_level.message}</p>
-                )}
-              </div>
 
               <div>
                 <Label htmlFor="status">Status *</Label>
@@ -227,16 +189,16 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
             </div>
 
             <div>
-              <Label htmlFor="linkedin_url">LinkedIn</Label>
+              <Label htmlFor="portfolio_url">Portfolio</Label>
               <Input
-                id="linkedin_url"
+                id="portfolio_url"
                 type="url"
-                {...register('linkedin_url')}
-                placeholder="https://linkedin.com/in/usuario"
-                className={errors.linkedin_url ? 'border-red-500' : ''}
+                {...register('portfolio_url')}
+                placeholder="https://portfolio.com"
+                className={errors.portfolio_url ? 'border-red-500' : ''}
               />
-              {errors.linkedin_url && (
-                <p className="text-sm text-red-500 mt-1">{errors.linkedin_url.message}</p>
+              {errors.portfolio_url && (
+                <p className="text-sm text-red-500 mt-1">{errors.portfolio_url.message}</p>
               )}
             </div>
           </div>

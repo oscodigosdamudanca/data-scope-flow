@@ -22,18 +22,18 @@ export const useInterviews = (filters?: InterviewFilters) => {
         .from('interviews')
         .select(`
           *,
-          candidate:candidates(
+          candidates(
             id,
             name,
             email,
             status
           ),
-          interviewer:profiles!interviews_interviewer_id_fkey(
+          profiles!interviews_interviewer_id_fkey(
             id,
             full_name,
             email
           ),
-          company:companies(
+          companies(
             id,
             name
           )
@@ -84,7 +84,7 @@ export const useInterviews = (filters?: InterviewFilters) => {
         .from('interviews')
         .select(`
           *,
-          candidate:candidates(
+          candidates(
             id,
             name,
             email,
@@ -94,12 +94,12 @@ export const useInterviews = (filters?: InterviewFilters) => {
             linkedin_url,
             portfolio_url
           ),
-          interviewer:profiles!interviews_interviewer_id_fkey(
+          profiles!interviews_interviewer_id_fkey(
             id,
             full_name,
             email
           ),
-          company:companies(
+          companies(
             id,
             name
           ),
@@ -108,7 +108,7 @@ export const useInterviews = (filters?: InterviewFilters) => {
             order_index,
             is_required,
             time_limit_minutes,
-            question:questions(
+            questions(
               id,
               title,
               content,
@@ -123,7 +123,7 @@ export const useInterviews = (filters?: InterviewFilters) => {
             rating,
             feedback,
             time_spent_seconds,
-            question:questions(
+            questions(
               id,
               title,
               content
@@ -313,13 +313,13 @@ export const useMyInterviews = () => {
         .from('interviews')
         .select(`
           *,
-          candidate:candidates(
+          candidates(
             id,
             name,
             email,
             status
           ),
-          company:companies(
+          companies(
             id,
             name
           )
@@ -351,7 +351,7 @@ export const useUpcomingInterviews = (limit: number = 5) => {
         .from('interviews')
         .select(`
           *,
-          candidate:candidates(
+          candidates(
             id,
             name,
             email

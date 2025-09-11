@@ -6,39 +6,35 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { CandidatesManager } from '@/features/interviews/components/CandidatesManager';
 import { InterviewsManager } from '@/features/interviews/components/InterviewsManager';
-import { useCandidates } from '@/features/interviews/hooks/useCandidates';
-import { useInterviews } from '@/features/interviews/hooks/useInterviews';
 
 export const InterviewsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('candidates');
-  const { data: candidatesStats } = useCandidates().getStats();
-  const { data: interviewsStats } = useInterviews().getStats();
 
   const statsCards = [
     {
       title: 'Total de Candidatos',
-      value: candidatesStats?.total || 0,
+      value: 0,
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
       title: 'Candidatos Ativos',
-      value: candidatesStats?.active || 0,
+      value: 0,
       icon: Users,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
       title: 'Entrevistas Agendadas',
-      value: interviewsStats?.scheduled || 0,
+      value: 0,
       icon: Calendar,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
     },
     {
       title: 'Entrevistas Concluídas',
-      value: interviewsStats?.completed || 0,
+      value: 0,
       icon: BarChart3,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
@@ -93,16 +89,9 @@ export const InterviewsPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Candidatos por Status</h3>
               <div className="space-y-3">
-                {candidatesStats?.by_status && Object.entries(candidatesStats.by_status).map(([status, count]) => (
-                  <div key={status} className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="capitalize">
-                        {status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                    <span className="font-semibold">{count as number}</span>
-                  </div>
-                ))}
+                <div className="text-center py-4">
+                  <p className="text-gray-500">Dados serão carregados quando disponíveis</p>
+                </div>
               </div>
             </div>
 
@@ -110,16 +99,9 @@ export const InterviewsPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Entrevistas por Status</h3>
               <div className="space-y-3">
-                {interviewsStats?.by_status && Object.entries(interviewsStats.by_status).map(([status, count]) => (
-                  <div key={status} className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="capitalize">
-                        {status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                    <span className="font-semibold">{count as number}</span>
-                  </div>
-                ))}
+                <div className="text-center py-4">
+                  <p className="text-gray-500">Dados serão carregados quando disponíveis</p>
+                </div>
               </div>
             </div>
           </div>
