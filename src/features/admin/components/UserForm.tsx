@@ -50,7 +50,7 @@ export const UserForm: React.FC<UserFormProps> = ({
     password: '',
     display_name: user?.display_name || '',
     phone: user?.phone || '',
-    roles: user?.roles?.map(r => r.role) || []
+    roles: user?.roles || []
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof UserFormData, string>>>({});
@@ -62,7 +62,7 @@ export const UserForm: React.FC<UserFormProps> = ({
         password: '',
         display_name: user.display_name || '',
         phone: user.phone || '',
-        roles: user.roles?.map(r => r.role) || []
+        roles: user.roles || []
       });
     }
   }, [user]);

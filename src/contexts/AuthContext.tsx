@@ -32,35 +32,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userRole, setUserRole] = useState<AppRole | null>(null);
 
   useEffect(() => {
-    const fetchUserRole = async (userId: string) => {
-      try {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', userId)
-          .single();
+  const ensureDefaultUserRole = async (userId: string) => {
+    try {
+      // Tenta inserir o papel 'developer' para novos usuários
+      const { error: insertError } = await supabase
+        .from('user_roles')
+        .insert([{ user_id: userId, role: 'developer' }]);
 
-        if (error) {
-          // Se o erro for PGRST116 (nenhuma linha encontrada), isso é esperado para novos usuários
-          if (error.code === 'PGRST116') {
-            console.log('No role found for user, setting default role');
-            // Definir um papel padrão ou null para novos usuários
-            setUserRole('organizer' as AppRole); // ou null se preferir
-            return;
-          }
-          console.error('Error fetching user role:', error);
-          setUserRole(null);
+      if (insertError && insertError.code !== '23505') { // 23505 é violation de unique constraint
+        console.error('Error creating default role:', insertError);
+      }
+
+      // Agora busca o papel atual (deve existir)
+      await fetchUserRole(userId);
+    } catch (error) {
+      console.error('Error in ensureDefaultUserRole:', error);
+      setUserRole(null);
+    }
+  };
+
+  const fetchUserRole = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          console.log('No role found for user, attempting to create default role');
+          // Chama ensureDefaultUserRole de forma assíncrona
+          setTimeout(() => {
+            ensureDefaultUserRole(userId);
+          }, 0);
           return;
         }
-        
-        if (data) {
-          setUserRole(data.role as AppRole);
-        }
-      } catch (error) {
-        console.error('Error in fetchUserRole:', error);
+        console.error('Error fetching user role:', error);
         setUserRole(null);
+        return;
       }
-    };
+      
+      if (data) {
+        setUserRole(data.role as AppRole);
+      }
+    } catch (error) {
+      console.error('Error in fetchUserRole:', error);
+      setUserRole(null);
+    }
+  };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
