@@ -17,14 +17,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -34,20 +26,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
   const ensureDefaultUserRole = async (userId: string) => {
     try {
-      // Tenta inserir o papel 'developer' para novos usuários
+      // Tenta inserir o papel 'organizer' para novos usuários (mais apropriado que developer)
       const { error: insertError } = await supabase
         .from('user_roles')
-        .insert([{ user_id: userId, role: 'developer' }]);
+        .insert([{ user_id: userId, role: 'organizer' }]);
 
       if (insertError && insertError.code !== '23505') { // 23505 é violation de unique constraint
         console.error('Error creating default role:', insertError);
+        // Se falhar, define papel padrão localmente
+        setUserRole('organizer');
+        return;
       }
 
       // Agora busca o papel atual (deve existir)
       await fetchUserRole(userId);
     } catch (error) {
       console.error('Error in ensureDefaultUserRole:', error);
-      setUserRole(null);
+      // Define papel padrão em caso de erro
+      setUserRole('organizer');
     }
   };
 
@@ -200,4 +196,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
