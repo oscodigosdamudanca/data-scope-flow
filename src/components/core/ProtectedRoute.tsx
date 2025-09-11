@@ -1,6 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { AppRole } from '@/integrations/supabase/types';
+import type { Enums } from '@/integrations/supabase/types';
+
+type AppRole = Enums<'app_role'>;
 
 interface ProtectedRouteProps {
   allowedRoles: AppRole[];

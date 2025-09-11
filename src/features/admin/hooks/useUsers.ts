@@ -21,6 +21,7 @@ type UserWithRoles = {
   created_at: string;
   updated_at: string;
   user_roles: UserRole[];
+  roles: AppRole[];
 };
 
 type CreateUserData = {
@@ -80,7 +81,8 @@ export const useUsers = () => {
         // Combinar dados
         const usersWithRoles: UserWithRoles[] = authUsers.map(authUser => {
           const profile = profiles?.find(p => p.id === authUser.id);
-          const roles = (userRoles || []).filter(r => r.user_id === authUser.id);
+          const userRolesList = (userRoles || []).filter(r => r.user_id === authUser.id);
+          const roles = userRolesList.map(r => r.role);
           return {
             id: authUser.id,
             email: authUser.email || '',
@@ -88,7 +90,8 @@ export const useUsers = () => {
             phone: profile?.phone || null,
             created_at: authUser.created_at,
             updated_at: profile?.updated_at || authUser.updated_at,
-            user_roles: roles
+            user_roles: userRolesList,
+            roles: roles
           };
         });
 
@@ -281,6 +284,9 @@ export const useUsers = () => {
     createUser: createUserMutation.mutate,
     updateUser: updateUserMutation.mutate,
     deleteUser: deleteUserMutation.mutate,
+    createUserMutation,
+    updateUserMutation,
+    deleteUserMutation,
     isCreating: createUserMutation.isPending,
     isUpdating: updateUserMutation.isPending,
     isDeleting: deleteUserMutation.isPending

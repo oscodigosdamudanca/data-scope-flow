@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { AppRole } from '@/integrations/supabase/types';
+import type { Enums } from '@/integrations/supabase/types';
+
+type AppRole = Enums<'app_role'>;
 
 interface AuthContextType {
   user: User | null;

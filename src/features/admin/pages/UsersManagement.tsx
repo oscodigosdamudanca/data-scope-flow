@@ -11,7 +11,21 @@ type ViewMode = 'list' | 'create' | 'edit';
 const UsersManagement: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedUser, setSelectedUser] = useState<UserWithRoles | null>(null);
-  const { createUser, updateUser, deleteUser } = useUsers();
+  const { 
+    users, 
+    loading, 
+    error, 
+    refetch, 
+    createUser, 
+    updateUser, 
+    deleteUser, 
+    createUserMutation,
+    updateUserMutation,
+    deleteUserMutation,
+    isCreating, 
+    isUpdating, 
+    isDeleting 
+  } = useUsers();
 
   const handleEditUser = (user: UserWithRoles) => {
     setSelectedUser(user);
@@ -22,10 +36,10 @@ const UsersManagement: React.FC = () => {
     try {
       if ('userId' in data) {
         // Modo edição
-        await updateUser.mutateAsync(data);
+        await updateUserMutation.mutateAsync(data);
       } else {
         // Modo criação
-        await createUser.mutateAsync(data);
+        await createUserMutation.mutateAsync(data);
       }
       setViewMode('list');
       setSelectedUser(null);
@@ -36,7 +50,7 @@ const UsersManagement: React.FC = () => {
 
   const handleDeleteUser = async (userId: string) => {
     try {
-      await deleteUser.mutateAsync(userId);
+      await deleteUserMutation.mutateAsync(userId);
     } catch (error) {
       console.error('Erro ao deletar usuário:', error);
     }
@@ -62,7 +76,7 @@ const UsersManagement: React.FC = () => {
             setViewMode('list');
             setSelectedUser(null);
           }}
-          isLoading={createUser.isPending || updateUser.isPending}
+          isLoading={isCreating || isUpdating}
         />
       )}
     </div>

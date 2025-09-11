@@ -60,18 +60,18 @@ export const UsersList: React.FC<UsersListProps> = ({
   onEditUser,
   onDeleteUser 
 }) => {
-  const { data: users = [], isLoading, error } = useUsers();
+  const { users = [], loading, error, refetch, deleteUser, isDeleting } = useUsers();
   const [searchTerm, setSearchTerm] = useState('');
 
   // Estatísticas dos usuários
   const stats = useMemo(() => {
     const total = users.length;
-    const active = users.filter(user => user.email_confirmed_at).length;
+    const active = users.filter(user => user.created_at).length; // Usando created_at como proxy para usuários confirmados
     const admins = users.filter(user => 
-      user.roles?.some(role => role.role === 'admin')
+      user.roles?.some(role => role === 'admin')
     ).length;
     const developers = users.filter(user => 
-      user.roles?.some(role => role.role === 'developer')
+      user.roles?.some(role => role === 'developer')
     ).length;
 
     return { total, active, admins, developers };
@@ -86,7 +86,7 @@ export const UsersList: React.FC<UsersListProps> = ({
       user.email?.toLowerCase().includes(term) ||
       user.display_name?.toLowerCase().includes(term) ||
       user.phone?.toLowerCase().includes(term) ||
-      user.roles?.some(role => role.role.toLowerCase().includes(term))
+      user.roles?.some(role => role.toLowerCase().includes(term))
     );
   }, [users, searchTerm]);
 
@@ -139,7 +139,7 @@ export const UsersList: React.FC<UsersListProps> = ({
     return phone;
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Card>
         <CardContent className="p-6">
@@ -247,13 +247,13 @@ export const UsersList: React.FC<UsersListProps> = ({
                           {!user.roles || user.roles.length === 0 ? (
                             <Badge variant="outline">Sem papéis</Badge>
                           ) : (
-                            user.roles.map((userRole) => (
+                            user.roles.map((userRole, index) => (
                               <Badge 
-                                key={userRole.role}
-                                variant={getRoleBadgeVariant(userRole.role)}
+                                key={index}
+                                variant={getRoleBadgeVariant(userRole)}
                                 className="text-xs"
                               >
-                                {getRoleDisplayName(userRole.role)}
+                                {getRoleDisplayName(userRole)}
                               </Badge>
                             ))
                           )}
