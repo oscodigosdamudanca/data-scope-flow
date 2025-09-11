@@ -11,6 +11,7 @@ import Companies from "@/features/companies/pages/Companies";
 import NotFound from "@/features/misc/pages/NotFound";
 import Unauthorized from "@/features/misc/pages/Unauthorized";
 import AdminDashboard from "@/features/admin/pages/AdminDashboard";
+import UsersManagement from "@/features/admin/pages/UsersManagement";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
 
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<UsersManagement />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
