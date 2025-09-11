@@ -41,6 +41,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .single();
 
         if (error) {
+          // Se o erro for PGRST116 (nenhuma linha encontrada), isso é esperado para novos usuários
+          if (error.code === 'PGRST116') {
+            console.log('No role found for user, setting default role');
+            // Definir um papel padrão ou null para novos usuários
+            setUserRole('organizer' as AppRole); // ou null se preferir
+            return;
+          }
           console.error('Error fetching user role:', error);
           setUserRole(null);
           return;
