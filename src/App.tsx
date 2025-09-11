@@ -12,6 +12,8 @@ import NotFound from "@/features/misc/pages/NotFound";
 import Unauthorized from "@/features/misc/pages/Unauthorized";
 import AdminDashboard from "@/features/admin/pages/AdminDashboard";
 import UsersManagement from "@/features/admin/pages/UsersManagement";
+import { QuestionTypesPage } from "@/pages/admin/QuestionTypesPage";
+import InterviewsPage from '@/pages/InterviewsPage';
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,8 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
+              <Route path="/admin/question-types" element={<QuestionTypesPage />} />
+              <Route path="/admin/interviews" element={<InterviewsPage />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

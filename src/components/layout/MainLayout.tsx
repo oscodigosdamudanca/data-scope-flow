@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Building, Home } from 'lucide-react';
+import { LogOut, User, Building, Home, Calendar } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -55,6 +55,15 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               >
                 <Building className="h-4 w-4" />
                 <span>Empresas</span>
+              </Link>
+              <Link 
+                to="/admin/interviews" 
+                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === '/admin/interviews' ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Calendar className="h-4 w-4" />
+                <span>Entrevistas</span>
               </Link>
             </nav>
           </div>

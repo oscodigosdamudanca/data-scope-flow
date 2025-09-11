@@ -39,9 +39,11 @@ const AdminDashboard = () => {
             <p className="text-sm text-gray-600 mb-4">
               Configure tipos de perguntas para entrevistas.
             </p>
-            <Button className="w-full" variant="outline" disabled>
-              Em Breve
-            </Button>
+            <Link to="/admin/question-types">
+              <Button className="w-full">
+                Gerenciar Tipos
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
