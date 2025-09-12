@@ -37,11 +37,11 @@ const BackToDashboard: React.FC<BackToDashboardProps> = ({
       if (onBeforeNavigate) {
         await onBeforeNavigate();
       }
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Erro ao navegar para o dashboard:', error);
       // Navega mesmo se houver erro no callback
-      navigate('/dashboard');
+      navigate('/');
     }
   };
 
@@ -97,10 +97,10 @@ export const HomeDashboardButton: React.FC<Omit<BackToDashboardProps, 'iconOnly'
       if (props.onBeforeNavigate) {
         await props.onBeforeNavigate();
       }
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Erro ao navegar para o dashboard:', error);
-      navigate('/dashboard');
+      navigate('/');
     }
   };
 

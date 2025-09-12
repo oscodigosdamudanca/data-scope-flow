@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import CompanyList from '@/features/companies/components/CompanyList';
 import CompanyForm from '@/features/companies/components/CompanyForm';
+import { BackToDashboard } from '@/components/core';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
@@ -35,6 +36,16 @@ const Companies = () => {
   return (
     <MainLayout>
         <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <BackToDashboard variant="outline" position="header" />
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Minhas Empresas</h1>
+              <p className="text-muted-foreground">
+                Gerencie as empresas que você tem acesso
+              </p>
+            </div>
+          </div>
+
           {viewMode !== 'list' && (
             <div className="flex items-center gap-4">
               <Button
