@@ -81,7 +81,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        console.log('Auth state change:', event, session);
+        
+        // Handle auth errors by clearing invalid tokens
+         if (event === 'TOKEN_REFRESHED' && !session) {
+           console.log('Token refresh failed, clearing storage');
+           localStorage.removeItem('supabase.auth.token');
+           const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+           if (supabaseUrl) {
+             const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
+             localStorage.removeItem(storageKey);
+           }
+         }
+        
         setSession(session);
         const currentUser = session?.user ?? null;
         setUser(currentUser);
@@ -101,15 +114,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error);
+        // Clear potentially corrupted auth data
+         localStorage.removeItem('supabase.auth.token');
+         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+         if (supabaseUrl) {
+           const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
+           localStorage.removeItem(storageKey);
+         }
+        setSession(null);
+        setUser(null);
+        setUserRole(null);
+      } else {
+        setSession(session);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
 
-      if (currentUser) {
-        await fetchUserRole(currentUser.id);
+        if (currentUser) {
+          await fetchUserRole(currentUser.id);
+        }
       }
       
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to get session:', error);
       setLoading(false);
     });
 
@@ -185,6 +215,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     await supabase.auth.signOut();
     setUserRole(null);
+    // Clear localStorage to prevent auth issues
+     localStorage.removeItem('supabase.auth.token');
+     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+     if (supabaseUrl) {
+       localStorage.removeItem('sb-' + supabaseUrl.split('//')[1] + '-auth-token');
+     }
   };
 
   const value = {
