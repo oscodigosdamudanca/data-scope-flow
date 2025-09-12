@@ -21,7 +21,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ExhibitorDashboard } from '../components/ExhibitorDashboard';
+import ExhibitorDashboard from '../components/ExhibitorDashboard';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useBIConfig } from '../hooks/useBIConfig';
 
