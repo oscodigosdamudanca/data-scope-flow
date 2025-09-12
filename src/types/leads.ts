@@ -8,8 +8,10 @@ export interface Lead {
   position?: string;
   interests: string[];
   source: 'manual' | 'qr_code' | 'survey';
+  source_type?: 'manual' | 'turbo_form' | 'qr_code' | 'survey' | 'website' | 'social_media' | 'referral' | 'event' | 'cold_outreach' | 'other';
   status: 'new' | 'contacted' | 'qualified' | 'converted' | 'lost';
   notes?: string;
+  lgpd_consent?: boolean;
   captured_at: string;
   created_at: string;
   updated_at: string;
@@ -23,7 +25,9 @@ export interface CreateLeadData {
   position?: string;
   interests?: string[];
   source?: 'manual' | 'qr_code' | 'survey';
+  source_type?: 'manual' | 'turbo_form' | 'qr_code' | 'survey' | 'website' | 'social_media' | 'referral' | 'event' | 'cold_outreach' | 'other';
   notes?: string;
+  lgpd_consent?: boolean;
 }
 
 export interface UpdateLeadData {
@@ -34,7 +38,9 @@ export interface UpdateLeadData {
   position?: string;
   interests?: string[];
   status?: 'new' | 'contacted' | 'qualified' | 'converted' | 'lost';
+  source_type?: 'manual' | 'turbo_form' | 'qr_code' | 'survey' | 'website' | 'social_media' | 'referral' | 'event' | 'cold_outreach' | 'other';
   notes?: string;
+  lgpd_consent?: boolean;
 }
 
 export interface LeadFilters {

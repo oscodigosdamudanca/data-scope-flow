@@ -23,6 +23,8 @@ import Raffles from "@/pages/Raffles";
 import QuestionTypes from "@/pages/developer/QuestionTypes";
 import Permissions from "@/pages/developer/Permissions";
 import SystemLogs from "@/pages/developer/SystemLogs";
+import TurboFormPage from "@/features/leads/pages/TurboFormPage";
+import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
 
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/turbo-form" element={<TurboFormPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer', 'fair_organizer']} />}>
               <Route path="/" element={<Dashboard />} />
