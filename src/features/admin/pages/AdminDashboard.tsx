@@ -1,13 +1,20 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BackToDashboard } from '@/components/core';
 import { Users, HelpCircle, Settings, BarChart3 } from 'lucide-react';
 
 const AdminDashboard = () => {
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Painel de Administração</h1>
+      <div className="flex items-center gap-4">
+        <BackToDashboard variant="outline" position="header" />
+        <div>
+          <h1 className="text-3xl font-bold">Painel de Administração</h1>
+          <p className="text-muted-foreground">
+            Gerencie usuários, configurações e recursos do sistema.
+          </p>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

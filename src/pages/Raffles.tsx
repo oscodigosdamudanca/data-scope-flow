@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { BackToDashboard } from '@/components/core';
 import { Gift, Plus, Play, Pause, Trophy, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -43,11 +44,14 @@ const Raffles = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sorteios</h1>
-          <p className="text-muted-foreground">
-            Gerencie sorteios e premiações para engajar participantes
-          </p>
+        <div className="flex items-center gap-4">
+          <BackToDashboard variant="outline" position="header" />
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Sorteios</h1>
+            <p className="text-muted-foreground">
+              Gerencie sorteios e premiações para engajar participantes
+            </p>
+          </div>
         </div>
         <Button>
           <Plus className="mr-2 h-4 w-4" />

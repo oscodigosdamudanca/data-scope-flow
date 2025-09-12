@@ -21,6 +21,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { BackToDashboard } from '@/components/core';
 import ExhibitorDashboard from '../components/ExhibitorDashboard';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useBIConfig } from '../hooks/useBIConfig';
@@ -231,11 +232,14 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Analytics & BI</h1>
-          <p className="text-muted-foreground">
-            Painel de business intelligence para análise de dados e métricas
-          </p>
+        <div className="flex items-center gap-4">
+          <BackToDashboard variant="outline" position="header" />
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight">Analytics & BI</h1>
+            <p className="text-muted-foreground">
+              Painel de business intelligence para análise de dados e métricas
+            </p>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
