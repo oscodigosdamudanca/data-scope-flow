@@ -25,6 +25,7 @@ import Permissions from "@/pages/developer/Permissions";
 import SystemLogs from "@/pages/developer/SystemLogs";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
 import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
+import { AnalyticsRoutes } from "@/features/analytics";
 
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin']} />}>
               <Route path="/leads" element={<LeadsPage />} />
               <Route path="/surveys" element={<SurveysPage />} />
+              <Route path="/analytics/*" element={<AnalyticsRoutes />} />
             </Route>
 
             {/* Rotas específicas do Organizador da Feira */}
