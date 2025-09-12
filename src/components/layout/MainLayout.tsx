@@ -1,116 +1,27 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { LogOut, User, Building, Home, Calendar } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import AppSidebar from './AppSidebar';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const { user, signOut } = useAuth();
-  const location = useLocation();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
-  const userInitials = user?.user_metadata?.display_name 
-    ? user.user_metadata.display_name.charAt(0).toUpperCase()
-    : user?.email?.charAt(0).toUpperCase() || 'U';
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <Link to="/" className="flex items-center space-x-2">
-              <h1 className="text-2xl font-bold text-primary">DataScope</h1>
-            </Link>
-            
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link 
-                to="/" 
-                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                <Home className="h-4 w-4" />
-                <span>Dashboard</span>
-              </Link>
-              <Link 
-                to="/companies" 
-                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === '/companies' ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                <Building className="h-4 w-4" />
-                <span>Empresas</span>
-              </Link>
-              <Link 
-                to="/admin/interviews" 
-                className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === '/admin/interviews' ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                <Calendar className="h-4 w-4" />
-                <span>Entrevistas</span>
-              </Link>
-            </nav>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <div className="h-4 w-px bg-sidebar-border" />
+            <h1 className="text-lg font-semibold">DataScope Analytics</h1>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <div className="flex items-center justify-start gap-2 p-2">
-                  <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">
-                      {user?.user_metadata?.display_name || user?.email?.split('@')[0]}
-                    </p>
-                    <p className="w-[200px] truncate text-sm text-muted-foreground">
-                      {user?.email}
-                    </p>
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={() => {}}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Perfil</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          {children}
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        {children}
-      </main>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 };
 
