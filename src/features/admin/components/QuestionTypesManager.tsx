@@ -276,7 +276,14 @@ export const QuestionTypesManager: React.FC = () => {
         <QuestionTypeForm
           questionType={selectedQuestionType}
           onClose={handleFormClose}
-          onSubmit={selectedQuestionType ? updateQuestionType : createQuestionType}
+          onSubmit={selectedQuestionType ? 
+            async (data: any) => {
+              await updateQuestionType(selectedQuestionType.id, data);
+            } : 
+            async (data: any) => {
+              await createQuestionType(data);
+            }
+          }
           isLoading={isCreating || isUpdating}
         />
       )}

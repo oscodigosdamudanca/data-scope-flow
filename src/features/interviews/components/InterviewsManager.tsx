@@ -236,7 +236,9 @@ export const InterviewsManager: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-gray-500" />
                           <div>
-                            <div className="font-medium">{formatDateTime(interview.scheduled_at)}</div>
+                            <div className="font-medium">
+                              {interview.scheduled_at ? formatDateTime(interview.scheduled_at) : 'Não agendada'}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -247,7 +249,7 @@ export const InterviewsManager: React.FC = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {interview.duration_minutes ? `${interview.duration_minutes} min` : 'N/A'}
+                        N/A
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>

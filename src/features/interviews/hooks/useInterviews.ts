@@ -267,7 +267,7 @@ export const useInterviews = (filters?: InterviewFilters) => {
     updateInterview: updateInterviewMutation.mutate,
     deleteInterview: deleteInterviewMutation.mutate,
     startInterview,
-    completeInterview,
+    finishInterview: completeInterview,
     cancelInterview,
     
     // Loading states
@@ -288,15 +288,28 @@ export const useInterviewStats = (companyId?: string) => {
         throw new Error('Company ID é obrigatório para estatísticas');
       }
 
-      const { data, error } = await supabase
-        .rpc('get_interview_stats', { company_uuid: companyId });
+      // Buscar estatísticas básicas por enquanto
+      const { data: candidates, error: candidatesError } = await supabase
+        .from('candidates')
+        .select('id')
+        .eq('company_id', companyId);
 
-      if (error) {
-        console.error('Erro ao buscar estatísticas:', error);
-        throw error;
-      }
+      const { data: interviews, error: interviewsError } = await supabase
+        .from('interviews')
+        .select('id, status')
+        .eq('company_id', companyId);
 
-      return data as InterviewStats;
+      if (candidatesError) throw candidatesError;
+      if (interviewsError) throw interviewsError;
+
+      const stats: InterviewStats = {
+        total_candidates: candidates?.length || 0,
+        total_interviews: interviews?.length || 0,
+        scheduled_interviews: interviews?.filter(i => i.status === 'scheduled').length || 0,
+        completed_interviews: interviews?.filter(i => i.status === 'completed').length || 0,
+      };
+
+      return stats;
     },
     enabled: !!user && !!companyId
   });

@@ -27,10 +27,7 @@ export const useQuestionTypes = () => {
     queryFn: async (): Promise<QuestionTypeWithQuestions[]> => {
       const { data, error } = await supabase
         .from('question_types')
-        .select(`
-          *,
-          questions:questions(count)
-        `)
+        .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
@@ -38,7 +35,7 @@ export const useQuestionTypes = () => {
       
       return (data || []).map(item => ({
         ...item,
-        questions_count: item.questions?.[0]?.count || 0
+        questions_count: 0 // Will be populated when needed
       }));
     },
     enabled: !!user

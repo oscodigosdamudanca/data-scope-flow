@@ -36,11 +36,14 @@ const App = () => (
               <Route path="/companies" element={<Companies />} />
             </Route>
 
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'admin', 'interviewer']} />}>
+              <Route path="/interviews" element={<InterviewsPage />} />
+            </Route>
+
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
               <Route path="/admin/question-types" element={<QuestionTypesPage />} />
-              <Route path="/admin/interviews" element={<InterviewsPage />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

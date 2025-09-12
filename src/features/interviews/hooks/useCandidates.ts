@@ -6,7 +6,8 @@ import type {
   Candidate, 
   CandidateInsert, 
   CandidateUpdate, 
-  CandidateFilters 
+  CandidateFilters,
+  CandidateStatus
 } from '@/types/interviews';
 
 export const useCandidates = (filters?: CandidateFilters) => {
@@ -21,7 +22,10 @@ export const useCandidates = (filters?: CandidateFilters) => {
         .from('candidates')
         .select(`
           *,
-          company:companies(name)
+          companies(
+            id,
+            name
+          )
         `)
         .order('created_at', { ascending: false });
 
@@ -31,10 +35,6 @@ export const useCandidates = (filters?: CandidateFilters) => {
 
       if (filters?.search) {
         query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
-      }
-
-      if (filters?.limit) {
-        query = query.limit(filters.limit);
       }
 
       const { data, error } = await query;
@@ -47,45 +47,6 @@ export const useCandidates = (filters?: CandidateFilters) => {
       return data as Candidate[];
     },
     enabled: !!user
-  });
-
-  // Query para buscar um candidato específico
-  const getCandidateQuery = (id: string) => useQuery({
-    queryKey: ['candidate', id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('candidates')
-        .select(`
-          *,
-          company:companies(name),
-          interviews:interviews(
-            id,
-            title,
-            status,
-            scheduled_at,
-            overall_rating
-          )
-        `)
-        .eq('id', id)
-        .single();
-
-      if (error) {
-        console.error('Erro ao buscar candidato:', error);
-        throw error;
-      }
-
-      return data as Candidate & {
-        company: { name: string };
-        interviews: Array<{
-          id: string;
-          title: string;
-          status: string;
-          scheduled_at: string;
-          overall_rating?: number;
-        }>;
-      };
-    },
-    enabled: !!id && !!user
   });
 
   // Mutation para criar candidato
@@ -133,7 +94,6 @@ export const useCandidates = (filters?: CandidateFilters) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] });
-      queryClient.invalidateQueries({ queryKey: ['candidate'] });
       toast.success('Candidato atualizado com sucesso!');
     },
     onError: (error) => {
@@ -166,8 +126,7 @@ export const useCandidates = (filters?: CandidateFilters) => {
   });
 
   // Função para atualizar status do candidato
-  const updateCandidateStatus = (id: string, status: CandidateUpdate['status']) => {
-    if (!status) return;
+  const updateCandidateStatus = (id: string, status: CandidateStatus) => {
     updateCandidateMutation.mutate({ id, updates: { status } });
   };
 
@@ -176,7 +135,6 @@ export const useCandidates = (filters?: CandidateFilters) => {
     candidates: candidatesQuery.data || [],
     isLoading: candidatesQuery.isLoading,
     error: candidatesQuery.error,
-    getCandidateQuery,
     
     // Mutations
     createCandidate: createCandidateMutation.mutate,
@@ -189,50 +147,4 @@ export const useCandidates = (filters?: CandidateFilters) => {
     isUpdating: updateCandidateMutation.isPending,
     isDeleting: deleteCandidateMutation.isPending
   };
-};
-
-// Hook para estatísticas de candidatos
-export const useCandidateStats = () => {
-  const { user } = useAuth();
-
-  return useQuery({
-    queryKey: ['candidate-stats'],
-    queryFn: async () => {
-      // Buscar estatísticas por status
-      const { data: statusStats, error: statusError } = await supabase
-        .from('candidates')
-        .select('status')
-        .then(({ data, error }) => {
-          if (error) throw error;
-          
-          const stats = data?.reduce((acc, candidate) => {
-            acc[candidate.status] = (acc[candidate.status] || 0) + 1;
-            return acc;
-          }, {} as Record<string, number>) || {};
-          
-          return { data: stats, error: null };
-        });
-
-      if (statusError) {
-        console.error('Erro ao buscar estatísticas:', statusError);
-        throw statusError;
-      }
-
-      // Buscar total de candidatos
-      const { count: totalCandidates, error: countError } = await supabase
-        .from('candidates')
-        .select('*', { count: 'exact', head: true });
-
-      if (countError) {
-        console.error('Erro ao contar candidatos:', countError);
-        throw countError;
-      }
-
-      return {
-        totalCandidates: totalCandidates || 0,
-        byStatus: statusStats || {}
-      };
-    },
-    enabled: !!user
-  });
 };
