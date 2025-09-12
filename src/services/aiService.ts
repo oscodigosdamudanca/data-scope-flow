@@ -28,7 +28,7 @@ class AIService {
   private baseUrl: string;
 
   constructor() {
-    this.apiKey = process.env.REACT_APP_OPENAI_API_KEY || '';
+    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
     this.baseUrl = 'https://api.openai.com/v1';
   }
 
@@ -37,7 +37,7 @@ class AIService {
    */
   async generateQuestionSuggestions(request: AIQuestionRequest): Promise<AIResponse> {
     if (!this.apiKey) {
-      throw new Error('Chave da API OpenAI não configurada. Configure REACT_APP_OPENAI_API_KEY no arquivo .env');
+      throw new Error('Chave da API OpenAI não configurada. Configure VITE_OPENAI_API_KEY no arquivo .env');
     }
 
     try {
