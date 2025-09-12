@@ -38,15 +38,18 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
   const [showSettings, setShowSettings] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const { data: analyticsData, loading: analyticsLoading, refetch } = useAnalytics(
-    companyId, 
-    dateRange
-  );
+  const { 
+    data: analyticsData, 
+    loading: analyticsLoading, 
+    error: analyticsError,
+    refetch 
+  } = useAnalytics(companyId, dateRange);
 
-  const { config: biConfig, loading: configLoading } = useBIConfig(
-    companyId, 
-    activeTab
-  );
+  const { 
+    config: biConfig, 
+    loading: configLoading,
+    error: configError 
+  } = useBIConfig(companyId, activeTab);
 
   const handleRefresh = () => {
     refetch();

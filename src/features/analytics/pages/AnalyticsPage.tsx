@@ -51,14 +51,14 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
   // Hooks
   const { 
     data: analyticsData, 
-    isLoading: analyticsLoading, 
+    loading: analyticsLoading, 
     error: analyticsError,
     refetch: refetchAnalytics 
   } = useAnalytics(companyId);
 
   const { 
-    biConfig, 
-    isLoading: configLoading, 
+    config: biConfig, 
+    loading: configLoading, 
     error: configError,
     updateConfig 
   } = useBIConfig(companyId, 'exhibitor_dashboard');
@@ -221,10 +221,10 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
 
   // Estatísticas rápidas para o header
   const quickStats = {
-    totalLeads: analyticsData?.leads?.total || 0,
-    conversionRate: analyticsData?.leads?.conversionRate || 0,
-    totalSurveys: analyticsData?.surveys?.total || 0,
-    completionRate: analyticsData?.surveys?.completionRate || 0
+    totalLeads: analyticsData?.totalLeads || 0,
+    conversionRate: analyticsData?.conversionRate || 0,
+    totalSurveys: analyticsData?.totalSurveys || 0,
+    completionRate: analyticsData?.completionRate || 0
   };
 
   return (
@@ -322,8 +322,6 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
         <CardContent className="p-0">
           <ExhibitorDashboard 
             companyId={companyId}
-            defaultTab={activeTab}
-            onTabChange={handleTabChange}
           />
         </CardContent>
       </Card>

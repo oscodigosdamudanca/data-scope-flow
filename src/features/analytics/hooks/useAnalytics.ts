@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface AnalyticsData {
+  // Contadores principais
   leadsCount: number;
   leadsToday: number;
   leadsThisWeek: number;
@@ -11,6 +12,16 @@ export interface AnalyticsData {
   surveysCount: number;
   surveysResponses: number;
   conversionRate: number;
+  
+  // Propriedades compatíveis com AnalyticsPage
+  totalLeads: number;
+  newLeads: number;
+  completedSurveys: number;
+  newSurveys: number;
+  totalSurveys: number;
+  completionRate: number;
+  
+  // Arrays de dados para gráficos
   topSources: Array<{ source: string; count: number }>;
   leadsByStatus: Array<{ status: string; count: number }>;
   leadsByInterest: Array<{ interest: string; count: number }>;
@@ -194,14 +205,33 @@ export const useAnalytics = (companyId?: string, dateRange?: DateRange) => {
       return total + (survey.survey_responses?.length || 0);
     }, 0);
 
+    const totalLeads = leadsData.length;
+    const completedSurveys = surveysResponses;
+    const totalSurveys = surveysData.length;
+    
     return {
-      leadsCount: leadsData.length,
+      // Contadores principais
+      leadsCount: totalLeads,
       leadsToday,
       leadsThisWeek,
       leadsThisMonth,
-      surveysCount: surveysData.length,
-      surveysResponses,
+      surveysCount: totalSurveys,
+      surveysResponses: completedSurveys,
       conversionRate: Math.round(conversionRate * 100) / 100,
+      
+      // Propriedades compatíveis com AnalyticsPage
+      totalLeads,
+      newLeads: leadsToday,
+      completedSurveys,
+      newSurveys: surveysData.filter(s => {
+        const createdAt = new Date(s.created_at);
+        const today = new Date();
+        return createdAt.toDateString() === today.toDateString();
+      }).length,
+      totalSurveys,
+      completionRate: totalSurveys ? (completedSurveys / totalSurveys) * 100 : 0,
+      
+      // Arrays de dados para gráficos
       topSources,
       leadsByStatus,
       leadsByInterest,
