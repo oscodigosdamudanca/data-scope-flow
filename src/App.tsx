@@ -6,15 +6,23 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import ProtectedRoute from "@/components/core/ProtectedRoute";
-import Dashboard from "@/features/dashboard/pages/Dashboard";
+import Dashboard from "./features/dashboard/pages/Dashboard";
 import Auth from "@/features/auth/pages/Auth";
-import Companies from "@/features/companies/pages/Companies";
-import NotFound from "@/features/misc/pages/NotFound";
+import Companies from "./features/companies/pages/Companies";
+import NotFound from "./features/misc/pages/NotFound";
 import Unauthorized from "@/features/misc/pages/Unauthorized";
-import AdminDashboard from "@/features/admin/pages/AdminDashboard";
-import UsersManagement from "@/features/admin/pages/UsersManagement";
-import LeadsPage from "@/features/leads/pages/LeadsPage";
-import SurveysPage from "@/features/surveys/pages/SurveysPage";
+import AdminDashboard from "./features/admin/pages/AdminDashboard";
+import UsersManagement from "./features/admin/pages/AdminUsers";
+import LeadsPage from "./features/leads/pages/LeadsPage";
+import SurveysPage from "./features/surveys/pages/SurveysPage";
+import AdminReports from "./features/admin/pages/AdminReports";
+import AdminSettings from "./features/admin/pages/AdminSettings";
+import FairFeedback from "@/pages/FairFeedback";
+import CustomSurveys from "@/pages/CustomSurveys";
+import Raffles from "@/pages/Raffles";
+import QuestionTypes from "@/pages/developer/QuestionTypes";
+import Permissions from "@/pages/developer/Permissions";
+import SystemLogs from "@/pages/developer/SystemLogs";
 
 
 const queryClient = new QueryClient();
@@ -31,7 +39,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
-            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer', 'fair_organizer']} />}>
               <Route path="/" element={<Dashboard />} />
             </Route>
 
@@ -44,12 +52,27 @@ const App = () => (
               <Route path="/surveys" element={<SurveysPage />} />
             </Route>
 
+            {/* Rotas específicas do Organizador da Feira */}
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'fair_organizer']} />}>
+              <Route path="/fair-feedback" element={<FairFeedback />} />
+              <Route path="/custom-surveys" element={<CustomSurveys />} />
+              <Route path="/raffles" element={<Raffles />} />
+            </Route>
 
-
+            {/* Rotas de Administração */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
+              <Route path="/admin/reports" element={<AdminReports />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
+            </Route>
 
+            {/* Área do Desenvolvedor */}
+            <Route element={<ProtectedRoute allowedRoles={['developer']} />}>
+              <Route path="/developer" element={<div>Developer Dashboard</div>} />
+              <Route path="/developer/question-types" element={<QuestionTypes />} />
+              <Route path="/developer/permissions" element={<Permissions />} />
+              <Route path="/developer/logs" element={<SystemLogs />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

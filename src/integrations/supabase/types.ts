@@ -473,6 +473,255 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          id: string
+          company_id: string
+          name: string
+          email: string
+          phone: string | null
+          position: string | null
+          company_name: string | null
+          notes: string | null
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          name: string
+          email: string
+          phone?: string | null
+          position?: string | null
+          company_name?: string | null
+          notes?: string | null
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          name?: string
+          email?: string
+          phone?: string | null
+          position?: string | null
+          company_name?: string | null
+          notes?: string | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      surveys: {
+        Row: {
+          id: string
+          company_id: string
+          title: string
+          description: string | null
+          is_active: boolean
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          title: string
+          description?: string | null
+          is_active?: boolean
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          title?: string
+          description?: string | null
+          is_active?: boolean
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      raffles: {
+        Row: {
+          id: string
+          company_id: string
+          title: string
+          description: string | null
+          prize_description: string
+          max_participants: number | null
+          draw_date: string | null
+          is_active: boolean
+          winner_id: string | null
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          title: string
+          description?: string | null
+          prize_description: string
+          max_participants?: number | null
+          draw_date?: string | null
+          is_active?: boolean
+          winner_id?: string | null
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          title?: string
+          description?: string | null
+          prize_description?: string
+          max_participants?: number | null
+          draw_date?: string | null
+          is_active?: boolean
+          winner_id?: string | null
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      custom_surveys: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          target_audience: string | null
+          is_active: boolean
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          target_audience?: string | null
+          is_active?: boolean
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          target_audience?: string | null
+          is_active?: boolean
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fair_feedback: {
+        Row: {
+          id: string
+          visitor_name: string | null
+          visitor_email: string | null
+          rating: number
+          feedback_text: string | null
+          category: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          visitor_name?: string | null
+          visitor_email?: string | null
+          rating: number
+          feedback_text?: string | null
+          category?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          visitor_name?: string | null
+          visitor_email?: string | null
+          rating?: number
+          feedback_text?: string | null
+          category?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      question_types: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          input_type: string
+          validation_rules: Json | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          input_type: string
+          validation_rules?: Json | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          input_type?: string
+          validation_rules?: Json | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      module_permissions: {
+        Row: {
+          id: string
+          module_name: string
+          role_type: string
+          role_name: string
+          permissions: Json
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          module_name: string
+          role_type: string
+          role_name: string
+          permissions: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          module_name?: string
+          role_type?: string
+          role_name?: string
+          permissions?: Json
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       company_memberships_safe: {
@@ -537,7 +786,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "developer" | "organizer" | "admin" | "interviewer"
+      app_role: "developer" | "organizer" | "admin" | "interviewer" | "fair_organizer"
       company_role: "admin" | "interviewer"
       question_category:
         | "technical"

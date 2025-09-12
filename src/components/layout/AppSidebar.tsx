@@ -34,10 +34,15 @@ import {
   FileText,
   UserCheck,
   ClipboardList,
+  MessageSquare,
+  Gift,
+  Code,
+  Shield,
+  Activity,
 } from 'lucide-react';
 
 const AppSidebar = () => {
-  const { user, signOut } = useAuth();
+  const { user, userRole, signOut } = useAuth();
   const location = useLocation();
 
   const handleSignOut = async () => {
@@ -48,59 +53,118 @@ const AppSidebar = () => {
     ? user.user_metadata.display_name.charAt(0).toUpperCase()
     : user?.email?.charAt(0).toUpperCase() || 'U';
 
+  // Itens de navegação principais
   const navigationItems = [
     {
       title: 'Dashboard',
       icon: Home,
       url: '/',
-      isActive: location.pathname === '/'
+      isActive: location.pathname === '/',
+      roles: ['developer', 'organizer', 'admin', 'interviewer', 'fair_organizer']
     },
+  ];
+
+  // Módulos do DataScope
+  const dataScopeModules = [
     {
       title: 'Empresas',
       icon: Building,
       url: '/companies',
-      isActive: location.pathname === '/companies'
+      isActive: location.pathname === '/companies',
+      roles: ['developer', 'organizer']
     },
     {
-      title: 'Leads',
+      title: 'Captação de Leads',
       icon: UserCheck,
       url: '/leads',
-      isActive: location.pathname === '/leads'
+      isActive: location.pathname === '/leads',
+      roles: ['developer', 'organizer', 'admin', 'interviewer']
+    },
+    {
+      title: 'Sorteios',
+      icon: Gift,
+      url: '/raffles',
+      isActive: location.pathname === '/raffles',
+      roles: ['developer', 'organizer', 'admin']
     },
     {
       title: 'Pesquisas',
       icon: ClipboardList,
       url: '/surveys',
-      isActive: location.pathname === '/surveys'
+      isActive: location.pathname === '/surveys',
+      roles: ['developer', 'organizer', 'admin']
     },
     {
-      title: 'Entrevistas',
-      icon: Calendar,
-      url: '/interviews',
-      isActive: location.pathname === '/interviews'
+      title: 'Feedback da Feira',
+      icon: MessageSquare,
+      url: '/fair-feedback',
+      isActive: location.pathname === '/fair-feedback',
+      roles: ['developer', 'fair_organizer']
+    },
+    {
+      title: 'Pesquisas Personalizadas',
+      icon: FileText,
+      url: '/custom-surveys',
+      isActive: location.pathname === '/custom-surveys',
+      roles: ['developer', 'fair_organizer']
     },
   ];
 
+  // Área administrativa
   const adminItems = [
     {
       title: 'Usuários',
       icon: Users,
       url: '/admin/users',
-      isActive: location.pathname === '/admin/users'
+      isActive: location.pathname === '/admin/users',
+      roles: ['admin']
     },
     {
       title: 'Relatórios',
       icon: BarChart3,
       url: '/admin/reports',
-      isActive: location.pathname === '/admin/reports'
+      isActive: location.pathname === '/admin/reports',
+      roles: ['admin']
     },
     {
       title: 'Configurações',
       icon: Settings,
       url: '/admin/settings',
-      isActive: location.pathname === '/admin/settings'
+      isActive: location.pathname === '/admin/settings',
+      roles: ['admin']
     },
   ];
+
+  // Área do desenvolvedor
+  const developerItems = [
+    {
+      title: 'Tipos de Pergunta',
+      icon: Code,
+      url: '/developer/question-types',
+      isActive: location.pathname === '/developer/question-types',
+      roles: ['developer']
+    },
+    {
+      title: 'Permissões',
+      icon: Shield,
+      url: '/developer/permissions',
+      isActive: location.pathname === '/developer/permissions',
+      roles: ['developer']
+    },
+    {
+      title: 'Logs do Sistema',
+      icon: Activity,
+      url: '/developer/logs',
+      isActive: location.pathname === '/developer/logs',
+      roles: ['developer']
+    },
+  ];
+
+  // Função para filtrar itens baseado no role do usuário
+  const filterItemsByRole = (items: any[]) => {
+    if (!userRole) return [];
+    return items.filter(item => item.roles.includes(userRole));
+  };
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -117,11 +181,12 @@ const AppSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent>
+        {/* Navegação Principal */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navegação Principal</SidebarGroupLabel>
+          <SidebarGroupLabel>Navegação</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
+              {filterItemsByRole(navigationItems).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
@@ -139,29 +204,89 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator />
+        {/* Módulos DataScope */}
+        {filterItemsByRole(dataScopeModules).length > 0 && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupLabel>Módulos DataScope</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {filterItemsByRole(dataScopeModules).map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.url} className="flex items-center gap-2">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Administração</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {adminItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={item.isActive}
-                    tooltip={item.title}
-                  >
-                    <Link to={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+        {/* Área Administrativa */}
+        {filterItemsByRole(adminItems).length > 0 && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupLabel>Administração</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {filterItemsByRole(adminItems).map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.url} className="flex items-center gap-2">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
+
+        {/* Área do Desenvolvedor */}
+        {filterItemsByRole(developerItems).length > 0 && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupLabel>Desenvolvedor</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {filterItemsByRole(developerItems).map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.url} className="flex items-center gap-2">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+            </SidebarGroup>
+          </>
+        )}
       </SidebarContent>
 
       <SidebarFooter>

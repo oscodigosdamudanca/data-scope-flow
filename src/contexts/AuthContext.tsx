@@ -5,6 +5,8 @@ import type { Enums } from '@/integrations/supabase/types';
 
 type AppRole = Enums<'app_role'>;
 
+// Note: The app_role enum should include: 'developer' | 'organizer' | 'admin' | 'interviewer' | 'fair_organizer'
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
