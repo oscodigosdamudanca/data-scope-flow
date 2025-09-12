@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { BackToDashboard } from '@/components/core';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,7 +66,10 @@ const AdminSettings = () => {
     <MainLayout>
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Configurações do Sistema</h1>
+          <div className="flex items-center gap-4">
+            <BackToDashboard variant="outline" position="header" />
+            <h1 className="text-3xl font-bold">Configurações do Sistema</h1>
+          </div>
           <Button onClick={handleSave}>
             <Save className="h-4 w-4 mr-2" />
             Salvar Alterações
