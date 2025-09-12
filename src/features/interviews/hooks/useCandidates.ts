@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCompany } from '@/contexts/CompanyContext';
 import { toast } from 'sonner';
 import type { 
   Candidate, 
@@ -12,12 +13,17 @@ import type {
 
 export const useCandidates = (filters?: CandidateFilters) => {
   const { user } = useAuth();
+  const { currentCompany } = useCompany();
   const queryClient = useQueryClient();
 
   // Query para listar candidatos
   const candidatesQuery = useQuery({
-    queryKey: ['candidates', filters],
+    queryKey: ['candidates', currentCompany?.id, filters],
     queryFn: async () => {
+      if (!currentCompany?.id) {
+        return [];
+      }
+
       let query = supabase
         .from('candidates')
         .select(`
@@ -27,6 +33,7 @@ export const useCandidates = (filters?: CandidateFilters) => {
             name
           )
         `)
+        .eq('company_id', currentCompany.id)
         .order('created_at', { ascending: false });
 
       if (filters?.status) {
@@ -46,7 +53,7 @@ export const useCandidates = (filters?: CandidateFilters) => {
 
       return data as Candidate[];
     },
-    enabled: !!user
+    enabled: !!user && !!currentCompany?.id
   });
 
   // Mutation para criar candidato

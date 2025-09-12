@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useCompany } from '@/contexts/CompanyContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +28,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
   onCancel,
   isLoading = false
 }) => {
+  const { currentCompany } = useCompany();
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<CandidateFormData>({
     defaultValues: {
       name: candidate?.name || '',
@@ -37,9 +39,16 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
       portfolio_url: candidate?.portfolio_url || '',
       status: candidate?.status || 'applied',
       notes: candidate?.notes || '',
-      company_id: candidate?.company_id || '' // Will need to be set from context
+      company_id: candidate?.company_id || currentCompany?.id || ''
     }
   });
+
+  // Atualizar company_id quando a empresa atual mudar
+  useEffect(() => {
+    if (currentCompany?.id && !candidate) {
+      setValue('company_id', currentCompany.id);
+    }
+  }, [currentCompany, candidate, setValue]);
 
   const status = watch('status');
 

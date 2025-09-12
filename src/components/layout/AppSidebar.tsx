@@ -62,8 +62,8 @@ const AppSidebar = () => {
     {
       title: 'Entrevistas',
       icon: Calendar,
-      url: '/admin/interviews',
-      isActive: location.pathname === '/admin/interviews'
+      url: '/interviews',
+      isActive: location.pathname === '/interviews'
     },
   ];
 

@@ -46,7 +46,7 @@ export const InterviewsManager: React.FC = () => {
     updateInterview,
     deleteInterview,
     startInterview,
-    finishInterview,
+    finishInterview: completeInterview,
     cancelInterview,
     isCreating,
     isUpdating,

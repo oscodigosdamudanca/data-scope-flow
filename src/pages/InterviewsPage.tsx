@@ -6,35 +6,41 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { CandidatesManager } from '@/features/interviews/components/CandidatesManager';
 import { InterviewsManager } from '@/features/interviews/components/InterviewsManager';
+import { useInterviewStats } from '@/features/interviews/hooks/useInterviews';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const InterviewsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('candidates');
+  const { user } = useAuth();
+  const companyId = user?.user_metadata?.company_id;
+  
+  const { data: stats, isLoading: statsLoading } = useInterviewStats(companyId);
 
   const statsCards = [
     {
       title: 'Total de Candidatos',
-      value: 0,
+      value: stats?.total_candidates || 0,
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'Candidatos Ativos',
-      value: 0,
+      title: 'Total de Entrevistas',
+      value: stats?.total_interviews || 0,
       icon: Users,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
       title: 'Entrevistas Agendadas',
-      value: 0,
+      value: stats?.scheduled_interviews || 0,
       icon: Calendar,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
     },
     {
       title: 'Entrevistas Concluídas',
-      value: 0,
+      value: stats?.completed_interviews || 0,
       icon: BarChart3,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
