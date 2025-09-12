@@ -31,7 +31,7 @@ const Index = () => {
           {/* Welcome Header */}
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">
-              Bem-vindo ao DataScope, {user?.user_metadata?.display_name || user?.email?.split('@')[0]}!
+              Bem-vindo ao DataScope, <span className="text-orange-700">{user?.user_metadata?.display_name || user?.email?.split('@')[0]}</span>!
             </h1>
             <p className="text-muted-foreground">
               Hub de inteligência de mercado para eventos corporativos - Sua central de leads e insights.
