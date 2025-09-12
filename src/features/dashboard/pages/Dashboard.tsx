@@ -105,46 +105,7 @@ const Index = () => {
             </Card>
           </div>
 
-          {/* Main Content Area */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Fase 1 - Fundação e Acesso</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">Sistema de autenticação implementado</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">Estrutura de perfis no Supabase criada</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">Hierarquia de usuários configurada</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                  <span className="text-sm">Área de controle do desenvolvedor (em desenvolvimento)</span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">Sistema de empresas implementado</span>
-                </div>
-                
-                <div className="mt-6 p-4 bg-muted rounded-lg">
-                  <h4 className="font-semibold mb-2">Próximos passos - Fase 3:</h4>
-                  <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Módulo de Captação de Leads</li>
-                    <li>• Painel de B.I. básico do Expositor</li>
-                    <li>• Configuração de perguntas do Desenvolvedor</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
         </div>
       </MainLayout>
   );
