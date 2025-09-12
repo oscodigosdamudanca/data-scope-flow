@@ -31,8 +31,8 @@ BEGIN
     END IF;
     
     -- Validate that the role exists in the enum
-    IF role_value NOT IN ('admin', 'interviewer') THEN
-        RAISE EXCEPTION 'Invalid company role: %. Valid values are: admin, interviewer', role_value;
+    IF role_value NOT IN ('admin') THEN
+        RAISE EXCEPTION 'Invalid company role: %. Valid values are: admin', role_value;
     END IF;
     
     RETURN role_value::public.company_role;
@@ -71,7 +71,7 @@ SELECT
     cm.role,
     CASE 
         WHEN cm.role = 'admin' THEN 'Administrador'
-        WHEN cm.role = 'interviewer' THEN 'Entrevistador'
+
         ELSE 'Desconhecido'
     END as role_display,
     cm.added_by,
@@ -98,20 +98,7 @@ AS $$
     );
 $$;
 
-CREATE OR REPLACE FUNCTION public.is_company_interviewer_safe(_user_id uuid, _company_id uuid)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-    SELECT EXISTS (
-        SELECT 1 FROM public.company_memberships
-        WHERE user_id = _user_id
-          AND company_id = _company_id
-          AND role = 'interviewer'::public.company_role
-    );
-$$;
+
 
 -- 7. Create a function to safely add company memberships
 CREATE OR REPLACE FUNCTION public.add_company_membership(
@@ -150,7 +137,7 @@ GRANT USAGE ON SCHEMA public TO authenticated;
 GRANT SELECT ON public.company_memberships_safe TO authenticated;
 GRANT EXECUTE ON FUNCTION public.validate_company_role(text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_company_admin_safe(uuid, uuid) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.is_company_interviewer_safe(uuid, uuid) TO authenticated;
+
 GRANT EXECUTE ON FUNCTION public.add_company_membership(uuid, uuid, text, uuid) TO authenticated;
 
 -- 9. Add comments for documentation
@@ -167,7 +154,7 @@ BEGIN
     -- Check for any remaining invalid enum values
     SELECT COUNT(*) INTO invalid_count
     FROM public.company_memberships
-    WHERE role::text NOT IN ('admin', 'interviewer');
+    WHERE role::text NOT IN ('admin');
     
     IF invalid_count > 0 THEN
         RAISE EXCEPTION 'Still found % invalid company role values after migration', invalid_count;

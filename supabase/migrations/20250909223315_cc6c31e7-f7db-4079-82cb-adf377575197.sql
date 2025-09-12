@@ -2,8 +2,8 @@
 create extension if not exists pgcrypto;
 
 -- Enums
-create type if not exists public.app_role as enum ('developer', 'organizer', 'admin', 'interviewer');
-create type if not exists public.company_role as enum ('admin', 'interviewer');
+create type if not exists public.app_role as enum ('developer', 'organizer', 'admin');
+create type if not exists public.company_role as enum ('admin');
 
 -- Helper: update_updated_at
 create or replace function public.update_updated_at_column()

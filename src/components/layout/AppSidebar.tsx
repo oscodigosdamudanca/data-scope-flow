@@ -32,6 +32,8 @@ import {
   BarChart3,
   Users,
   FileText,
+  UserCheck,
+  ClipboardList,
 } from 'lucide-react';
 
 const AppSidebar = () => {
@@ -58,6 +60,18 @@ const AppSidebar = () => {
       icon: Building,
       url: '/companies',
       isActive: location.pathname === '/companies'
+    },
+    {
+      title: 'Leads',
+      icon: UserCheck,
+      url: '/leads',
+      isActive: location.pathname === '/leads'
+    },
+    {
+      title: 'Pesquisas',
+      icon: ClipboardList,
+      url: '/surveys',
+      isActive: location.pathname === '/surveys'
     },
     {
       title: 'Entrevistas',
