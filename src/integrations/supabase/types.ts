@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      candidates: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          linkedin_url: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          portfolio_url: string | null
+          resume_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id?: string
+          linkedin_url?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          portfolio_url?: string | null
+          resume_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          linkedin_url?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          portfolio_url?: string | null
+          resume_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           address: Json | null
@@ -91,6 +147,190 @@ export type Database = {
           },
         ]
       }
+      interview_questions: {
+        Row: {
+          created_at: string
+          id: string
+          interview_id: string
+          is_required: boolean
+          order_index: number
+          question_id: string
+          time_limit_minutes: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          interview_id: string
+          is_required?: boolean
+          order_index: number
+          question_id: string
+          time_limit_minutes?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          interview_id?: string
+          is_required?: boolean
+          order_index?: number
+          question_id?: string
+          time_limit_minutes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_questions_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interview_responses: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          feedback: string | null
+          id: string
+          interview_id: string
+          question_id: string
+          rating: number | null
+          response_file_url: string | null
+          response_text: string | null
+          time_spent_seconds: number | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          interview_id: string
+          question_id: string
+          rating?: number | null
+          response_file_url?: string | null
+          response_text?: string | null
+          time_spent_seconds?: number | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          interview_id?: string
+          question_id?: string
+          rating?: number | null
+          response_file_url?: string | null
+          response_text?: string | null
+          time_spent_seconds?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_responses_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_responses_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interviews: {
+        Row: {
+          candidate_id: string
+          company_id: string
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          interviewer_id: string | null
+          meeting_url: string | null
+          notes: string | null
+          overall_rating: number | null
+          recommendation: string | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          company_id: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          interviewer_id?: string | null
+          meeting_url?: string | null
+          notes?: string | null
+          overall_rating?: number | null
+          recommendation?: string | null
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          interviewer_id?: string | null
+          meeting_url?: string | null
+          notes?: string | null
+          overall_rating?: number | null
+          recommendation?: string | null
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interviews_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interviews_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -115,6 +355,103 @@ export type Database = {
         }
         Relationships: []
       }
+      question_types: {
+        Row: {
+          category: Database["public"]["Enums"]["question_category"]
+          company_id: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          difficulty: Database["public"]["Enums"]["question_difficulty"]
+          id: string
+          is_active: boolean
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["question_category"]
+          company_id?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["question_difficulty"]
+          id?: string
+          is_active?: boolean
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["question_category"]
+          company_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["question_difficulty"]
+          id?: string
+          is_active?: boolean
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_types_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          created_at: string
+          created_by: string
+          evaluation_criteria: string | null
+          expected_answer: string | null
+          id: string
+          is_active: boolean
+          question_text: string
+          question_type_id: string
+          time_limit_minutes: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          evaluation_criteria?: string | null
+          expected_answer?: string | null
+          id?: string
+          is_active?: boolean
+          question_text: string
+          question_type_id: string
+          time_limit_minutes?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          evaluation_criteria?: string | null
+          expected_answer?: string | null
+          id?: string
+          is_active?: boolean
+          question_text?: string
+          question_type_id?: string
+          time_limit_minutes?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_question_type_id_fkey"
+            columns: ["question_type_id"]
+            isOneToOne: false
+            referencedRelation: "question_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -138,9 +475,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      company_memberships_safe: {
+        Row: {
+          added_by: string | null
+          company_id: string | null
+          company_name: string | null
+          created_at: string | null
+          id: string | null
+          role: Database["public"]["Enums"]["company_role"] | null
+          role_display: string | null
+          user_id: string | null
+          user_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_memberships_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      add_company_membership: {
+        Args: {
+          _added_by?: string
+          _company_id: string
+          _role: string
+          _user_id: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -152,14 +519,33 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      is_company_admin_safe: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_company_interviewer_safe: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_company_member: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
+      }
+      validate_company_role: {
+        Args: { role_value: string }
+        Returns: Database["public"]["Enums"]["company_role"]
       }
     }
     Enums: {
       app_role: "developer" | "organizer" | "admin" | "interviewer"
       company_role: "admin" | "interviewer"
+      question_category:
+        | "technical"
+        | "behavioral"
+        | "cultural"
+        | "situational"
+        | "general"
+      question_difficulty: "easy" | "medium" | "hard"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -289,6 +675,14 @@ export const Constants = {
     Enums: {
       app_role: ["developer", "organizer", "admin", "interviewer"],
       company_role: ["admin", "interviewer"],
+      question_category: [
+        "technical",
+        "behavioral",
+        "cultural",
+        "situational",
+        "general",
+      ],
+      question_difficulty: ["easy", "medium", "hard"],
     },
   },
 } as const
