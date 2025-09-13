@@ -25,7 +25,9 @@ import QuestionTypes from "@/pages/developer/QuestionTypes";
 import Permissions from "@/pages/developer/Permissions";
 import SystemLogs from "@/pages/developer/SystemLogs";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
-import LeadCapturePage from "@/features/leads/pages/LeadCapturePage";
+import LeadCapturePage from "./features/leads/pages/LeadCapturePage";
+import TagsManagerPage from "./features/leads/pages/TagsManagerPage";
+import LeadTaggingPage from "./features/leads/pages/LeadTaggingPage";
 import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
 import { AnalyticsRoutes } from "@/features/analytics";
 
@@ -59,6 +61,8 @@ const App = () => (
             <Route path="/leads/list" element={<LeadsListPage />} />
             <Route path="/leads/create" element={<CreateLeadPage />} />
               <Route path="/leads/capture" element={<LeadCapturePage />} />
+              <Route path="/leads/tags" element={<TagsManagerPage />} />
+              <Route path="/leads/tagging" element={<LeadTaggingPage />} />
               <Route path="/surveys" element={<SurveysPage />} />
               <Route path="/analytics/*" element={<AnalyticsRoutes />} />
             </Route>

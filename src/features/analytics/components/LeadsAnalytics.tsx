@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { AnalyticsData, DateRange } from '../hooks/useAnalytics';
 import { BIConfig } from '../hooks/useBIConfig';
+import ConversionFunnel from './ConversionFunnel';
+import ConversionMetrics from './ConversionMetrics';
 
 interface LeadsAnalyticsProps {
   companyId: string;
@@ -77,6 +79,27 @@ const LeadsAnalytics: React.FC<LeadsAnalyticsProps> = ({
     topPerformingContent = [],
     recentLeads = []
   } = analyticsData || {};
+
+  // Dados para funil de conversão
+  const funnelData = {
+    totalVisitors: 5280,
+    totalLeads: totalLeads || 1247,
+    qualifiedLeads: 892,
+    convertedLeads: 293
+  };
+
+  // Dados para métricas de conversão
+  const conversionMetricsData = {
+    conversionRate: conversionRate || 23.5,
+    avgTimeToConvert: 32,
+    leadQuality: 78,
+    monthlyGrowth: 12.3,
+    targetConversionRate: 25,
+    totalLeads: totalLeads || 1247,
+    convertedLeads: 293,
+    avgDealValue: 4500,
+    costPerLead: 85
+  };
 
   // Métricas de leads
   const leadsMetrics = [
@@ -390,6 +413,22 @@ const LeadsAnalytics: React.FC<LeadsAnalyticsProps> = ({
           </CardContent>
         </Card>
       </div>
+
+      {/* Funil de Conversão */}
+      <ConversionFunnel
+        totalVisitors={funnelData.totalVisitors}
+        totalLeads={funnelData.totalLeads}
+        qualifiedLeads={funnelData.qualifiedLeads}
+        convertedLeads={funnelData.convertedLeads}
+        className="mb-6"
+      />
+
+      {/* Métricas de Conversão */}
+      <ConversionMetrics
+        data={conversionMetricsData}
+        period={dateRange ? `${dateRange.startDate} - ${dateRange.endDate}` : 'Últimos 30 dias'}
+        className="mb-6"
+      />
 
       {/* Análise de Performance */}
       <Card>

@@ -191,6 +191,55 @@ const LeadsPage: React.FC = () => {
           </Card>
         </div>
 
+        {/* Tags Management Section */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/tags')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-orange-600" />
+                Gerenciar Tags
+              </CardTitle>
+              <CardDescription>
+                Crie e organize tags para categorizar seus leads
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="default" className="bg-orange-600">✓ Disponível</Badge>
+                  <Badge variant="secondary">Sistema Completo</Badge>
+                </div>
+                <Button size="sm">
+                  Acessar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/tagging')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-indigo-600" />
+                Aplicar Tags
+              </CardTitle>
+              <CardDescription>
+                Aplique tags aos seus leads existentes em lote
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="default" className="bg-indigo-600">✓ Disponível</Badge>
+                  <Badge variant="secondary">Ação em Lote</Badge>
+                </div>
+                <Button size="sm">
+                  Começar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Development Status */}
         <Card>
           <CardHeader>
