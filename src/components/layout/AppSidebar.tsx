@@ -1,5 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
+import { NotificationBadge } from '@/components/notifications/NotificationBadge';
 import {
   Sidebar,
   SidebarContent,
@@ -177,6 +178,7 @@ const AppSidebar = () => {
             <span className="truncate font-semibold">DataScope</span>
             <span className="truncate text-xs text-muted-foreground">Analytics Platform</span>
           </div>
+          <NotificationBadge className="group-data-[collapsible=icon]:hidden" />
         </div>
       </SidebarHeader>
 

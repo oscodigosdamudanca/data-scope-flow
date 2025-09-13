@@ -18,9 +18,11 @@ import {
   Bell, 
   Palette,
   Globe,
-  Key
+  Key,
+  Target
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { FollowUpSettings } from '@/components/notifications/FollowUpSettings';
 
 const AdminSettings = () => {
   const { toast } = useToast();
@@ -292,11 +294,24 @@ const AdminSettings = () => {
           </Card>
         </div>
 
-        {/* Ações Avançadas */}
-        <Card>
+        {/* Follow-up Automático */}
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5" />
+              <Target className="h-5 w-5" />
+              Sistema de Follow-up Automático
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FollowUpSettings />
+          </CardContent>
+        </Card>
+
+        {/* Ações Avançadas */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5" />
               Ações Avançadas
             </CardTitle>
           </CardHeader>

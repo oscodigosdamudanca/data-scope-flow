@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
+import { NotificationsProvider } from "@/contexts/NotificationsContext";
 import ProtectedRoute from "@/components/core/ProtectedRoute";
 import Dashboard from "./features/dashboard/pages/Dashboard";
 import Auth from "@/features/auth/pages/Auth";
@@ -39,9 +40,10 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <CompanyProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+          <NotificationsProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
@@ -93,7 +95,8 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </BrowserRouter>
+            </BrowserRouter>
+          </NotificationsProvider>
         </CompanyProvider>
       </AuthProvider>
     </TooltipProvider>
