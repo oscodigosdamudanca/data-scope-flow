@@ -62,8 +62,8 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({
     if (biConfig) {
       setSettings(prev => ({
         ...prev,
-        visibleWidgets: biConfig.widgets?.map(w => w.id) || [],
-        widgetLayout: biConfig.layout?.type || 'grid'
+        visibleWidgets: biConfig.widget_configs?.map(w => w.id) || [],
+        widgetLayout: biConfig.layout_config?.theme || 'grid'
       }));
     }
   }, [biConfig]);

@@ -42,64 +42,23 @@ export const useBIConfig = (companyId: string, dashboardType: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Query para buscar configuração existente
+  // Para fins de demonstração, retornamos configuração padrão
+  // Uma vez que a tabela business_intelligence_configs não existe ainda
   const { data: config, isLoading } = useQuery({
     queryKey: ['bi-config', companyId, dashboardType, user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('business_intelligence_configs')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('dashboard_type', dashboardType)
-        .eq('user_id', user?.id)
-        .eq('is_active', true)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      return data as BIConfig | null;
+      // Simular dados da configuração
+      return null as BIConfig | null;
     },
     enabled: !!user && !!companyId && !!dashboardType,
   });
 
-  // Mutation para criar/atualizar configuração
+  // Mutation para criar/atualizar configuração (simulado)
   const updateConfigMutation = useMutation({
     mutationFn: async (newConfig: Partial<BIConfig>) => {
-      if (config?.id) {
-        // Atualizar configuração existente
-        const { data, error } = await supabase
-          .from('business_intelligence_configs')
-          .update({
-            widget_configs: newConfig.widget_configs,
-            layout_config: newConfig.layout_config,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', config.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      } else {
-        // Criar nova configuração
-        const { data, error } = await supabase
-          .from('business_intelligence_configs')
-          .insert({
-            company_id: companyId,
-            user_id: user?.id,
-            dashboard_type: dashboardType,
-            widget_configs: newConfig.widget_configs || [],
-            layout_config: newConfig.layout_config || getDefaultLayoutConfig(),
-            is_active: true,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      }
+      // Por enquanto apenas simular o salvamento
+      console.log('Salvando configuração:', newConfig);
+      return newConfig as BIConfig;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ 
@@ -119,17 +78,11 @@ export const useBIConfig = (companyId: string, dashboardType: string) => {
     },
   });
 
-  // Mutation para deletar configuração
+  // Mutation para deletar configuração (simulado)
   const deleteConfigMutation = useMutation({
     mutationFn: async () => {
-      if (!config?.id) return;
-
-      const { error } = await supabase
-        .from('business_intelligence_configs')
-        .update({ is_active: false })
-        .eq('id', config.id);
-
-      if (error) throw error;
+      console.log('Deletando configuração');
+      return;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ 
