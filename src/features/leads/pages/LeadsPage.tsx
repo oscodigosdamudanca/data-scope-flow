@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { BackToDashboard } from '@/components/core';
-import { LeadsManager } from '../components';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const LeadsPage: React.FC = () => {
   return (
@@ -17,7 +17,16 @@ const LeadsPage: React.FC = () => {
           </div>
         </div>
         
-        <LeadsManager />
+        <Card>
+          <CardHeader>
+            <CardTitle>Sistema de Leads</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              O sistema de leads está sendo desenvolvido. Em breve você poderá gerenciar todos os leads capturados durante a feira.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </MainLayout>
   );

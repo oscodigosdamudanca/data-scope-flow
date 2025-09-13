@@ -1,7 +1,7 @@
 import React from 'react';
-import { QuestionTypesManager } from '@/features/admin/components/QuestionTypesManager';
 import { BackToDashboard } from '@/components/core';
 import MainLayout from '@/components/layout/MainLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const QuestionTypesPage: React.FC = () => {
   return (
@@ -17,7 +17,16 @@ export const QuestionTypesPage: React.FC = () => {
           </div>
         </div>
         
-        <QuestionTypesManager />
+        <Card>
+          <CardHeader>
+            <CardTitle>Tipos de Perguntas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              O gerenciador de tipos de perguntas está sendo desenvolvido. Em breve você poderá configurar e gerenciar todos os tipos de perguntas do sistema.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </MainLayout>
   );
