@@ -31,6 +31,7 @@ import TagsManagerPage from "./features/leads/pages/TagsManagerPage";
 import LeadTaggingPage from "./features/leads/pages/LeadTaggingPage";
 import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
 import { AnalyticsRoutes } from "@/features/analytics";
+import ReportsPage from "@/features/reports/pages/ReportsPage";
 
 
 const queryClient = new QueryClient();
@@ -80,7 +81,7 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
-              <Route path="/admin/reports" element={<div>Relatórios em desenvolvimento</div>} />
+              <Route path="/admin/reports" element={<ReportsPage />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
