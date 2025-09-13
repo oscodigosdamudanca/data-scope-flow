@@ -28,40 +28,65 @@ async function checkDatabase() {
       }
     }
     
-    // Problema identificado: Tabelas existem fisicamente mas não estão no cache do schema
-console.log('\n🚨 PROBLEMA IDENTIFICADO:');
-console.log('As tabelas existem fisicamente no banco (count funciona)');
-console.log('Mas não estão no cache do schema do Supabase');
-console.log('Isso explica por que os tipos TypeScript não foram gerados');
+    // 🔍 VERIFICAÇÃO FINAL: Testando se as tabelas leads e surveys realmente existem
+console.log('\n=== TESTE DIRETO DE EXISTÊNCIA DAS TABELAS ===');
 
-console.log('\n=== POSSÍVEIS CAUSAS ===');
-console.log('1. Políticas RLS muito restritivas');
-console.log('2. Tabelas criadas fora do Supabase CLI');
-console.log('3. Cache do schema desatualizado');
-console.log('4. Permissões de acesso incorretas');
-
-// Verificar se há outras tabelas no schema que funcionam
-console.log('\n=== TESTANDO TABELAS QUE FUNCIONAM ===');
+// Teste 1: Verificar se conseguimos fazer SELECT nas tabelas
 try {
-  const { data: companiesData, error: companiesError } = await supabase
-    .from('companies')
+  console.log('\n📋 Testando SELECT em leads...');
+  const { data: leadsTest, error: leadsError } = await supabase
+    .from('leads')
     .select('*')
     .limit(1);
   
-  if (companiesError) {
-    console.log('❌ Erro ao acessar companies:', companiesError.message);
+  if (leadsError) {
+    console.log('❌ Erro ao acessar leads:', leadsError.message);
+    console.log('🔍 Código do erro:', leadsError.code);
   } else {
-    console.log('✅ Tabela companies acessível via Supabase client');
+    console.log('✅ Tabela leads acessível via Supabase client');
+    console.log('📊 Dados encontrados:', leadsTest?.length || 0);
   }
 } catch (error) {
-  console.log('Erro ao testar companies:', error.message);
+  console.log('💥 Erro inesperado ao testar leads:', error.message);
 }
 
-console.log('\n=== RECOMENDAÇÕES ===');
-console.log('1. Verificar se as migrações foram aplicadas corretamente');
-console.log('2. Verificar políticas RLS das tabelas leads e surveys');
-console.log('3. Recriar as tabelas usando o Supabase CLI');
-console.log('4. Limpar cache do schema e regenerar tipos');
+try {
+  console.log('\n📋 Testando SELECT em surveys...');
+  const { data: surveysTest, error: surveysError } = await supabase
+    .from('surveys')
+    .select('*')
+    .limit(1);
+  
+  if (surveysError) {
+    console.log('❌ Erro ao acessar surveys:', surveysError.message);
+    console.log('🔍 Código do erro:', surveysError.code);
+  } else {
+    console.log('✅ Tabela surveys acessível via Supabase client');
+    console.log('📊 Dados encontrados:', surveysTest?.length || 0);
+  }
+} catch (error) {
+  console.log('💥 Erro inesperado ao testar surveys:', error.message);
+}
+
+// Teste 2: Comparar com uma tabela que sabemos que funciona
+console.log('\n=== COMPARAÇÃO COM TABELA COMPANIES (CONTROLE) ===');
+const { data: companiesData, error: companiesError } = await supabase
+  .from('companies')
+  .select('*')
+  .limit(1);
+
+if (companiesError) {
+  console.log('❌ Erro ao acessar companies:', companiesError.message);
+} else {
+  console.log('✅ Tabela companies acessível normalmente');
+  console.log('📊 Dados encontrados:', companiesData?.length || 0);
+}
+
+// 📋 CONCLUSÃO:
+console.log('\n=== CONCLUSÃO ===');
+console.log('Se leads/surveys retornarem erro "relation does not exist",');
+console.log('significa que as tabelas foram removidas e nunca recriadas.');
+console.log('Se retornarem dados ou erro de permissão, existem mas têm problemas de acesso.');
     
   } catch (error) {
     console.error('❌ Erro geral:', error);
