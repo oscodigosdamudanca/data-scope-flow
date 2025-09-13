@@ -14,8 +14,8 @@ import Unauthorized from "@/features/misc/pages/Unauthorized";
 import AdminDashboard from "./features/admin/pages/AdminDashboard";
 import UsersManagement from "./features/admin/pages/AdminUsers";
 import LeadsPage from "./features/leads/pages/LeadsPage";
+import LeadsListPage from "./features/leads/pages/LeadsListPage";
 import SurveysPage from "./features/surveys/pages/SurveysPage";
-import AdminReports from "./features/admin/pages/AdminReports";
 import AdminSettings from "./features/admin/pages/AdminSettings";
 import FairFeedback from "@/pages/FairFeedback";
 import CustomSurveys from "@/pages/CustomSurveys";
@@ -55,6 +55,7 @@ const App = () => (
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin']} />}>
               <Route path="/leads" element={<LeadsPage />} />
+              <Route path="/leads/list" element={<LeadsListPage />} />
               <Route path="/leads/capture" element={<LeadCapturePage />} />
               <Route path="/surveys" element={<SurveysPage />} />
               <Route path="/analytics/*" element={<AnalyticsRoutes />} />
@@ -71,7 +72,7 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
-              <Route path="/admin/reports" element={<AdminReports />} />
+              <Route path="/admin/reports" element={<div>Relatórios em desenvolvimento</div>} />
               <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 

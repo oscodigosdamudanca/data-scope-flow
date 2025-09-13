@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Plus, FileText, BarChart3, UserPlus, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,9 +6,29 @@ import MainLayout from '@/components/layout/MainLayout';
 import { BackToDashboard } from '@/components/core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useLeads } from '../hooks/useLeads';
 
 const LeadsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { leads, loading, fetchLeads } = useLeads();
+
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);
+
+  // Calcular estatísticas
+  const totalLeads = leads.length;
+  const activeLeads = leads.filter(lead => ['new', 'contacted', 'qualified'].includes(lead.status)).length;
+  const convertedLeads = leads.filter(lead => lead.status === 'converted').length;
+  const conversionRate = totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
+  
+  // Leads do mês atual
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const leadsThisMonth = leads.filter(lead => {
+    const leadDate = new Date(lead.created_at);
+    return leadDate.getMonth() === currentMonth && leadDate.getFullYear() === currentYear;
+  }).length;
 
   return (
     <MainLayout>
@@ -55,7 +75,9 @@ const LeadsPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600 mb-2">0</div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">
+                {loading ? '...' : activeLeads}
+              </div>
               <p className="text-sm text-muted-foreground">
                 Leads em acompanhamento
               </p>
@@ -70,9 +92,11 @@ const LeadsPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600 mb-2">0%</div>
+              <div className="text-3xl font-bold text-green-600 mb-2">
+                {loading ? '...' : `${conversionRate}%`}
+              </div>
               <p className="text-sm text-muted-foreground">
-                Leads convertidos este mês
+                Taxa de conversão geral
               </p>
             </CardContent>
           </Card>
@@ -85,9 +109,11 @@ const LeadsPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-purple-600 mb-2">0</div>
+              <div className="text-3xl font-bold text-purple-600 mb-2">
+                {loading ? '...' : leadsThisMonth}
+              </div>
               <p className="text-sm text-muted-foreground">
-                Leads captados recentemente
+                Leads captados este mês
               </p>
             </CardContent>
           </Card>
@@ -131,11 +157,11 @@ const LeadsPage: React.FC = () => {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary">Em Desenvolvimento</Badge>
-                  <Badge variant="outline">Filtros Avançados</Badge>
+                  <Badge variant="default" className="bg-green-600">✓ Disponível</Badge>
+                  <Badge variant="secondary">Filtros Avançados</Badge>
                 </div>
-                <Button size="sm" variant="outline">
-                  Em Breve
+                <Button size="sm" onClick={() => navigate('/leads/list')}>
+                  Acessar
                 </Button>
               </div>
             </CardContent>
@@ -172,8 +198,8 @@ const LeadsPage: React.FC = () => {
                 <Badge variant="default" className="bg-green-600">
                   ✓ Formulário de Captação
                 </Badge>
-                <Badge variant="secondary">
-                  🚧 Listagem de Leads
+                <Badge variant="default" className="bg-green-600">
+                  ✓ Listagem de Leads
                 </Badge>
                 <Badge variant="outline">
                   ⏳ Analytics Avançados
