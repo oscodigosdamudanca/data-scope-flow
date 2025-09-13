@@ -24,6 +24,7 @@ import QuestionTypes from "@/pages/developer/QuestionTypes";
 import Permissions from "@/pages/developer/Permissions";
 import SystemLogs from "@/pages/developer/SystemLogs";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
+import LeadCapturePage from "@/features/leads/pages/LeadCapturePage";
 import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
 import { AnalyticsRoutes } from "@/features/analytics";
 
@@ -54,6 +55,7 @@ const App = () => (
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin']} />}>
               <Route path="/leads" element={<LeadsPage />} />
+              <Route path="/leads/capture" element={<LeadCapturePage />} />
               <Route path="/surveys" element={<SurveysPage />} />
               <Route path="/analytics/*" element={<AnalyticsRoutes />} />
             </Route>
