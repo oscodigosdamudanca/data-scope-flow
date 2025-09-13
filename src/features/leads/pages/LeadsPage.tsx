@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Plus, FileText, BarChart3, UserPlus, Target } from 'lucide-react';
+import { ArrowLeft, Users, Plus, FileText, BarChart3, UserPlus, Target, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
 import { BackToDashboard } from '@/components/core';
@@ -120,11 +120,34 @@ const LeadsPage: React.FC = () => {
         </div>
 
         {/* Main Actions */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/capture')}>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/create')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserPlus className="w-5 h-5 text-blue-600" />
+                Criar Novo Lead
+              </CardTitle>
+              <CardDescription>
+                Adicione um novo lead ao seu sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary">Criação Rápida</Badge>
+                </div>
+                <Button size="sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Criar Lead
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/capture')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-purple-600" />
                 Capturar Novo Lead
               </CardTitle>
               <CardDescription>

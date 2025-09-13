@@ -20,7 +20,8 @@ import {
   ArrowUp,
   ArrowDown,
   UserPlus,
-  MoreHorizontal
+  MoreHorizontal,
+  Plus
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useLeads } from '../hooks/useLeads';
@@ -303,12 +304,11 @@ const LeadsList: React.FC<LeadsListProps> = ({
             filteredLeads={filteredAndSortedLeads}
           />
           <Button 
-            variant="outline" 
-            onClick={() => navigate('/leads/capture')}
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Novo Lead
-          </Button>
+             onClick={() => navigate('/leads/create')}
+           >
+             <Plus className="w-4 h-4 mr-2" />
+             Novo Lead
+           </Button>
           
           {state.selectedLeads.length > 0 && (
             <>

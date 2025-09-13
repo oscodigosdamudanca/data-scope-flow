@@ -15,6 +15,7 @@ import AdminDashboard from "./features/admin/pages/AdminDashboard";
 import UsersManagement from "./features/admin/pages/AdminUsers";
 import LeadsPage from "./features/leads/pages/LeadsPage";
 import LeadsListPage from "./features/leads/pages/LeadsListPage";
+import { CreateLeadPage } from "./features/leads/pages/CreateLeadPage";
 import SurveysPage from "./features/surveys/pages/SurveysPage";
 import AdminSettings from "./features/admin/pages/AdminSettings";
 import FairFeedback from "@/pages/FairFeedback";
@@ -55,7 +56,8 @@ const App = () => (
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin']} />}>
               <Route path="/leads" element={<LeadsPage />} />
-              <Route path="/leads/list" element={<LeadsListPage />} />
+            <Route path="/leads/list" element={<LeadsListPage />} />
+            <Route path="/leads/create" element={<CreateLeadPage />} />
               <Route path="/leads/capture" element={<LeadCapturePage />} />
               <Route path="/surveys" element={<SurveysPage />} />
               <Route path="/analytics/*" element={<AnalyticsRoutes />} />
