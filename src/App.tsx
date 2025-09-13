@@ -27,8 +27,12 @@ import Permissions from "@/pages/developer/Permissions";
 import SystemLogs from "@/pages/developer/SystemLogs";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
 import LeadCapturePage from "./features/leads/pages/LeadCapturePage";
+import PublicLeadCapturePage from "./features/leads/pages/PublicLeadCapturePage";
+import PublicSurveyPage from "./features/surveys/pages/PublicSurveyPage";
+import PublicQRLeadCapturePage from "./features/leads/pages/PublicQRLeadCapturePage";
 import TagsManagerPage from "./features/leads/pages/TagsManagerPage";
 import LeadTaggingPage from "./features/leads/pages/LeadTaggingPage";
+import QRCodeLeadsPage from "./features/leads/pages/QRCodeLeadsPage";
 import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
 import { AnalyticsRoutes } from "@/features/analytics";
 import ReportsPage from "@/features/reports/pages/ReportsPage";
@@ -49,6 +53,9 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/turbo-form" element={<TurboFormPage />} />
+            <Route path="/lead-capture" element={<PublicLeadCapturePage />} />
+            <Route path="/lead-capture/qr/:qrId" element={<PublicQRLeadCapturePage />} />
+            <Route path="/survey/:surveyId" element={<PublicSurveyPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']} />}>
@@ -64,6 +71,7 @@ const App = () => (
             <Route path="/leads/list" element={<LeadsListPage />} />
             <Route path="/leads/create" element={<CreateLeadPage />} />
               <Route path="/leads/capture" element={<LeadCapturePage />} />
+              <Route path="/leads/qr-codes" element={<QRCodeLeadsPage />} />
               <Route path="/leads/tags" element={<TagsManagerPage />} />
               <Route path="/leads/tagging" element={<LeadTaggingPage />} />
               <Route path="/surveys" element={<SurveysPage />} />

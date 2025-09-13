@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Plus, FileText, BarChart3, UserPlus, Target, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Users, Plus, FileText, BarChart3, UserPlus, Target, TrendingUp, QrCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
 import { BackToDashboard } from '@/components/core';
@@ -191,8 +191,31 @@ const LeadsPage: React.FC = () => {
           </Card>
         </div>
 
-        {/* Tags Management Section */}
+        {/* Advanced Features Section */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/qr-codes')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-blue-600" />
+                QR Codes
+              </CardTitle>
+              <CardDescription>
+                Crie QR Codes para captação automática de leads em eventos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="default" className="bg-blue-600">✓ Disponível</Badge>
+                  <Badge variant="secondary">Captação Automática</Badge>
+                </div>
+                <Button size="sm">
+                  Acessar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/leads/tags')}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

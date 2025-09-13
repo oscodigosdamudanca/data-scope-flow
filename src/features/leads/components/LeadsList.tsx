@@ -28,6 +28,7 @@ import { useLeads } from '../hooks/useLeads';
 import { useToast } from '@/hooks/use-toast';
 import type { Lead, LeadFilters } from '@/types/leads';
 import { LeadExport } from './LeadExport';
+import LeadEditModal from './LeadEditModal';
 
 interface LeadsListProps {
   companyId?: string;
@@ -72,6 +73,7 @@ const LeadsList: React.FC<LeadsListProps> = ({
   });
 
   const [showFilters, setShowFilters] = useState(false);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
   // Aplicar filtros e ordenação
   const filteredAndSortedLeads = React.useMemo(() => {
@@ -200,6 +202,18 @@ const LeadsList: React.FC<LeadsListProps> = ({
         });
       }
     }
+  };
+
+  const handleEditLead = (lead: Lead) => {
+    setEditingLead(lead);
+  };
+
+  const handleSaveLead = (updatedLead: Lead) => {
+    // Mock update - replace with actual API call
+    console.log('Saving lead:', updatedLead);
+    setEditingLead(null);
+    // Refresh leads list
+    fetchLeads();
   };
 
   const handleBulkDelete = async () => {
@@ -543,7 +557,7 @@ const LeadsList: React.FC<LeadsListProps> = ({
                               <Eye className="w-4 h-4 mr-2" />
                               Visualizar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onLeadEdit?.(lead)}>
+                            <DropdownMenuItem onClick={() => handleEditLead(lead)}>
                               <Edit className="w-4 h-4 mr-2" />
                               Editar
                             </DropdownMenuItem>
@@ -632,6 +646,16 @@ const LeadsList: React.FC<LeadsListProps> = ({
             </div>
           </CardContent>
         </Card>
+      )}
+      
+      {/* Modal de edição */}
+      {editingLead && (
+        <LeadEditModal
+          lead={editingLead}
+          isOpen={!!editingLead}
+          onClose={() => setEditingLead(null)}
+          onSave={handleSaveLead}
+        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit, Trash2, Eye, BarChart3, Users } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, BarChart3, Users, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useSurveys } from '../hooks/useSurveys';
 import { useSurveyResponses } from '../hooks/useSurveyResponses';
 import { Survey, CreateSurveyData, UpdateSurveyData, SurveyFilters } from '@/types/surveys';
+import SurveyShareDialog from './SurveyShareDialog';
 
 const SurveyManager: React.FC = () => {
   const { surveys, loading, error, createSurvey, updateSurvey, deleteSurvey, refetch } = useSurveys();
@@ -19,6 +20,7 @@ const SurveyManager: React.FC = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAnalyticsDialogOpen, setIsAnalyticsDialogOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [selectedSurvey, setSelectedSurvey] = useState<Survey | null>(null);
   const [analytics, setAnalytics] = useState<any>(null);
   const [filters, setFilters] = useState<SurveyFilters & { search?: string }>({
@@ -299,6 +301,17 @@ const SurveyManager: React.FC = () => {
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={() => {
+                      setSelectedSurvey(survey);
+                      setIsShareDialogOpen(true);
+                    }}
+                  >
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Compartilhar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => openAnalyticsDialog(survey)}
                   >
                     <BarChart3 className="mr-2 h-4 w-4" />
@@ -464,6 +477,18 @@ const SurveyManager: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Dialog de compartilhamento */}
+      {selectedSurvey && (
+        <SurveyShareDialog
+          survey={selectedSurvey}
+          isOpen={isShareDialogOpen}
+          onClose={() => {
+            setIsShareDialogOpen(false);
+            setSelectedSurvey(null);
+          }}
+        />
+      )}
     </div>
   );
 };
