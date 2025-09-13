@@ -66,14 +66,21 @@ const defaultAnalyticsData: AnalyticsData = {
   abandonmentRate: 0
 };
 
-// Default empty BI config
+// Default empty BI config with all required properties
 const defaultBIConfig: BIConfig = {
   id: '',
   company_id: '',
   user_id: '',
   dashboard_type: 'overview',
   widget_configs: [],
-  layout_config: {},
+  layout_config: {
+    columns: 3,
+    gap: 16,
+    theme: 'light',
+    auto_refresh: true,
+    refresh_interval: 30
+  },
+  is_active: true,
   created_at: '',
   updated_at: ''
 };
@@ -96,10 +103,23 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
   } = useAnalytics(companyId, dateRange);
 
   const { 
-    config: biConfig, 
+    config: biConfigData, 
     loading: configLoading,
     error: configError 
   } = useBIConfig(companyId, activeTab);
+
+  // Create a proper BIConfig object from the partial data returned by useBIConfig
+  const biConfig: BIConfig = {
+    ...defaultBIConfig,
+    ...biConfigData,
+    id: (biConfigData && 'id' in biConfigData ? biConfigData.id : '') || defaultBIConfig.id,
+    company_id: companyId || defaultBIConfig.company_id,
+    user_id: user?.id || defaultBIConfig.user_id,
+    dashboard_type: activeTab as any || defaultBIConfig.dashboard_type,
+    is_active: (biConfigData && 'is_active' in biConfigData ? biConfigData.is_active : defaultBIConfig.is_active) ?? defaultBIConfig.is_active,
+    created_at: (biConfigData && 'created_at' in biConfigData ? biConfigData.created_at : '') || defaultBIConfig.created_at,
+    updated_at: (biConfigData && 'updated_at' in biConfigData ? biConfigData.updated_at : '') || defaultBIConfig.updated_at,
+  };
 
   const handleRefresh = () => {
     refetch();
@@ -209,7 +229,7 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
           <OverviewAnalytics 
             companyId={companyId}
             analyticsData={analyticsData || defaultAnalyticsData}
-            biConfig={biConfig || defaultBIConfig}
+            biConfig={biConfig}
             loading={isLoading}
             dateRange={dateRange}
           />
@@ -219,7 +239,7 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
           <LeadsAnalytics 
             companyId={companyId}
             analyticsData={analyticsData || defaultAnalyticsData}
-            biConfig={biConfig || defaultBIConfig}
+            biConfig={biConfig}
             loading={isLoading}
             dateRange={dateRange}
           />
@@ -229,7 +249,7 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
           <SurveysAnalytics 
             companyId={companyId}
             analyticsData={analyticsData || defaultAnalyticsData}
-            biConfig={biConfig || defaultBIConfig}
+            biConfig={biConfig}
             loading={isLoading}
             dateRange={dateRange}
           />
@@ -272,7 +292,7 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
             <DashboardSettings 
               companyId={companyId}
               dashboardType={activeTab}
-              biConfig={biConfig || defaultBIConfig}
+              biConfig={biConfig}
               onClose={() => setShowSettings(false)}
               onAutoRefreshChange={setAutoRefresh}
               onDateRangeChange={setDateRange}

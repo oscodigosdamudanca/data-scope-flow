@@ -17,8 +17,7 @@ export function useSurveyQuestions(surveyId?: string) {
       options: ['Excelente', 'Bom', 'Regular', 'Ruim'],
       is_required: true,
       order_index: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      created_at: new Date().toISOString()
     },
     {
       id: '2',
@@ -28,8 +27,7 @@ export function useSurveyQuestions(surveyId?: string) {
       options: null,
       is_required: false,
       order_index: 1,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      created_at: new Date().toISOString()
     }
   ];
 
@@ -70,8 +68,7 @@ export function useSurveyQuestions(surveyId?: string) {
         options: questionData.options,
         is_required: questionData.is_required || false,
         order_index: questionData.order_index || questions.length,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+          created_at: new Date().toISOString()
       };
 
       setQuestions(prev => [...prev, newQuestion].sort((a, b) => a.order_index - b.order_index));

@@ -403,7 +403,7 @@ const LeadsAnalytics: React.FC<LeadsAnalyticsProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="text-2xl font-bold text-blue-600">
-                {((Object.values(leadsByStatus).reduce((sum: number, count) => sum + (count as number), 0) / totalLeads) * 100).toFixed(1)}%
+                {((Array.isArray(leadsByStatus) ? leadsByStatus.reduce((sum, status) => sum + status.count, 0) : 0) / Math.max(totalLeads, 1) * 100 || 0).toFixed(1)}%
               </div>
               <div className="text-sm text-muted-foreground">Taxa de Ativação</div>
             </div>

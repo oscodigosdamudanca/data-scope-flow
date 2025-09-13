@@ -78,8 +78,8 @@ const SurveysAnalytics: React.FC<SurveysAnalyticsProps> = ({
   // Calcular métricas derivadas
   const completionRate = totalSurveys > 0 ? (completedSurveys / totalSurveys) * 100 : 0;
   const activeRate = 100 - abandonmentRate;
-  const avgRating = Object.values(surveyRatings).length > 0 
-    ? Object.values(surveyRatings).reduce((sum: number, rating) => sum + (rating as number), 0) / Object.values(surveyRatings).length 
+  const avgRating = Array.isArray(surveyRatings) && surveyRatings.length > 0 
+    ? surveyRatings.reduce((sum, rating) => sum + rating.rating * rating.count, 0) / surveyRatings.reduce((sum, rating) => sum + rating.count, 0)
     : 0;
 
   // Métricas principais
