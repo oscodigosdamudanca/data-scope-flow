@@ -460,7 +460,7 @@ const SurveysAnalytics: React.FC<SurveysAnalyticsProps> = ({
                           <div className="text-xs text-muted-foreground space-y-1">
                             <div>Tipo: {survey.type}</div>
                             <div>Respostas: {survey.responses}</div>
-                            <div>Criado: {new Date(survey.created_at).toLocaleDateString('pt-BR')}</div>
+                            <div>Criado: {new Date(survey.createdAt).toLocaleDateString('pt-BR')}</div>
                           </div>
                         </div>
                       </div>

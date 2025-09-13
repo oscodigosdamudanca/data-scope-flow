@@ -29,16 +29,14 @@ const ROLE_LABELS: Record<AppRole, string> = {
   developer: 'Desenvolvedor',
   organizer: 'Organizador',
   admin: 'Administrador',
-  interviewer: 'Entrevistador',
-  fair_organizer: 'Organizador da Feira'
+  interviewer: 'Entrevistador'
 };
 
 const ROLE_DESCRIPTIONS: Record<AppRole, string> = {
   developer: 'Acesso total ao sistema, incluindo configurações avançadas',
   organizer: 'Pode organizar entrevistas e gerenciar processos seletivos',
   admin: 'Administra empresas e usuários dentro do escopo permitido',
-  interviewer: 'Realiza entrevistas e avalia candidatos',
-  fair_organizer: 'Gerencia feedback da feira e pesquisas personalizadas'
+  interviewer: 'Realiza entrevistas e avalia candidatos'
 };
 
 export const UserForm: React.FC<UserFormProps> = ({

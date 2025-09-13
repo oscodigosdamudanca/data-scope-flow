@@ -88,33 +88,33 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({
     switch (newSettings.dateRange) {
       case 'today':
         dateRange = {
-          start: new Date(),
-          end: new Date()
+          from: new Date(),
+          to: new Date()
         };
         break;
       case 'last7days':
         dateRange = {
-          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          end: new Date()
+          from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          to: new Date()
         };
         break;
       case 'last30days':
         dateRange = {
-          start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          end: new Date()
+          from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          to: new Date()
         };
         break;
       case 'last90days':
         dateRange = {
-          start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-          end: new Date()
+          from: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+          to: new Date()
         };
         break;
       case 'custom':
         if (newSettings.customDateStart && newSettings.customDateEnd) {
           dateRange = {
-            start: new Date(newSettings.customDateStart),
-            end: new Date(newSettings.customDateEnd)
+            from: new Date(newSettings.customDateStart),
+            to: new Date(newSettings.customDateEnd)
           };
         }
         break;

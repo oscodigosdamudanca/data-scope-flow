@@ -218,7 +218,7 @@ const OverviewAnalytics: React.FC<OverviewAnalyticsProps> = ({
                           {index + 1}
                         </span>
                       </div>
-                      <span className="font-medium">{interest.name}</span>
+                      <span className="font-medium">{interest.interest}</span>
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-bold">{interest.count}</div>

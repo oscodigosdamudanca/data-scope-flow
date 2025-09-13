@@ -44,7 +44,7 @@ const App = () => (
             <Route path="/turbo-form" element={<TurboFormPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer', 'fair_organizer']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']} />}>
               <Route path="/" element={<Dashboard />} />
             </Route>
 
@@ -59,7 +59,7 @@ const App = () => (
             </Route>
 
             {/* Rotas específicas do Organizador da Feira */}
-            <Route element={<ProtectedRoute allowedRoles={['developer', 'fair_organizer']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />}>
               <Route path="/fair-feedback" element={<FairFeedback />} />
               <Route path="/custom-surveys" element={<CustomSurveys />} />
               <Route path="/raffles" element={<Raffles />} />

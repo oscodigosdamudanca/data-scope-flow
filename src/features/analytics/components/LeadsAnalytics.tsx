@@ -373,7 +373,7 @@ const LeadsAnalytics: React.FC<LeadsAnalyticsProps> = ({
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground mt-2">
-                        {new Date(lead.created_at).toLocaleString('pt-BR')}
+                        {new Date(lead.createdAt).toLocaleString('pt-BR')}
                       </div>
                     </div>
                   </div>

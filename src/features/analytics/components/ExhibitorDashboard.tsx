@@ -15,8 +15,8 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
-import { useAnalytics, DateRange } from '../hooks/useAnalytics';
-import { useBIConfig } from '../hooks/useBIConfig';
+import { useAnalytics, DateRange, AnalyticsData } from '../hooks/useAnalytics';
+import { useBIConfig, BIConfig } from '../hooks/useBIConfig';
 import { useAuth } from '@/contexts/AuthContext';
 import LeadsAnalytics from './LeadsAnalytics';
 import SurveysAnalytics from './SurveysAnalytics';
@@ -27,6 +27,56 @@ interface ExhibitorDashboardProps {
   companyId: string;
   companyName?: string;
 }
+
+// Default empty analytics data
+const defaultAnalyticsData: AnalyticsData = {
+  leadsCount: 0,
+  leadsToday: 0,
+  leadsThisWeek: 0,
+  leadsThisMonth: 0,
+  surveysCount: 0,
+  surveysResponses: 0,
+  conversionRate: 0,
+  totalLeads: 0,
+  newLeads: 0,
+  completedSurveys: 0,
+  newSurveys: 0,
+  totalSurveys: 0,
+  completionRate: 0,
+  topSources: [],
+  leadsByStatus: [],
+  leadsByInterest: [],
+  dailyLeads: [],
+  weeklyLeads: [],
+  monthlyLeads: [],
+  avgResponseTime: 0,
+  topInterests: [],
+  surveysByType: [],
+  recentActivity: [],
+  leadsBySource: [],
+  leadsByLocation: [],
+  leadsTimeline: [],
+  topPerformingContent: [],
+  recentLeads: [],
+  surveysByStatus: [],
+  responsesByQuestion: [],
+  surveyRatings: [],
+  recentSurveys: [],
+  topPerformingSurveys: [],
+  abandonmentRate: 0
+};
+
+// Default empty BI config
+const defaultBIConfig: BIConfig = {
+  id: '',
+  company_id: '',
+  user_id: '',
+  dashboard_type: 'overview',
+  widget_configs: [],
+  layout_config: {},
+  created_at: '',
+  updated_at: ''
+};
 
 const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({ 
   companyId, 
@@ -158,8 +208,8 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
         <TabsContent value="overview" className="space-y-6">
           <OverviewAnalytics 
             companyId={companyId}
-            analyticsData={analyticsData}
-            biConfig={biConfig}
+            analyticsData={analyticsData || defaultAnalyticsData}
+            biConfig={biConfig || defaultBIConfig}
             loading={isLoading}
             dateRange={dateRange}
           />
@@ -168,8 +218,8 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
         <TabsContent value="leads" className="space-y-6">
           <LeadsAnalytics 
             companyId={companyId}
-            analyticsData={analyticsData}
-            biConfig={biConfig}
+            analyticsData={analyticsData || defaultAnalyticsData}
+            biConfig={biConfig || defaultBIConfig}
             loading={isLoading}
             dateRange={dateRange}
           />
@@ -178,8 +228,8 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
         <TabsContent value="surveys" className="space-y-6">
           <SurveysAnalytics 
             companyId={companyId}
-            analyticsData={analyticsData}
-            biConfig={biConfig}
+            analyticsData={analyticsData || defaultAnalyticsData}
+            biConfig={biConfig || defaultBIConfig}
             loading={isLoading}
             dateRange={dateRange}
           />
@@ -222,7 +272,7 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
             <DashboardSettings 
               companyId={companyId}
               dashboardType={activeTab}
-              biConfig={biConfig}
+              biConfig={biConfig || defaultBIConfig}
               onClose={() => setShowSettings(false)}
               onAutoRefreshChange={setAutoRefresh}
               onDateRangeChange={setDateRange}

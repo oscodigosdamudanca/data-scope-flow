@@ -45,16 +45,14 @@ const ROLE_LABELS: Record<AppRole, string> = {
   developer: 'Dev',
   organizer: 'Org',
   admin: 'Admin',
-  interviewer: 'Entrev',
-  fair_organizer: 'Org Feira'
+  interviewer: 'Entrev'
 };
 
 const ROLE_COLORS: Record<AppRole, 'default' | 'secondary' | 'destructive' | 'outline'> = {
   developer: 'destructive',
   organizer: 'default',
   admin: 'secondary',
-  interviewer: 'outline',
-  fair_organizer: 'secondary'
+  interviewer: 'outline'
 };
 
 export const UsersList: React.FC<UsersListProps> = ({ 
@@ -112,8 +110,7 @@ export const UsersList: React.FC<UsersListProps> = ({
       admin: 'Administrador',
       developer: 'Desenvolvedor',
       organizer: 'Organizador',
-      interviewer: 'Entrevistador',
-      fair_organizer: 'Organizador de Feira'
+      interviewer: 'Entrevistador'
     };
     return roleLabels[role] || role;
   };
