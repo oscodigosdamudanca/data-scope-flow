@@ -154,7 +154,7 @@ const ReportsPage: React.FC = () => {
               value={metric.value}
               change={metric.change}
               icon={metric.icon}
-              color={metric.color as const}
+              color="blue"
               description={metric.description}
               loading={loading}
             />

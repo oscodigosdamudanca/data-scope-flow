@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      bi_configs: {
+        Row: {
+          company_id: string
+          config: Json
+          created_at: string
+          dashboard_type: string
+          id: string
+          is_default: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          config?: Json
+          created_at?: string
+          dashboard_type?: string
+          id?: string
+          is_default?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          config?: Json
+          created_at?: string
+          dashboard_type?: string
+          id?: string
+          is_default?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bi_configs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           address: Json | null
@@ -91,6 +132,254 @@ export type Database = {
           },
         ]
       }
+      follow_up_rules: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          notification_config: Json
+          schedule_config: Json
+          trigger_conditions: Json
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          notification_config?: Json
+          schedule_config?: Json
+          trigger_conditions?: Json
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          notification_config?: Json
+          schedule_config?: Json
+          trigger_conditions?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_rules_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          captured_at: string | null
+          company: string | null
+          company_id: string | null
+          conversion_date: string | null
+          created_at: string | null
+          created_by: string | null
+          custom_fields: Json | null
+          email: string
+          id: string
+          interests: string[] | null
+          last_contact_date: string | null
+          lead_score: number | null
+          lgpd_consent: boolean | null
+          name: string
+          next_follow_up_date: string | null
+          notes: string | null
+          phone: string | null
+          position: string | null
+          priority: string | null
+          source: string | null
+          source_type: string | null
+          status: string | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          captured_at?: string | null
+          company?: string | null
+          company_id?: string | null
+          conversion_date?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          email: string
+          id?: string
+          interests?: string[] | null
+          last_contact_date?: string | null
+          lead_score?: number | null
+          lgpd_consent?: boolean | null
+          name: string
+          next_follow_up_date?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          priority?: string | null
+          source?: string | null
+          source_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          captured_at?: string | null
+          company?: string | null
+          company_id?: string | null
+          conversion_date?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          email?: string
+          id?: string
+          interests?: string[] | null
+          last_contact_date?: string | null
+          lead_score?: number | null
+          lgpd_consent?: boolean | null
+          name?: string
+          next_follow_up_date?: string | null
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          priority?: string | null
+          source?: string | null
+          source_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_settings: {
+        Row: {
+          company_id: string
+          created_at: string
+          email_notifications: boolean
+          id: string
+          in_app_notifications: boolean
+          notification_types: Json
+          push_notifications: boolean
+          quiet_hours: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email_notifications?: boolean
+          id?: string
+          in_app_notifications?: boolean
+          notification_types?: Json
+          push_notifications?: boolean
+          quiet_hours?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email_notifications?: boolean
+          id?: string
+          in_app_notifications?: boolean
+          notification_types?: Json
+          push_notifications?: boolean
+          quiet_hours?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          company_id: string
+          created_at: string
+          data: Json | null
+          expires_at: string | null
+          id: string
+          lead_id: string | null
+          message: string
+          priority: string
+          read_at: string | null
+          scheduled_for: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          action_url?: string | null
+          company_id: string
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          lead_id?: string | null
+          message: string
+          priority?: string
+          read_at?: string | null
+          scheduled_for?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_url?: string | null
+          company_id?: string
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          lead_id?: string | null
+          message?: string
+          priority?: string
+          read_at?: string | null
+          scheduled_for?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -115,104 +404,113 @@ export type Database = {
         }
         Relationships: []
       }
-      user_roles: {
+      survey_questions: {
         Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      },
-      leads: {
-        Row: {
-          company: string | null
-          company_id: string | null
-          conversion_date: string | null
+          conditional_logic: Json | null
           created_at: string | null
-          created_by: string | null
-          custom_fields: Json | null
-          email: string
+          help_text: string | null
           id: string
-          last_contact_date: string | null
-          lead_score: number | null
-          name: string
-          next_follow_up_date: string | null
-          notes: string | null
-          phone: string | null
-          position: string | null
-          priority: string | null
-          source: string | null
-          status: string | null
-          tags: string[] | null
-          updated_at: string | null
+          is_required: boolean | null
+          options: Json | null
+          order_index: number
+          question_text: string
+          question_type: string | null
+          survey_id: string
+          validation_rules: Json | null
         }
         Insert: {
-          company?: string | null
-          company_id?: string | null
-          conversion_date?: string | null
+          conditional_logic?: Json | null
           created_at?: string | null
-          created_by?: string | null
-          custom_fields?: Json | null
-          email: string
+          help_text?: string | null
           id?: string
-          last_contact_date?: string | null
-          lead_score?: number | null
-          name: string
-          next_follow_up_date?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          priority?: string | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
+          is_required?: boolean | null
+          options?: Json | null
+          order_index: number
+          question_text: string
+          question_type?: string | null
+          survey_id: string
+          validation_rules?: Json | null
         }
         Update: {
-          company?: string | null
-          company_id?: string | null
-          conversion_date?: string | null
+          conditional_logic?: Json | null
           created_at?: string | null
-          created_by?: string | null
-          custom_fields?: Json | null
-          email?: string
+          help_text?: string | null
           id?: string
-          last_contact_date?: string | null
-          lead_score?: number | null
-          name?: string
-          next_follow_up_date?: string | null
-          notes?: string | null
-          phone?: string | null
-          position?: string | null
-          priority?: string | null
-          source?: string | null
-          status?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
+          is_required?: boolean | null
+          options?: Json | null
+          order_index?: number
+          question_text?: string
+          question_type?: string | null
+          survey_id?: string
+          validation_rules?: Json | null
         }
         Relationships: [
           {
-            foreignKeyName: "leads_company_id_fkey"
-            columns: ["company_id"]
+            foreignKeyName: "survey_questions_survey_id_fkey"
+            columns: ["survey_id"]
             isOneToOne: false
-            referencedRelation: "companies"
+            referencedRelation: "surveys"
             referencedColumns: ["id"]
           },
         ]
-      },
+      }
+      survey_responses: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          question_id: string
+          respondent_email: string | null
+          respondent_id: string | null
+          response_data: Json | null
+          response_metadata: Json | null
+          response_text: string | null
+          survey_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          question_id: string
+          respondent_email?: string | null
+          respondent_id?: string | null
+          response_data?: Json | null
+          response_metadata?: Json | null
+          response_text?: string | null
+          survey_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          question_id?: string
+          respondent_email?: string | null
+          respondent_id?: string | null
+          response_data?: Json | null
+          response_metadata?: Json | null
+          response_text?: string | null
+          survey_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "survey_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_responses_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       surveys: {
         Row: {
           anonymous_responses: boolean | null
@@ -274,113 +572,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      },
-      survey_questions: {
+      }
+      user_roles: {
         Row: {
-          conditional_logic: Json | null
-          created_at: string | null
-          help_text: string | null
+          created_at: string
           id: string
-          is_required: boolean | null
-          options: Json | null
-          order_index: number
-          question_text: string
-          question_type: string | null
-          survey_id: string
-          validation_rules: Json | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Insert: {
-          conditional_logic?: Json | null
-          created_at?: string | null
-          help_text?: string | null
+          created_at?: string
           id?: string
-          is_required?: boolean | null
-          options?: Json | null
-          order_index: number
-          question_text: string
-          question_type?: string | null
-          survey_id: string
-          validation_rules?: Json | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Update: {
-          conditional_logic?: Json | null
-          created_at?: string | null
-          help_text?: string | null
+          created_at?: string
           id?: string
-          is_required?: boolean | null
-          options?: Json | null
-          order_index?: number
-          question_text?: string
-          question_type?: string | null
-          survey_id?: string
-          validation_rules?: Json | null
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "survey_questions_survey_id_fkey"
-            columns: ["survey_id"]
-            isOneToOne: false
-            referencedRelation: "surveys"
-            referencedColumns: ["id"]
-          },
-        ]
-      },
-      survey_responses: {
-        Row: {
-          created_at: string | null
-          id: string
-          ip_address: unknown | null
-          question_id: string
-          respondent_email: string | null
-          respondent_id: string | null
-          response_data: Json | null
-          response_metadata: Json | null
-          response_text: string | null
-          survey_id: string
-          user_agent: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          ip_address?: unknown | null
-          question_id: string
-          respondent_email?: string | null
-          respondent_id?: string | null
-          response_data?: Json | null
-          response_metadata?: Json | null
-          response_text?: string | null
-          survey_id: string
-          user_agent?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          ip_address?: unknown | null
-          question_id?: string
-          respondent_email?: string | null
-          respondent_id?: string | null
-          response_data?: Json | null
-          response_metadata?: Json | null
-          response_text?: string | null
-          survey_id?: string
-          user_agent?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "survey_responses_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "survey_questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "survey_responses_survey_id_fkey"
-            columns: ["survey_id"]
-            isOneToOne: false
-            referencedRelation: "surveys"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {

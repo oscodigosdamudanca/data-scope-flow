@@ -60,7 +60,7 @@ interface FollowUpSettingsProps {
 export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
   const {
     rules,
-    isLoading: rulesLoading,
+    loading: rulesLoading,
     createRule,
     updateRule,
     deleteRule,
@@ -106,14 +106,14 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
       return;
     }
 
-    const rule: Omit<FollowUpRule, 'id' | 'createdAt' | 'updatedAt'> = {
+    const rule: CreateFollowUpRuleData = {
       name: newRule.name,
       description: newRule.description,
-      isActive: true,
-      conditions: {
-        status: newRule.status,
-        daysSinceLastContact: newRule.daysSinceLastContact,
-        source: newRule.source.length > 0 ? newRule.source : undefined,
+      is_active: true,
+      trigger_conditions: {
+        lead_status: newRule.status,
+        days_since_last_contact: newRule.daysSinceLastContact,
+        lead_source: newRule.source.length > 0 ? newRule.source : undefined,
         tags: newRule.tags.length > 0 ? newRule.tags : undefined
       },
       actions: {
@@ -139,7 +139,7 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
       daysSinceLastContact: 1,
       source: [],
       tags: [],
-      notificationType: 'follow_up',
+      notificationType: 'follow_up_reminder',
       priority: 'medium',
       message: '',
       frequency: 'once',
@@ -462,8 +462,8 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <Switch
-                          checked={rule.isActive}
-                          onCheckedChange={() => toggleRule(rule.id)}
+                          checked={rule.is_active}
+                          onCheckedChange={(checked) => toggleRule(rule.id, checked)}
                         />
                         <div>
                           <CardTitle className="text-base">{rule.name}</CardTitle>

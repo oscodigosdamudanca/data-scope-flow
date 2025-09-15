@@ -431,7 +431,7 @@ const PublicQRLeadCapturePage: React.FC = () => {
                         <a href="#" className="text-primary underline">Política de Privacidade</a> *
                       </Label>
                       {formErrors.lgpdConsent && (
-                        <p className="text-sm text-red-500">{formErrors.lgpdConsent as string}</p>
+                        <p className="text-sm text-red-500">{String(formErrors.lgpdConsent)}</p>
                       )}
                     </div>
                   </div>

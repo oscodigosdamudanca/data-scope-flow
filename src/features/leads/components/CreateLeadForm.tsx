@@ -105,7 +105,7 @@ export const CreateLeadForm: React.FC<CreateLeadFormProps> = ({
         position: formData.position || undefined,
         interests: formData.interests,
         source: formData.source,
-        source_type: formData.source_type || undefined,
+        source_type: 'manual' as const,
         notes: formData.notes || undefined,
         lgpd_consent: formData.lgpd_consent
       };

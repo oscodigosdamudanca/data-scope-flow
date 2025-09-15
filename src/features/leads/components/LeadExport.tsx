@@ -35,7 +35,7 @@ export const LeadExport: React.FC<LeadExportProps> = ({
     'Cargo': lead.position || '',
     'Status': getStatusLabel(lead.status),
     'Fonte': getSourceLabel(lead.source),
-    'Pontuação': lead.score || 0,
+    'Pontuação': lead.lead_score || 0,
     'Data de Criação': new Date(lead.created_at).toLocaleDateString('pt-BR'),
     'Última Atualização': new Date(lead.updated_at).toLocaleDateString('pt-BR'),
     'Observações': lead.notes || ''

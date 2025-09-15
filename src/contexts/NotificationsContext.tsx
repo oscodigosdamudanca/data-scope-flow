@@ -11,6 +11,40 @@ import {
 import { useAuth } from './AuthContext';
 import { useCompany } from './CompanyContext';
 
+export interface NotificationsContextType {
+  notifications: Notification[];
+  stats: NotificationStats;
+  settings: NotificationSettings | null;
+  filters: NotificationFilters;
+  loading: boolean;
+  error: string | null;
+  
+  // Notification CRUD operations
+  fetchNotifications: (filters?: NotificationFilters) => Promise<void>;
+  createNotification: (data: CreateNotificationData) => Promise<void>;
+  addNotification: (data: CreateNotificationData) => Promise<void>;
+  updateNotification: (id: string, data: UpdateNotificationData) => Promise<void>;
+  deleteNotification: (id: string) => Promise<void>;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  archiveNotification: (id: string) => Promise<void>;
+  
+  // Settings operations
+  fetchSettings: () => Promise<void>;
+  updateSettings: (data: UpdateNotificationSettingsData) => Promise<void>;
+  
+  // Stats operations
+  fetchStats: () => Promise<void>;
+  
+  // Filter operations
+  setFilters: (filters: NotificationFilters) => void;
+  clearFilters: () => void;
+  
+  // Utility operations
+  clearNotifications: () => void;
+  refreshNotifications: () => Promise<void>;
+}
+
 interface NotificationsState {
   notifications: Notification[];
   stats: NotificationStats;

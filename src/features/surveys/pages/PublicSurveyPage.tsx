@@ -176,7 +176,7 @@ const PublicSurveyPage: React.FC = () => {
       if (formData.respondent_email && formData.lgpdConsent) {
         try {
           const companyId = survey?.company_id || 'default-company';
-          const leadResult = await SurveyLeadIntegrationService.processSurveyResponse(
+          const leadResult = await SurveyLeadIntegrationService.createLeadFromSurvey(
             responseData,
             companyId
           );

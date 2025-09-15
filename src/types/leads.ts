@@ -7,14 +7,22 @@ export interface Lead {
   company?: string;
   position?: string;
   interests: string[];
-  source: 'manual' | 'qr_code' | 'survey';
+  source?: 'manual' | 'qr_code' | 'survey';
   source_type?: 'manual' | 'turbo_form' | 'qr_code' | 'survey' | 'website' | 'social_media' | 'referral' | 'event' | 'cold_outreach' | 'other';
   status: 'new' | 'contacted' | 'qualified' | 'converted' | 'lost';
+  priority?: 'low' | 'medium' | 'high';
   notes?: string;
   lgpd_consent?: boolean;
   captured_at: string;
   created_at: string;
   updated_at: string;
+  tags?: string[];
+  lead_score?: number;
+  last_contact_date?: string;
+  next_follow_up_date?: string;
+  conversion_date?: string;
+  created_by?: string;
+  custom_fields?: Record<string, any>;
 }
 
 export interface CreateLeadData {
@@ -28,6 +36,9 @@ export interface CreateLeadData {
   source_type?: 'manual' | 'turbo_form' | 'qr_code' | 'survey' | 'website' | 'social_media' | 'referral' | 'event' | 'cold_outreach' | 'other';
   notes?: string;
   lgpd_consent?: boolean;
+  priority?: 'low' | 'medium' | 'high';
+  tags?: string[];
+  lead_score?: number;
 }
 
 export interface UpdateLeadData {

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Lead, LeadStatus, LeadSource } from '../types/leads';
+import { Lead } from '@/types/leads';
 
 interface LeadEditModalProps {
   lead: Lead;

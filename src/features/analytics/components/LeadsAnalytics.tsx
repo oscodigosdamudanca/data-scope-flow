@@ -426,7 +426,7 @@ const LeadsAnalytics: React.FC<LeadsAnalyticsProps> = ({
       {/* Métricas de Conversão */}
       <ConversionMetrics
         data={conversionMetricsData}
-        period={dateRange ? `${dateRange.startDate} - ${dateRange.endDate}` : 'Últimos 30 dias'}
+        period={dateRange ? `${dateRange.from} - ${dateRange.to}` : 'Últimos 30 dias'}
         className="mb-6"
       />
 

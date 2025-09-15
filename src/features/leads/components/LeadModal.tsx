@@ -145,7 +145,7 @@ const LeadModal: React.FC<LeadModalProps> = ({
     setLoading(true);
     try {
       const updatedLead = { ...lead, ...formData } as Lead;
-      await updateLead(updatedLead);
+      await updateLead(lead.id, formData);
       
       toast({
         title: 'Sucesso',

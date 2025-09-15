@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import type { Lead, LeadFilters, CreateLeadData, UpdateLeadData } from '@/types/leads';
@@ -10,22 +11,58 @@ export const useLeads = (companyId?: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
-  // Mock query since leads table doesn't exist yet
   const { data: leads = [], isLoading, refetch } = useQuery({
     queryKey: ['leads', companyId],
     queryFn: async () => {
-      // Return mock empty array since table doesn't exist
-      return [] as Lead[];
+      if (!companyId || !user) return [];
+
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching leads:', error);
+        throw error;
+      }
+
+      return data as Lead[];
     },
-    enabled: !!user,
+    enabled: !!user && !!companyId,
   });
 
-  // Mock fetch function
   const fetchLeads = useCallback(async (filters?: LeadFilters) => {
     setLoading(true);
     try {
-      // Mock implementation - just log and set no error
-      console.log('Mock: Fetching leads with filters:', filters);
+      if (!companyId || !user) return;
+
+      let query = supabase
+        .from('leads')
+        .select('*')
+        .eq('company_id', companyId);
+
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+      if (filters?.source) {
+        query = query.eq('source', filters.source);
+      }
+      if (filters?.search) {
+        query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+      }
+      if (filters?.dateFrom) {
+        query = query.gte('created_at', filters.dateFrom);
+      }
+      if (filters?.dateTo) {
+        query = query.lte('created_at', filters.dateTo);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      refetch();
       setError('');
     } catch (err) {
       setError('Erro ao buscar leads');
@@ -33,88 +70,157 @@ export const useLeads = (companyId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [companyId, user, refetch]);
 
-  // Mock create function
   const createLead = useCallback(async (leadData: CreateLeadData) => {
+    if (!user || !companyId) return;
+    
     setLoading(true);
     try {
-      console.log('Mock: Creating lead:', leadData);
+      const { error } = await supabase
+        .from('leads')
+        .insert({
+          ...leadData,
+          company_id: companyId,
+          created_by: user.id,
+          captured_at: new Date().toISOString(),
+        });
+
+      if (error) throw error;
+
       toast({
         title: 'Lead criado',
         description: 'Lead foi criado com sucesso',
       });
+      
+      refetch();
       setError('');
-      // Don't actually call refetch since it would fail
     } catch (err) {
-      setError('Erro ao criar lead');
+      const message = err instanceof Error ? err.message : 'Erro ao criar lead';
+      setError(message);
       toast({
         title: 'Erro',
-        description: 'Não foi possível criar o lead',
+        description: message,
         variant: 'destructive',
       });
       console.error('Error creating lead:', err);
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [user, companyId, toast, refetch]);
 
-  // Mock update function
   const updateLead = useCallback(async (id: string, leadData: UpdateLeadData) => {
     setLoading(true);
     try {
-      console.log('Mock: Updating lead:', id, leadData);
+      const { error } = await supabase
+        .from('leads')
+        .update(leadData)
+        .eq('id', id);
+
+      if (error) throw error;
+
       toast({
         title: 'Lead atualizado',
         description: 'Lead foi atualizado com sucesso',
       });
+      
+      refetch();
       setError('');
     } catch (err) {
-      setError('Erro ao atualizar lead');
+      const message = err instanceof Error ? err.message : 'Erro ao atualizar lead';
+      setError(message);
       toast({
         title: 'Erro',
-        description: 'Não foi possível atualizar o lead',
+        description: message,
         variant: 'destructive',
       });
       console.error('Error updating lead:', err);
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, refetch]);
 
-  // Mock delete function
   const deleteLead = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      console.log('Mock: Deleting lead:', id);
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
       toast({
         title: 'Lead excluído',
         description: 'Lead foi excluído com sucesso',
       });
+      
+      refetch();
       setError('');
     } catch (err) {
-      setError('Erro ao excluir lead');
+      const message = err instanceof Error ? err.message : 'Erro ao excluir lead';
+      setError(message);
       toast({
         title: 'Erro',
-        description: 'Não foi possível excluir o lead',
+        description: message,
         variant: 'destructive',
       });
       console.error('Error deleting lead:', err);
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, refetch]);
 
-  // Mock stats function
   const getLeadStats = useCallback(async () => {
-    return {
-      total: 0,
-      new: 0,
-      qualified: 0,
-      converted: 0,
-      conversionRate: 0,
-    };
-  }, []);
+    if (!companyId || !user) {
+      return {
+        total: 0,
+        new: 0,
+        contacted: 0,
+        qualified: 0,
+        converted: 0,
+        lost: 0,
+        conversionRate: 0,
+      };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('status')
+        .eq('company_id', companyId);
+
+      if (error) throw error;
+
+      const stats = data.reduce((acc, lead) => {
+        acc.total++;
+        acc[lead.status as keyof typeof acc]++;
+        return acc;
+      }, {
+        total: 0,
+        new: 0,
+        contacted: 0,
+        qualified: 0,
+        converted: 0,
+        lost: 0,
+        conversionRate: 0,
+      });
+
+      stats.conversionRate = stats.total > 0 ? (stats.converted / stats.total) * 100 : 0;
+      return stats;
+    } catch (err) {
+      console.error('Error getting lead stats:', err);
+      return {
+        total: 0,
+        new: 0,
+        contacted: 0,
+        qualified: 0,
+        converted: 0,
+        lost: 0,
+        conversionRate: 0,
+      };
+    }
+  }, [companyId, user]);
 
   return {
     leads,
@@ -125,9 +231,6 @@ export const useLeads = (companyId?: string) => {
     updateLead,
     deleteLead,
     getLeadStats,
-    refetch: () => {
-      // Mock refetch - do nothing since query would fail
-      console.log('Mock: Refetching leads');
-    },
+    refetch,
   };
 };

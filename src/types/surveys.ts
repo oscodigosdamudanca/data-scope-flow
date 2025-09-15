@@ -78,6 +78,7 @@ export interface SubmitSurveyResponseData {
   respondent_name?: string;
   respondent_email?: string;
   respondent_phone?: string;
+  respondent_company?: string;
   responses: Record<string, any>;
 }
 
