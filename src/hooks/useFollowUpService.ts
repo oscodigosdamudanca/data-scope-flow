@@ -67,7 +67,7 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
         id: `service_started_${Date.now()}`,
         title: 'Serviço de Follow-up Iniciado',
         message: 'O sistema de follow-up automático foi iniciado com sucesso',
-        type: 'system',
+        type: 'system_alert',
         priority: 'low',
         status: 'unread',
         createdAt: new Date().toISOString()

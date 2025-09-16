@@ -50,14 +50,16 @@ import {
 } from 'lucide-react';
 import { useFollowUpRules } from '../../hooks/useFollowUpRules';
 import { useFollowUpService } from '../../hooks/useFollowUpService';
-import { FollowUpRule, NotificationPriority, NotificationType } from '../../types/notifications';
+import { FollowUpRule, NotificationPriority, NotificationType, CreateFollowUpRuleData } from '../../types/notifications';
 import { toast } from '@/hooks/use-toast';
+import { useCompany } from '../../contexts/CompanyContext';
 
 interface FollowUpSettingsProps {
   className?: string;
 }
 
 export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
+  const { currentCompany } = useCompany();
   const {
     rules,
     loading: rulesLoading,
@@ -106,7 +108,10 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
       return;
     }
 
+        // ... keep existing code
+
     const rule: CreateFollowUpRuleData = {
+      company_id: currentCompany?.id || '',
       name: newRule.name,
       description: newRule.description,
       is_active: true,
@@ -116,15 +121,15 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
         lead_source: newRule.source.length > 0 ? newRule.source : undefined,
         tags: newRule.tags.length > 0 ? newRule.tags : undefined
       },
-      actions: {
-        createNotification: true,
-        notificationType: newRule.notificationType,
+      notification_config: {
+        type: newRule.notificationType,
         priority: newRule.priority,
-        message: newRule.message || `Follow-up necessário para {{leadName}}`
+        title_template: `Follow-up: {{leadName}}`,
+        message_template: newRule.message || `Follow-up necessário para {{leadName}}`
       },
-      schedule: {
-        frequency: newRule.frequency,
-        time: newRule.time
+      schedule_config: {
+        delay_hours: 0,
+        business_hours_only: true
       }
     };
 
@@ -474,12 +479,12 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
                       </div>
                       
                       <div className="flex items-center space-x-2">
-                        <Badge variant={rule.isActive ? 'default' : 'secondary'}>
-                          {rule.isActive ? 'Ativa' : 'Inativa'}
+                        <Badge variant={rule.is_active ? 'default' : 'secondary'}>
+                          {rule.is_active ? 'Ativa' : 'Inativa'}
                         </Badge>
                         
                         <Badge variant="outline">
-                          {rule.actions.priority?.toUpperCase()}
+                          {rule.notification_config.priority?.toUpperCase()}
                         </Badge>
                         
                         <Button variant="ghost" size="sm">
@@ -517,37 +522,37 @@ export function FollowUpSettings({ className = '' }: FollowUpSettingsProps) {
                       <div>
                         <span className="font-medium">Status:</span>
                         <div className="text-muted-foreground">
-                          {rule.conditions.status?.join(', ') || 'Todos'}
+                          {rule.trigger_conditions.lead_status?.join(', ') || 'Todos'}
                         </div>
                       </div>
                       
                       <div>
                         <span className="font-medium">Dias:</span>
                         <div className="text-muted-foreground">
-                          {rule.conditions.daysSinceLastContact || 'N/A'}
+                          {rule.trigger_conditions.days_since_last_contact || 'N/A'}
                         </div>
                       </div>
                       
                       <div>
                         <span className="font-medium">Horário:</span>
                         <div className="text-muted-foreground">
-                          {rule.schedule.time}
+                          {rule.schedule_config.business_hours_only ? 'Horário comercial' : 'Qualquer horário'}
                         </div>
                       </div>
                       
                       <div>
                         <span className="font-medium">Tipo:</span>
                         <div className="text-muted-foreground">
-                          {rule.actions.notificationType}
+                          {rule.notification_config.type}
                         </div>
                       </div>
                     </div>
                     
-                    {rule.actions.message && (
+                    {rule.notification_config.message_template && (
                       <div className="mt-4 p-3 bg-muted rounded-lg">
                         <span className="text-sm font-medium">Mensagem:</span>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {rule.actions.message}
+                          {rule.notification_config.message_template}
                         </p>
                       </div>
                     )}
