@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useLeads } from '../hooks/useLeads';
 import { validateTurboFormData } from '@/utils/validation';
+import { z } from 'zod';
 import type { CreateLeadData } from '@/types/leads';
 
 interface LeadCaptureFormData {
