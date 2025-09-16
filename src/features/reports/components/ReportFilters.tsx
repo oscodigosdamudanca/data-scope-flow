@@ -77,7 +77,6 @@ export function ReportFilters({ onFilterChange, onRefresh, className = '' }: Rep
             <Calendar className="h-4 w-4 mr-2" />
             Aplicar Filtros
           </Button>
->>>>>>> df16f190cebd4a5fb312b757b5726c02013d0a7a
         </div>
       </CardContent>
     </Card>
