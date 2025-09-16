@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useCallback } from 'react';
 import { 
   Notification, 
   NotificationFilters, 
@@ -18,11 +18,12 @@ export interface NotificationsContextType {
   filters: NotificationFilters;
   loading: boolean;
   error: string | null;
+  unreadCount: number;
   
   // Notification CRUD operations
   fetchNotifications: (filters?: NotificationFilters) => Promise<void>;
   createNotification: (data: CreateNotificationData) => Promise<void>;
-  addNotification: (data: CreateNotificationData) => Promise<void>;
+  addNotification: (notification: Notification) => void;
   updateNotification: (id: string, data: UpdateNotificationData) => Promise<void>;
   deleteNotification: (id: string) => Promise<void>;
   markAsRead: (id: string) => Promise<void>;
@@ -172,34 +173,6 @@ function notificationsReducer(state: NotificationsState, action: NotificationsAc
   }
 }
 
-interface NotificationsContextType {
-  state: NotificationsState;
-  // Ações de notificações
-  loadNotifications: (filters?: NotificationFilters) => Promise<void>;
-  createNotification: (data: CreateNotificationData) => Promise<Notification>;
-  updateNotification: (id: string, data: UpdateNotificationData) => Promise<void>;
-  deleteNotification: (id: string) => Promise<void>;
-  markAsRead: (id: string) => Promise<void>;
-  markAllAsRead: () => Promise<void>;
-  archiveNotification: (id: string) => Promise<void>;
-  
-  // Estatísticas
-  loadStats: () => Promise<void>;
-  
-  // Configurações
-  loadSettings: () => Promise<void>;
-  updateSettings: (data: UpdateNotificationSettingsData) => Promise<void>;
-  
-  // Filtros
-  setFilters: (filters: NotificationFilters) => void;
-  clearFilters: () => void;
-  
-  // Utilitários
-  getUnreadCount: () => number;
-  getNotificationsByType: (type: string) => Notification[];
-  getNotificationsByPriority: (priority: string) => Notification[];
-}
-
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
@@ -295,7 +268,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   };
 
   // Funções de notificações
-  const loadNotifications = async (filters?: NotificationFilters) => {
+  const fetchNotifications = useCallback(async (filters?: NotificationFilters) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       // Simular delay de API
@@ -323,13 +296,13 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
       
       dispatch({ type: 'SET_NOTIFICATIONS', payload: filteredNotifications });
-      await loadStats();
+      await fetchStats();
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: 'Erro ao carregar notificações' });
     }
-  };
+  }, []);
 
-  const createNotification = async (data: CreateNotificationData): Promise<Notification> => {
+  const createNotification = useCallback(async (data: CreateNotificationData): Promise<void> => {
     const newNotification: Notification = {
       id: Date.now().toString(),
       ...data,
@@ -339,36 +312,39 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'ADD_NOTIFICATION', payload: newNotification });
-    await loadStats();
-    return newNotification;
-  };
+    await fetchStats();
+  }, []);
 
-  const updateNotification = async (id: string, data: UpdateNotificationData) => {
+  const addNotification = useCallback((notification: Notification) => {
+    dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+  }, []);
+
+  const updateNotification = useCallback(async (id: string, data: UpdateNotificationData) => {
     dispatch({ type: 'UPDATE_NOTIFICATION', payload: { id, data } });
-    await loadStats();
-  };
+    await fetchStats();
+  }, []);
 
-  const deleteNotification = async (id: string) => {
+  const deleteNotification = useCallback(async (id: string) => {
     dispatch({ type: 'REMOVE_NOTIFICATION', payload: id });
-    await loadStats();
-  };
+    await fetchStats();
+  }, []);
 
-  const markAsRead = async (id: string) => {
+  const markAsRead = useCallback(async (id: string) => {
     dispatch({ type: 'MARK_AS_READ', payload: id });
-    await loadStats();
-  };
+    await fetchStats();
+  }, []);
 
-  const markAllAsRead = async () => {
+  const markAllAsRead = useCallback(async () => {
     dispatch({ type: 'MARK_ALL_AS_READ' });
-    await loadStats();
-  };
+    await fetchStats();
+  }, []);
 
-  const archiveNotification = async (id: string) => {
+  const archiveNotification = useCallback(async (id: string) => {
     await updateNotification(id, { status: 'archived' });
-  };
+  }, [updateNotification]);
 
   // Estatísticas
-  const loadStats = async () => {
+  const fetchStats = useCallback(async () => {
     const notifications = state.notifications.length > 0 ? state.notifications : mockNotifications;
     
     const stats: NotificationStats = {
@@ -396,14 +372,14 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'SET_STATS', payload: stats });
-  };
+  }, [state.notifications]);
 
   // Configurações
-  const loadSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     dispatch({ type: 'SET_SETTINGS', payload: mockSettings });
-  };
+  }, [mockSettings]);
 
-  const updateSettings = async (data: UpdateNotificationSettingsData) => {
+  const updateSettings = useCallback(async (data: UpdateNotificationSettingsData) => {
     if (state.settings) {
       const updatedSettings: NotificationSettings = {
         ...state.settings,
@@ -415,55 +391,58 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       };
       dispatch({ type: 'SET_SETTINGS', payload: updatedSettings });
     }
-  };
+  }, [state.settings]);
 
   // Filtros
-  const setFilters = (filters: NotificationFilters) => {
+  const setFilters = useCallback((filters: NotificationFilters) => {
     dispatch({ type: 'SET_FILTERS', payload: filters });
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     dispatch({ type: 'SET_FILTERS', payload: {} });
-  };
+  }, []);
 
-  // Utilitários
-  const getUnreadCount = () => {
-    return state.notifications.filter(n => n.status === 'unread').length;
-  };
+  const clearNotifications = useCallback(() => {
+    dispatch({ type: 'CLEAR_NOTIFICATIONS' });
+  }, []);
 
-  const getNotificationsByType = (type: string) => {
-    return state.notifications.filter(n => n.type === type);
-  };
-
-  const getNotificationsByPriority = (priority: string) => {
-    return state.notifications.filter(n => n.priority === priority);
-  };
+  const refreshNotifications = useCallback(async () => {
+    await fetchNotifications();
+  }, [fetchNotifications]);
 
   // Carregar dados iniciais
   useEffect(() => {
     if (currentCompany) {
-      loadNotifications();
-      loadSettings();
+      fetchNotifications();
+      fetchSettings();
     }
-  }, [currentCompany]);
+  }, [currentCompany, fetchNotifications, fetchSettings]);
+
+  const unreadCount = state.notifications.filter(n => n.status === 'unread').length;
 
   const contextValue: NotificationsContextType = {
-    state,
-    loadNotifications,
+    notifications: state.notifications,
+    stats: state.stats,
+    settings: state.settings,
+    filters: state.filters,
+    loading: state.loading,
+    error: state.error,
+    unreadCount,
+    fetchNotifications,
     createNotification,
+    addNotification,
     updateNotification,
     deleteNotification,
     markAsRead,
     markAllAsRead,
     archiveNotification,
-    loadStats,
-    loadSettings,
+    fetchStats,
+    fetchSettings,
     updateSettings,
     setFilters,
     clearFilters,
-    getUnreadCount,
-    getNotificationsByType,
-    getNotificationsByPriority
+    clearNotifications,
+    refreshNotifications
   };
 
   return (

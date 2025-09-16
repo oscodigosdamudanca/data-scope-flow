@@ -1,70 +1,85 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Filter, RefreshCw } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Calendar, Filter, RefreshCw } from 'lucide-react';
 
 interface ReportFiltersProps {
-  onFilterChange?: (filters: any) => void;
+  onFilterChange: (filters: any) => void;
   onRefresh?: () => void;
+  className?: string;
 }
 
-export const ReportFilters: React.FC<ReportFiltersProps> = ({ onFilterChange, onRefresh }) => {
+export function ReportFilters({ onFilterChange, onRefresh, className = '' }: ReportFiltersProps) {
+  const handleFilterChange = (key: string, value: any) => {
+    onFilterChange({ [key]: value });
+  };
+
   return (
-    <Card className="mb-4">
-      <CardContent className="pt-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end">
-          <div className="flex-1 space-y-2">
-            <Label htmlFor="date-range">Período</Label>
-            <Select defaultValue="last-30-days">
-              <SelectTrigger id="date-range">
-                <SelectValue placeholder="Selecione o período" />
+    <Card className={`mb-4 ${className}`}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Filter className="h-4 w-4" />
+          Filtros do Relatório
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="date-from">Data Inicial</Label>
+            <Input
+              id="date-from"
+              type="date"
+              onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="date-to">Data Final</Label>
+            <Input
+              id="date-to"
+              type="date"
+              onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select onValueChange={(value) => handleFilterChange('status', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Todos os status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="today">Hoje</SelectItem>
-                <SelectItem value="yesterday">Ontem</SelectItem>
-                <SelectItem value="last-7-days">Últimos 7 dias</SelectItem>
-                <SelectItem value="last-30-days">Últimos 30 dias</SelectItem>
-                <SelectItem value="this-month">Este mês</SelectItem>
-                <SelectItem value="last-month">Mês passado</SelectItem>
-                <SelectItem value="custom">Personalizado</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="new">Novo</SelectItem>
+                <SelectItem value="contacted">Contatado</SelectItem>
+                <SelectItem value="qualified">Qualificado</SelectItem>
+                <SelectItem value="converted">Convertido</SelectItem>
+                <SelectItem value="lost">Perdido</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="flex-1 space-y-2">
-            <Label htmlFor="source">Fonte</Label>
-            <Select defaultValue="all">
-              <SelectTrigger id="source">
-                <SelectValue placeholder="Selecione a fonte" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as fontes</SelectItem>
-                <SelectItem value="form">Formulário</SelectItem>
-                <SelectItem value="api">API</SelectItem>
-                <SelectItem value="import">Importação</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex-1 space-y-2">
-            <Label htmlFor="search">Busca</Label>
-            <Input id="search" placeholder="Buscar por nome, email..." />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={onRefresh}>
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-            <Button variant="default" onClick={() => onFilterChange && onFilterChange({})}>
-              <Filter className="h-4 w-4 mr-2" />
-              Filtrar
-            </Button>
-          </div>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => onFilterChange({})}>
+            Limpar Filtros
+          </Button>
+          <Button onClick={() => onFilterChange({ refresh: Date.now() })}>
+            <Calendar className="h-4 w-4 mr-2" />
+            Aplicar Filtros
+          </Button>
+>>>>>>> df16f190cebd4a5fb312b757b5726c02013d0a7a
         </div>
       </CardContent>
     </Card>
   );
-};
+}

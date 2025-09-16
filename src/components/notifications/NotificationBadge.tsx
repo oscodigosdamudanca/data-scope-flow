@@ -9,10 +9,8 @@ interface NotificationBadgeProps {
 }
 
 export function NotificationBadge({ className = '', showLabel = false }: NotificationBadgeProps) {
-  const { getUnreadCount } = useNotifications();
+  const { unreadCount } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
-  
-  const unreadCount = getUnreadCount();
 
   return (
     <>

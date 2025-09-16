@@ -1,3 +1,4 @@
+import { supabase } from '../integrations/supabase/client';
 import { Lead } from '../types/leads';
 import { Notification, FollowUpRule, NotificationPriority, NotificationType } from '../types/notifications';
 
@@ -7,10 +8,25 @@ export interface FollowUpServiceConfig {
   maxRetries: number;
 }
 
+export interface FollowUpServiceStats {
+  isRunning: boolean;
+  checkInterval: number;
+  lastProcessedAt: string | null;
+  totalNotificationsSent: number;
+  totalLeadsProcessed: number;
+}
+
 export class FollowUpService {
   private config: FollowUpServiceConfig;
   private isRunning: boolean = false;
   private intervalId: NodeJS.Timeout | null = null;
+  private stats: FollowUpServiceStats = {
+    isRunning: false,
+    checkInterval: 15,
+    lastProcessedAt: null,
+    totalNotificationsSent: 0,
+    totalLeadsProcessed: 0
+  };
 
   constructor(config: FollowUpServiceConfig = {
     checkInterval: 15, // 15 minutos
@@ -18,6 +34,7 @@ export class FollowUpService {
     maxRetries: 3
   }) {
     this.config = config;
+    this.stats.checkInterval = config.checkInterval;
   }
 
   /**
@@ -30,6 +47,7 @@ export class FollowUpService {
     }
 
     this.isRunning = true;
+    this.stats.isRunning = true;
     this.intervalId = setInterval(() => {
       this.processFollowUps().catch(error => {
         console.error('Erro no processamento de follow-ups:', error);
@@ -48,12 +66,44 @@ export class FollowUpService {
     }
 
     this.isRunning = false;
+    this.stats.isRunning = false;
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
 
     console.log('FollowUpService parado');
+  }
+
+  /**
+   * Obtém estatísticas do serviço
+   */
+  getStats(): FollowUpServiceStats {
+    return { ...this.stats };
+  }
+
+  /**
+   * Atualiza configurações do serviço
+   */
+  updateConfig(newConfig: Partial<FollowUpServiceConfig>): void {
+    this.config = { ...this.config, ...newConfig };
+    if (newConfig.checkInterval) {
+      this.stats.checkInterval = newConfig.checkInterval;
+      
+      // Reiniciar com novo intervalo se estiver rodando
+      if (this.isRunning) {
+        this.stop();
+        this.start();
+      }
+    }
+  }
+
+  /**
+   * Força o processamento imediato de follow-ups
+   */
+  async forceProcess(): Promise<void> {
+    console.log('Forçando processamento de follow-ups...');
+    await this.processFollowUps();
   }
 
   /**
@@ -68,22 +118,32 @@ export class FollowUpService {
         return;
       }
 
-      const notifications: Notification[] = [];
+      const now = new Date();
+      let processedLeads = 0;
+      let sentNotifications = 0;
 
       for (const lead of leads) {
-        const applicableRules = this.getApplicableRules(lead, rules);
+        const applicableRules = await this.getApplicableRules(lead, rules, now);
         
         for (const rule of applicableRules) {
-          const notification = this.createNotificationFromRule(lead, rule);
+          const notification = await this.createNotificationFromRule(lead, rule);
           if (notification) {
-            notifications.push(notification);
+            await this.sendNotification(notification);
+            sentNotifications++;
           }
+        }
+        
+        if (applicableRules.length > 0) {
+          processedLeads++;
         }
       }
 
-      if (notifications.length > 0) {
-        await this.sendNotifications(notifications);
-        console.log(`Processados ${notifications.length} follow-ups para ${leads.length} leads`);
+      this.stats.lastProcessedAt = now.toISOString();
+      this.stats.totalLeadsProcessed += processedLeads;
+      this.stats.totalNotificationsSent += sentNotifications;
+
+      if (sentNotifications > 0) {
+        console.log(`Processados ${sentNotifications} follow-ups para ${processedLeads} leads`);
       }
     } catch (error) {
       console.error('Erro no processamento de follow-ups:', error);
@@ -94,144 +154,118 @@ export class FollowUpService {
    * Obtém leads que precisam ser processados
    */
   private async getLeadsForProcessing(): Promise<Lead[]> {
-    // Mock - em produção, isso seria uma consulta ao banco de dados
-    // Buscar leads que:
-    // - Não foram contatados recentemente
-    // - Estão em status que permite follow-up
-    // - Não têm follow-ups agendados para hoje
-    
-    const mockLeads: Lead[] = [
-      {
-        id: '1',
-        company_id: 'comp1',
-        name: 'João Silva',
-        email: 'joao@empresa.com',
-        phone: '11999999999',
-        status: 'new',
-        source: 'website',
-        interests: ['produto-a'],
-        captured_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 dias atrás
-        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: '2',
-        company_id: 'comp1',
-        name: 'Maria Santos',
-        email: 'maria@empresa.com',
-        phone: '11888888888',
-        status: 'contacted',
-        source: 'fair',
-        interests: ['produto-b'],
-        captured_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 dias atrás
-        created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        updated_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 dias atrás
-      }
-    ];
+    try {
+      const { data: leads, error } = await supabase
+        .from('leads')
+        .select('*')
+        .in('status', ['new', 'contacted', 'qualified'])
+        .order('created_at', { ascending: false })
+        .limit(this.config.batchSize);
 
-    return mockLeads;
+      if (error) throw error;
+      return leads || [];
+    } catch (error) {
+      console.error('Erro ao buscar leads:', error);
+      return [];
+    }
   }
 
   /**
    * Obtém regras de follow-up ativas
    */
   private async getActiveFollowUpRules(): Promise<FollowUpRule[]> {
-    // Mock - em produção, isso seria uma consulta ao banco de dados
-    const mockRules: FollowUpRule[] = [
-      {
-        id: '1',
-        name: 'Follow-up Leads Novos',
-        description: 'Notificar sobre leads novos após 1 dia',
-        isActive: true,
-        conditions: {
-          status: ['new'],
-          daysSinceLastContact: 1,
-          source: ['website', 'fair']
-        },
-        actions: {
-          createNotification: true,
-          notificationType: 'follow_up' as NotificationType,
-          priority: 'high' as NotificationPriority,
-          message: 'Lead novo precisa de follow-up: {{leadName}}'
-        },
-        schedule: {
-          frequency: 'once',
-          time: '09:00'
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: '2',
-        name: 'Follow-up Leads Contatados',
-        description: 'Lembrar de leads contatados após 3 dias',
-        isActive: true,
-        conditions: {
-          status: ['contacted'],
-          daysSinceLastContact: 3
-        },
-        actions: {
-          createNotification: true,
-          notificationType: 'reminder' as NotificationType,
-          priority: 'medium' as NotificationPriority,
-          message: 'Lembrete: Lead {{leadName}} foi contatado há 3 dias'
-        },
-        schedule: {
-          frequency: 'once',
-          time: '14:00'
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ];
+    try {
+      const { data: rules, error } = await supabase
+        .from('follow_up_rules')
+        .select('*')
+        .eq('is_active', true);
 
-    return mockRules.filter(rule => rule.isActive);
+      if (error) throw error;
+      return rules || [];
+    } catch (error) {
+      console.error('Erro ao buscar regras:', error);
+      return [];
+    }
   }
 
   /**
    * Verifica quais regras se aplicam a um lead específico
    */
-  private getApplicableRules(lead: Lead, rules: FollowUpRule[]): FollowUpRule[] {
-    return rules.filter(rule => this.doesRuleApplyToLead(lead, rule));
+  private async getApplicableRules(lead: Lead, rules: FollowUpRule[], now: Date): Promise<FollowUpRule[]> {
+    const applicableRules: FollowUpRule[] = [];
+
+    for (const rule of rules) {
+      if (await this.doesRuleApplyToLead(lead, rule, now)) {
+        applicableRules.push(rule);
+      }
+    }
+
+    return applicableRules;
   }
 
   /**
    * Verifica se uma regra se aplica a um lead
    */
-  private doesRuleApplyToLead(lead: Lead, rule: FollowUpRule): boolean {
-    const { conditions } = rule;
+  private async doesRuleApplyToLead(lead: Lead, rule: FollowUpRule, now: Date): boolean {
+    const conditions = rule.trigger_conditions;
 
-    // Verificar status
-    if (conditions.status && !conditions.status.includes(lead.status)) {
+    // Verificar condições do status
+    if (conditions.lead_status && !conditions.lead_status.includes(lead.status)) {
       return false;
     }
 
-    // Verificar source
-    if (conditions.source && !conditions.source.includes(lead.source)) {
+    // Verificar condições da fonte
+    if (conditions.lead_source && !conditions.lead_source.includes(lead.source)) {
       return false;
     }
 
-    // Verificar dias desde último contato
-    if (conditions.daysSinceLastContact !== undefined) {
-      const daysSinceUpdate = Math.floor(
-        (Date.now() - new Date(lead.updated_at).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      
-      if (daysSinceUpdate < conditions.daysSinceLastContact) {
-        return false;
-      }
-    }
-
-    // Verificar tags/interests
+    // Verificar condições das tags
     if (conditions.tags && conditions.tags.length > 0) {
-      const leadInterests = lead.interests || [];
       const hasMatchingTag = conditions.tags.some(tag => 
-        leadInterests.includes(tag)
+        lead.tags?.includes(tag)
       );
-      
       if (!hasMatchingTag) {
         return false;
       }
+    }
+
+    // Verificar dias desde criação
+    if (conditions.days_since_created) {
+      const daysSinceCreated = Math.floor(
+        (now.getTime() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      if (daysSinceCreated < conditions.days_since_created) {
+        return false;
+      }
+    }
+
+    // Verificar dias desde último contato
+    if (conditions.days_since_last_contact) {
+      const lastContactDate = lead.last_contact_date 
+        ? new Date(lead.last_contact_date)
+        : new Date(lead.created_at);
+      
+      const daysSinceLastContact = Math.floor(
+        (now.getTime() - lastContactDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      
+      if (daysSinceLastContact < conditions.days_since_last_contact) {
+        return false;
+      }
+    }
+
+    // Verificar se já existe notificação para este lead e regra
+    const existingNotification = await supabase
+      .from('notifications')
+      .select('id')
+      .eq('company_id', lead.company_id)
+      .eq('lead_id', lead.id)
+      .eq('type', rule.notification_config.type)
+      .eq('status', 'unread')
+      .single();
+
+    if (existingNotification.data) {
+      return false; // Já existe notificação pendente
     }
 
     return true;
@@ -240,106 +274,92 @@ export class FollowUpService {
   /**
    * Cria uma notificação baseada em uma regra e lead
    */
-  private createNotificationFromRule(lead: Lead, rule: FollowUpRule): Notification | null {
-    if (!rule.actions.createNotification) {
+  private async createNotificationFromRule(lead: Lead, rule: FollowUpRule): Promise<Notification | null> {
+    try {
+      const notification = {
+        company_id: lead.company_id,
+        user_id: rule.notification_config.assign_to_user || null,
+        type: rule.notification_config.type,
+        priority: rule.notification_config.priority,
+        title: rule.notification_config.title_template?.replace('{{leadName}}', lead.name) || `Follow-up: ${lead.name}`,
+        message: rule.notification_config.message_template?.replace('{{leadName}}', lead.name) || `Lead ${lead.name} precisa de follow-up`,
+        lead_id: lead.id,
+        action_url: rule.notification_config.action_url_template?.replace('{{leadId}}', lead.id),
+        scheduled_for: this.calculateScheduledTime(rule.schedule_config),
+      };
+
+      return notification as Notification;
+    } catch (error) {
+      console.error('Erro ao criar notificação:', error);
       return null;
     }
-
-    const message = rule.actions.message?.replace('{{leadName}}', lead.name) || 
-                   `Follow-up necessário para ${lead.name}`;
-
-    const notification: Notification = {
-      id: `followup_${lead.id}_${rule.id}_${Date.now()}`,
-      title: `Follow-up: ${lead.name}`,
-      message,
-      type: rule.actions.notificationType || 'follow_up',
-      priority: rule.actions.priority || 'medium',
-      status: 'unread',
-      leadId: lead.id,
-      ruleId: rule.id,
-      createdAt: new Date().toISOString(),
-      scheduledFor: this.calculateScheduledTime(rule)
-    };
-
-    return notification;
   }
 
   /**
    * Calcula o horário agendado para a notificação
    */
-  private calculateScheduledTime(rule: FollowUpRule): string {
+  private calculateScheduledTime(schedule_config: any): Date {
     const now = new Date();
-    const [hours, minutes] = (rule.schedule.time || '09:00').split(':').map(Number);
+    const delayHours = schedule_config.delay_hours || 0;
+    const scheduledTime = new Date(now.getTime() + delayHours * 60 * 60 * 1000);
     
-    const scheduledTime = new Date(now);
-    scheduledTime.setHours(hours, minutes, 0, 0);
-    
-    // Se o horário já passou hoje, agendar para amanhã
-    if (scheduledTime <= now) {
-      scheduledTime.setDate(scheduledTime.getDate() + 1);
+    // Verificar se deve processar apenas em horário comercial
+    if (schedule_config.business_hours_only) {
+      const hour = scheduledTime.getHours();
+      if (hour < 8 || hour > 18) {
+        // Agendar para o próximo dia útil às 9h
+        const nextDay = new Date(scheduledTime);
+        nextDay.setDate(nextDay.getDate() + 1);
+        nextDay.setHours(9, 0, 0, 0);
+        return nextDay;
+      }
     }
     
-    return scheduledTime.toISOString();
+    return scheduledTime;
   }
 
   /**
-   * Envia as notificações criadas
+   * Envia uma notificação
    */
-  private async sendNotifications(notifications: Notification[]): Promise<void> {
-    // Mock - em produção, isso integraria com o sistema de notificações
-    // Poderia enviar para:
-    // - Sistema de notificações em tempo real (WebSocket)
-    // - Email
-    // - Slack
-    // - Push notifications
-    
-    for (const notification of notifications) {
-      console.log('Enviando notificação:', {
-        id: notification.id,
-        title: notification.title,
-        message: notification.message,
-        leadId: notification.leadId,
-        scheduledFor: notification.scheduledFor
-      });
+  private async sendNotification(notification: any): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .insert([notification]);
+
+      if (error) throw error;
       
-      // Simular envio da notificação
-      await this.simulateNotificationDelivery(notification);
+      console.log('✓ Notificação enviada:', notification.title);
+    } catch (error) {
+      console.error('Erro ao enviar notificação:', error);
     }
   }
 
   /**
-   * Simula o envio de uma notificação
+   * Processa notificações agendadas
    */
-  private async simulateNotificationDelivery(notification: Notification): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(`✓ Notificação ${notification.id} enviada com sucesso`);
-        resolve();
-      }, 100);
-    });
-  }
+  private async processScheduledNotifications(): Promise<void> {
+    try {
+      const { data: notifications, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('status', 'unread')
+        .not('scheduled_for', 'is', null)
+        .lte('scheduled_for', new Date().toISOString());
 
-  /**
-   * Obtém estatísticas do serviço
-   */
-  getStats(): {
-    isRunning: boolean;
-    checkInterval: number;
-    lastProcessedAt: string | null;
-  } {
-    return {
-      isRunning: this.isRunning,
-      checkInterval: this.config.checkInterval,
-      lastProcessedAt: null // TODO: implementar tracking de última execução
-    };
-  }
+      if (error) throw error;
 
-  /**
-   * Força o processamento imediato de follow-ups
-   */
-  async forceProcess(): Promise<void> {
-    console.log('Forçando processamento de follow-ups...');
-    await this.processFollowUps();
+      for (const notification of notifications || []) {
+        const scheduledTime = new Date(notification.scheduled_for);
+        
+        if (scheduledTime <= new Date()) {
+          console.log('Processando notificação agendada:', notification.title);
+          // Aqui você pode implementar lógica adicional como envio por email, webhook, etc.
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao processar notificações agendadas:', error);
+    }
   }
 }
 

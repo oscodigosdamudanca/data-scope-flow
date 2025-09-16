@@ -1,3 +1,7 @@
+export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'negotiating' | 'converted' | 'lost';
+export type LeadPriority = 'low' | 'medium' | 'high';  
+export type LeadSource = 'manual' | 'qr_code' | 'survey' | 'website' | 'social_media' | 'referral' | 'event' | 'cold_call' | 'email' | 'other';
+
 export interface Lead {
   id: string;
   company_id: string;

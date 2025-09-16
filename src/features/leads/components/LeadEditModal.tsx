@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Lead } from '@/types/leads';
+import { Lead, LeadStatus, LeadSource } from '../../../types/leads';
 
 interface LeadEditModalProps {
   lead: Lead;
@@ -158,11 +158,11 @@ const LeadEditModal: React.FC<LeadEditModalProps> = ({
               </div>
               
               <div>
-                <Label htmlFor="location">Localização</Label>
+                <Label htmlFor="company">Empresa</Label>
                 <Input
-                  id="location"
-                  value={formData.location || ''}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  id="company"
+                  value={formData.company || ''}
+                  onChange={(e) => handleInputChange('company', e.target.value)}
                   className="mt-1"
                 />
               </div>
