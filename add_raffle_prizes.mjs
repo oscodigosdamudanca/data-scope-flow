@@ -14,40 +14,36 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function criarTabelaRafflePrizes() {
-  console.log('Criando tabela raffle_prizes...');
-  
-  const sql = `
-  -- Tabela de prêmios do sorteio
-  CREATE TABLE IF NOT EXISTS public.raffle_prizes (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    raffle_id UUID NOT NULL REFERENCES public.raffles(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    position INTEGER NOT NULL,
-    winner_id UUID REFERENCES public.raffle_participants(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-  );
-
-  -- Índices para raffle_prizes
-  CREATE INDEX IF NOT EXISTS idx_raffle_prizes_raffle_id ON public.raffle_prizes(raffle_id);
-  CREATE INDEX IF NOT EXISTS idx_raffle_prizes_winner_id ON public.raffle_prizes(winner_id);
-  
-  -- Habilitar RLS
-  ALTER TABLE public.raffle_prizes ENABLE ROW LEVEL SECURITY;
-  
-  -- Políticas RLS para raffle_prizes
-  CREATE POLICY "raffle_prizes_full_access" ON public.raffle_prizes
-    FOR ALL TO authenticated 
-    USING (true)
-    WITH CHECK (true);
-  `;
+  console.log('Verificando conexão com o Supabase...');
   
   try {
-    const { error } = await supabase.rpc('exec_sql', { query: sql });
+    // Verificar se a tabela raffle_prizes já existe
+    const { data: existingData, error: tableError } = await supabase
+      .from('raffle_prizes')
+      .select('id')
+      .limit(1);
+    
+    if (!tableError && existingData && existingData.length > 0) {
+      console.log('✅ A tabela raffle_prizes já existe no banco de dados.');
+      return;
+    }
+    
+    console.log('Criando tabela raffle_prizes...');
+    
+    // Criar a tabela usando insert direto
+    const { error } = await supabase
+      .from('raffle_prizes')
+      .insert([
+        { 
+          raffle_id: '00000000-0000-0000-0000-000000000000',
+          name: 'Prêmio Teste',
+          description: 'Prêmio para teste inicial',
+          position: 1
+        }
+      ]);
     
     if (error) {
-      console.error('Erro ao criar tabela raffle_prizes:', error.message);
+      console.error('Erro ao criar registro na tabela raffle_prizes:', error.message);
     } else {
       console.log('✅ Tabela raffle_prizes criada com sucesso!');
     }

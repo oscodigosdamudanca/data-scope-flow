@@ -22,6 +22,7 @@ export interface NotificationsContextType {
   
   // Notification CRUD operations
   fetchNotifications: (filters?: NotificationFilters) => Promise<void>;
+  loadNotifications: (filters?: NotificationFilters) => Promise<void>; // Adicionando a função loadNotifications
   createNotification: (data: CreateNotificationData) => Promise<void>;
   addNotification: (notification: Notification) => void;
   updateNotification: (id: string, data: UpdateNotificationData) => Promise<void>;
@@ -420,6 +421,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   const unreadCount = state.notifications.filter(n => n.status === 'unread').length;
 
+  // Adicionando loadNotifications como um alias para fetchNotifications
+  const loadNotifications = fetchNotifications;
+
   const contextValue: NotificationsContextType = {
     notifications: state.notifications,
     stats: state.stats,
@@ -429,6 +433,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     error: state.error,
     unreadCount,
     fetchNotifications,
+    loadNotifications,
     createNotification,
     addNotification,
     updateNotification,
