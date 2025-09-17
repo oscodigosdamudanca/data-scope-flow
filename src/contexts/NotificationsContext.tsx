@@ -297,11 +297,12 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
       
       dispatch({ type: 'SET_NOTIFICATIONS', payload: filteredNotifications });
-      // Removida chamada de fetchStats para evitar loop infinito
+      // Atualizar stats automaticamente
+      fetchStats();
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: 'Erro ao carregar notificações' });
     }
-  }, [state.allNotifications, state.filter, state.filters]);
+  }, []);
 
   const createNotification = useCallback(async (data: CreateNotificationData): Promise<void> => {
     const newNotification: Notification = {
@@ -374,7 +375,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'SET_STATS', payload: stats });
-  }, [mockNotifications]); // Removendo state.notifications da dependência para evitar loop infinito
+  }, [state.notifications]);
 
   // Configurações
   const fetchSettings = useCallback(async () => {

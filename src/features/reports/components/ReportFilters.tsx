@@ -13,12 +13,13 @@ import {
 import { Calendar, Filter, RefreshCw } from 'lucide-react';
 
 interface ReportFiltersProps {
+  filters?: any;
   onFilterChange: (filters: any) => void;
   onRefresh?: () => void;
   className?: string;
 }
 
-export function ReportFilters({ onFilterChange, onRefresh, className = '' }: ReportFiltersProps) {
+export function ReportFilters({ filters, onFilterChange, onRefresh, className = '' }: ReportFiltersProps) {
   const handleFilterChange = (key: string, value: any) => {
     onFilterChange({ [key]: value });
   };

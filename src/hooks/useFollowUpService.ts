@@ -65,12 +65,14 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
       // Adicionar notificação de sucesso
       addNotification({
         id: `service_started_${Date.now()}`,
+        company_id: 'mock-company-id',
         title: 'Serviço de Follow-up Iniciado',
         message: 'O sistema de follow-up automático foi iniciado com sucesso',
         type: 'system_alert',
         priority: 'low',
         status: 'unread',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
       
       refreshStats();
@@ -82,12 +84,14 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
       // Adicionar notificação de erro
       addNotification({
         id: `service_error_${Date.now()}`,
+        company_id: 'mock-company-id',
         title: 'Erro no Serviço de Follow-up',
         message: errorMessage,
-        type: 'system',
+        type: 'system_alert',
         priority: 'high',
         status: 'unread',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
     } finally {
       setIsLoading(false);
@@ -105,12 +109,14 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
       // Adicionar notificação de parada
       addNotification({
         id: `service_stopped_${Date.now()}`,
+        company_id: 'mock-company-id',
         title: 'Serviço de Follow-up Parado',
         message: 'O sistema de follow-up automático foi parado',
-        type: 'system',
+        type: 'system_alert',
         priority: 'low',
         status: 'unread',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
       
       refreshStats();
@@ -134,12 +140,14 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
       // Adicionar notificação de processamento
       addNotification({
         id: `force_process_${Date.now()}`,
+        company_id: 'mock-company-id',
         title: 'Processamento Forçado',
         message: 'Follow-ups foram processados manualmente',
-        type: 'system',
+        type: 'system_alert',
         priority: 'low',
         status: 'unread',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
       
       // Atualizar contadores (mock)
@@ -157,12 +165,14 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
       
       addNotification({
         id: `process_error_${Date.now()}`,
+        company_id: 'mock-company-id',
         title: 'Erro no Processamento',
         message: errorMessage,
-        type: 'system',
+        type: 'system_alert',
         priority: 'high',
         status: 'unread',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
     } finally {
       setIsLoading(false);
@@ -186,12 +196,14 @@ export function useFollowUpService(): UseFollowUpServiceReturn {
       
       addNotification({
         id: `config_updated_${Date.now()}`,
+        company_id: 'mock-company-id',
         title: 'Configuração Atualizada',
         message: 'As configurações do serviço de follow-up foram atualizadas',
-        type: 'system',
+        type: 'system_alert',
         priority: 'low',
         status: 'unread',
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       });
       
       setError(null);

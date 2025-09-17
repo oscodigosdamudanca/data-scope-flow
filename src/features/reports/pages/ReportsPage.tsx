@@ -62,8 +62,8 @@ const ReportsPage: React.FC = () => {
     setShowExportDialog(true);
   };
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
   };
 
   // Métricas principais para o período selecionado
@@ -139,8 +139,6 @@ const ReportsPage: React.FC = () => {
 
         {/* Filtros */}
         <ReportFilters
-          dateRange={dateRange}
-          onDateRangeChange={setDateRange}
           filters={filters}
           onFilterChange={handleFilterChange}
         />

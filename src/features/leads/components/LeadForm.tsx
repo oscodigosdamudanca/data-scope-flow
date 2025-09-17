@@ -11,11 +11,12 @@ import LgpdConsent from './LgpdConsent';
 import LeadFormFeedback from './LeadFormFeedback';
 import { leadFormSchema, type LeadFormData } from './LeadFormValidation';
 import { INTEREST_OPTIONS, SOURCE_TYPE_OPTIONS } from '../constants/leadOptions';
+import type { CreateLeadData } from '@/types/leads';
 
 interface LeadFormProps {
   companyId: string;
   initialData?: Partial<LeadFormData>;
-  mode?: 'create' | 'edit' | 'view';
+  mode?: 'create' | 'edit';
   leadId?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
@@ -52,25 +53,30 @@ export const LeadForm: React.FC<LeadFormProps> = ({
   const onSubmit = async (data: LeadFormData) => {
     setIsSubmitting(true);
     try {
+      // Ensure all required fields are present
+      const leadData: CreateLeadData = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company,
+        position: data.position,
+        interests: data.interests,
+        source_type: data.source_type,
+        notes: data.notes,
+        lgpd_consent: data.lgpd_consent
+      };
+
       if (mode === 'edit' && leadId) {
-        await updateLead(leadId, {
-          ...data,
-          company_id: companyId
-        });
+        await updateLead(leadId, leadData);
         toast({
           title: 'Lead atualizado',
-          description: 'As informações do lead foram atualizadas com sucesso.',
-          variant: 'success'
+          description: 'As informações do lead foram atualizadas com sucesso.'
         });
       } else {
-        await createLead({
-          ...data,
-          company_id: companyId
-        });
+        await createLead(leadData);
         toast({
           title: 'Lead capturado',
-          description: 'O lead foi capturado com sucesso.',
-          variant: 'success'
+          description: 'O lead foi capturado com sucesso.'
         });
       }
       setShowFeedback(true);
@@ -106,13 +112,13 @@ export const LeadForm: React.FC<LeadFormProps> = ({
     );
   }
 
-  const isViewMode = mode === 'view';
+  const isViewMode = false; // Removido mode === 'view' já que não está na interface
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle>
-          {mode === 'edit' ? 'Editar Lead' : mode === 'view' ? 'Visualizar Lead' : 'Capturar Lead'}
+          {mode === 'edit' ? 'Editar Lead' : 'Capturar Lead'}
         </CardTitle>
       </CardHeader>
       <Form {...form}>
@@ -120,7 +126,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
           <CardContent className="space-y-6">
             <LeadFormBasic 
               form={form} 
-              interestOptions={INTEREST_OPTIONS}
+              interestOptions={INTEREST_OPTIONS.map(option => ({ value: option, label: option }))}
               sourceOptions={SOURCE_TYPE_OPTIONS}
               disabled={isViewMode}
             />

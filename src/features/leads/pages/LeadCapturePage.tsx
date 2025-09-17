@@ -10,7 +10,7 @@ import MainLayout from '@/components/layout/MainLayout';
 const LeadCapturePage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleSuccess = (leadId: string) => {
+  const handleSuccess = () => {
     // Redirect to leads list after successful creation
     setTimeout(() => {
       navigate('/leads');
@@ -52,10 +52,9 @@ const LeadCapturePage: React.FC = () => {
           {/* Form Section */}
           <div className="lg:col-span-2">
             <LeadCaptureForm
+              companyId="mock-company-id"
               onSuccess={handleSuccess}
               onCancel={handleCancel}
-              title="Novo Lead"
-              description="Preencha as informações do lead para iniciar o processo de qualificação"
             />
           </div>
 

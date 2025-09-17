@@ -43,7 +43,10 @@ const typeIcons = {
 
 export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps) {
   const { 
-    state, 
+    notifications,
+    stats,
+    loading,
+    error,
     markAsRead, 
     markAllAsRead, 
     archiveNotification, 
@@ -171,9 +174,9 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
           <div className="flex items-center space-x-2">
             <Bell className="h-5 w-5 text-gray-600" />
             <h2 className="text-lg font-semibold text-gray-900">Notificações</h2>
-            {state.stats.unread > 0 && (
+            {stats.unread > 0 && (
               <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                {state.stats.unread}
+                {stats.unread}
               </span>
             )}
           </div>
@@ -189,7 +192,7 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
               <Filter className="h-4 w-4" />
             </button>
             
-            {state.stats.unread > 0 && (
+            {stats.unread > 0 && (
               <button
                 onClick={markAllAsRead}
                 className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
@@ -276,22 +279,22 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
 
         {/* Lista de notificações */}
         <div className="flex-1 overflow-y-auto">
-          {state.loading ? (
+          {loading ? (
             <div className="flex items-center justify-center p-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
-          ) : state.error ? (
+          ) : error ? (
             <div className="p-4 text-center text-red-600">
-              {state.error}
+              {error}
             </div>
-          ) : state.notifications.length === 0 ? (
+          ) : notifications.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               <Bell className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <p>Nenhuma notificação encontrada</p>
             </div>
           ) : (
             <div>
-              {state.notifications.map((notification) => (
+              {notifications.map((notification) => (
                 <NotificationItem
                   key={notification.id}
                   notification={notification}
@@ -304,9 +307,9 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
         {/* Footer com estatísticas */}
         <div className="p-4 bg-gray-50 border-t border-gray-200">
           <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>Total: {state.stats.total}</span>
-            <span>Não lidas: {state.stats.unread}</span>
-            <span>Arquivadas: {state.stats.archived}</span>
+            <span>Total: {stats.total}</span>
+            <span>Não lidas: {stats.unread}</span>
+            <span>Arquivadas: {stats.archived}</span>
           </div>
         </div>
       </div>
