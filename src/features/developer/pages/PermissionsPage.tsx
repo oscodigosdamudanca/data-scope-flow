@@ -59,21 +59,37 @@ const PermissionsPage = () => {
   };
   
   const handleSaveChanges = () => {
+    // Definindo o estado de salvamento como true
     setIsSaving(true);
     
-    // Simulando uma chamada de API
-    setTimeout(() => {
-      // Aqui seria implementada a lógica para salvar no backend
-      console.log('Permissões salvas:', permissions);
-      
-      toast({
-        title: "Alterações salvas com sucesso",
-        description: "As permissões foram atualizadas no sistema.",
-        variant: "default",
-      });
-      
+    try {
+      // Simulando uma chamada de API
+      setTimeout(() => {
+        try {
+          // Aqui seria implementada a lógica para salvar no backend
+          console.log('Permissões salvas:', permissions);
+          
+          toast({
+            title: "Alterações salvas com sucesso",
+            description: "As permissões foram atualizadas no sistema.",
+            variant: "default",
+          });
+        } catch (error) {
+          console.error('Erro ao salvar permissões:', error);
+          toast({
+            title: "Erro ao salvar",
+            description: "Ocorreu um erro ao salvar as permissões.",
+            variant: "destructive",
+          });
+        } finally {
+          // Garantindo que o estado de salvamento seja sempre atualizado
+          setIsSaving(false);
+        }
+      }, 800);
+    } catch (error) {
+      console.error('Erro ao iniciar salvamento:', error);
       setIsSaving(false);
-    }, 800);
+    }
   };
   
   return (
