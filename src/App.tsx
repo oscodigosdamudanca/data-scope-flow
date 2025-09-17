@@ -22,9 +22,10 @@ import AdminSettings from "./features/admin/pages/AdminSettings";
 import FairFeedback from "@/pages/FairFeedback";
 import CustomSurveys from "@/pages/CustomSurveys";
 import Raffles from "@/pages/Raffles";
-import QuestionTypes from "@/pages/developer/QuestionTypes";
-import Permissions from "@/pages/developer/Permissions";
-import SystemLogs from "@/pages/developer/SystemLogs";
+import DeveloperDashboard from "./features/developer/pages/DeveloperDashboard";
+import QuestionTypesPage from "./features/developer/pages/QuestionTypesPage";
+import PermissionsPage from "./features/developer/pages/PermissionsPage";
+import SystemLogsPage from "./features/developer/pages/SystemLogsPage";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
 import LeadCapturePage from "./features/leads/pages/LeadCapturePage";
 import PublicLeadCapturePage from "./features/leads/pages/PublicLeadCapturePage";
@@ -95,10 +96,10 @@ const App = () => (
 
             {/* Área do Desenvolvedor */}
             <Route element={<ProtectedRoute allowedRoles={['developer']} />}>
-              <Route path="/developer" element={<div>Developer Dashboard</div>} />
-              <Route path="/developer/question-types" element={<QuestionTypes />} />
-              <Route path="/developer/permissions" element={<Permissions />} />
-              <Route path="/developer/logs" element={<SystemLogs />} />
+              <Route path="/developer" element={<DeveloperDashboard />} />
+              <Route path="/developer/question-types" element={<QuestionTypesPage />} />
+              <Route path="/developer/permissions" element={<PermissionsPage />} />
+              <Route path="/developer/logs" element={<SystemLogsPage />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
