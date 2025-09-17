@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowLeft, Save } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/components/ui/use-toast';
 
 const roles = [
   { id: 'developer', name: 'Desenvolvedor' },
@@ -26,8 +27,8 @@ const modules = [
   { id: 'developer', name: 'Área do Desenvolvedor', description: 'Configurações avançadas do sistema' }
 ];
 
-// Matriz de permissões (role x módulo)
-const permissions = {
+// Matriz de permissões inicial (role x módulo)
+const initialPermissions = {
   developer: ['dashboard', 'leads', 'surveys', 'raffles', 'fair_feedback', 'custom_surveys', 'analytics', 'admin', 'developer'],
   organizer: ['dashboard', 'leads', 'surveys', 'raffles', 'fair_feedback', 'custom_surveys', 'analytics'],
   admin: ['dashboard', 'leads', 'surveys', 'raffles', 'analytics', 'admin'],
@@ -35,6 +36,46 @@ const permissions = {
 };
 
 const PermissionsPage = () => {
+  const { toast } = useToast();
+  const [permissions, setPermissions] = useState(initialPermissions);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  const handlePermissionChange = (roleId, moduleId, isChecked) => {
+    setPermissions(prevPermissions => {
+      const updatedPermissions = { ...prevPermissions };
+      
+      if (isChecked) {
+        // Adicionar permissão
+        if (!updatedPermissions[roleId].includes(moduleId)) {
+          updatedPermissions[roleId] = [...updatedPermissions[roleId], moduleId];
+        }
+      } else {
+        // Remover permissão
+        updatedPermissions[roleId] = updatedPermissions[roleId].filter(id => id !== moduleId);
+      }
+      
+      return updatedPermissions;
+    });
+  };
+  
+  const handleSaveChanges = () => {
+    setIsSaving(true);
+    
+    // Simulando uma chamada de API
+    setTimeout(() => {
+      // Aqui seria implementada a lógica para salvar no backend
+      console.log('Permissões salvas:', permissions);
+      
+      toast({
+        title: "Alterações salvas com sucesso",
+        description: "As permissões foram atualizadas no sistema.",
+        variant: "default",
+      });
+      
+      setIsSaving(false);
+    }, 800);
+  };
+  
   return (
     <MainLayout>
       <div className="flex flex-col gap-6">
@@ -47,9 +88,12 @@ const PermissionsPage = () => {
             </Button>
             <h1 className="text-2xl font-bold">Gerenciamento de Permissões</h1>
           </div>
-          <Button>
+          <Button 
+            onClick={handleSaveChanges} 
+            disabled={isSaving}
+          >
             <Save className="h-4 w-4 mr-2" />
-            Salvar Alterações
+            {isSaving ? 'Salvando...' : 'Salvar Alterações'}
           </Button>
         </div>
 
@@ -80,6 +124,7 @@ const PermissionsPage = () => {
                       <TableCell key={role.id} className="text-center">
                         <Checkbox 
                           checked={permissions[role.id].includes(module.id)}
+                          onCheckedChange={(checked) => handlePermissionChange(role.id, module.id, checked)}
                           className="mx-auto"
                         />
                       </TableCell>
