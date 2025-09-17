@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Shield, AlertCircle } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const AuthForm = () => {
   const { signIn, signUp } = useAuth();
@@ -17,7 +18,10 @@ const AuthForm = () => {
     password: '',
     displayName: '',
     confirmPassword: '',
+    lgpdConsent: false,
   });
+  
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -54,21 +58,38 @@ const AuthForm = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Limpar erros anteriores
+    setFormErrors({});
+    const errors: Record<string, string> = {};
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error('As senhas não coincidem');
-      setLoading(false);
-      return;
+      errors.confirmPassword = 'As senhas não coincidem';
     }
 
     if (formData.password.length < 6) {
-      toast.error('A senha deve ter pelo menos 6 caracteres');
+      errors.password = 'A senha deve ter pelo menos 6 caracteres';
+    }
+    
+    // Validação LGPD
+    if (!formData.lgpdConsent) {
+      errors.lgpdConsent = 'É necessário aceitar os termos de privacidade para continuar';
+    }
+    
+    // Se houver erros, não prosseguir
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       setLoading(false);
       return;
     }
 
     try {
-      const { error } = await signUp(formData.email, formData.password, formData.displayName);
+      const { error } = await signUp(
+        formData.email, 
+        formData.password, 
+        formData.displayName,
+        formData.lgpdConsent
+      );
       
       if (error) {
         if (error.message.includes('User already registered')) {
@@ -220,7 +241,42 @@ const AuthForm = () => {
                     onChange={handleInputChange}
                     required
                   />
+                  {formErrors.confirmPassword && (
+                    <p className="text-sm text-destructive">{formErrors.confirmPassword}</p>
+                  )}
                 </div>
+                
+                <div className="flex items-start space-x-2 py-2">
+                  <Checkbox
+                    id="lgpdConsent"
+                    checked={formData.lgpdConsent}
+                    onCheckedChange={(checked) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        lgpdConsent: checked === true
+                      }));
+                    }}
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="lgpdConsent"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center"
+                    >
+                      <Shield className="h-4 w-4 mr-1 text-primary" />
+                      Consentimento LGPD
+                    </label>
+                    <p className="text-xs text-muted-foreground">
+                      Concordo com a coleta e processamento dos meus dados pessoais de acordo com a Lei Geral de Proteção de Dados (LGPD).
+                    </p>
+                    {formErrors.lgpdConsent && (
+                      <p className="text-xs text-destructive flex items-center">
+                        <AlertCircle className="h-3 w-3 mr-1" />
+                        {formErrors.lgpdConsent}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? (
                     <>

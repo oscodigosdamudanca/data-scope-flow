@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { UsersList } from '../components/UsersList';
 import { UserForm } from '../components/UserForm';
+import { UserPermissions } from '../components/UserPermissions';
 import { useUsers } from '../hooks/useUsers';
+import { CreateUserData, UpdateUserData, UserWithRoles } from '../types';
 import { Button } from '@/components/ui/button';
-import { Plus, ArrowLeft } from 'lucide-react';
-import type { UserWithRoles, CreateUserData, UpdateUserData } from '../hooks/useUsers';
+import { ArrowLeft } from 'lucide-react';
 
-type ViewMode = 'list' | 'create' | 'edit';
+type ViewMode = 'list' | 'create' | 'edit' | 'permissions';
 
 const UsersManagement: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedUser, setSelectedUser] = useState<UserWithRoles | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("details");
   const { 
     users, 
     loading, 
@@ -30,6 +32,11 @@ const UsersManagement: React.FC = () => {
   const handleEditUser = (user: UserWithRoles) => {
     setSelectedUser(user);
     setViewMode('edit');
+  };
+
+  const handleManagePermissions = (user: UserWithRoles) => {
+    setSelectedUser(user);
+    setViewMode('permissions');
   };
 
   const handleSubmit = async (data: CreateUserData | { userId: string; userData: UpdateUserData }) => {
@@ -56,7 +63,10 @@ const UsersManagement: React.FC = () => {
     }
   };
 
-
+  const handleBackToList = () => {
+    setViewMode('list');
+    setSelectedUser(null);
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -64,6 +74,7 @@ const UsersManagement: React.FC = () => {
         <UsersList
           onCreateUser={() => setViewMode('create')}
           onEditUser={handleEditUser}
+          onManagePermissions={handleManagePermissions}
           onDeleteUser={handleDeleteUser}
         />
       )}
@@ -72,11 +83,16 @@ const UsersManagement: React.FC = () => {
         <UserForm
           user={viewMode === 'edit' ? selectedUser : undefined}
           onSubmit={handleSubmit}
-          onCancel={() => {
-            setViewMode('list');
-            setSelectedUser(null);
-          }}
+          onCancel={handleBackToList}
           isLoading={isCreating || isUpdating}
+        />
+      )}
+
+      {viewMode === 'permissions' && selectedUser && (
+        <UserPermissions
+          user={selectedUser}
+          onBack={handleBackToList}
+          onSave={handleBackToList}
         />
       )}
     </div>

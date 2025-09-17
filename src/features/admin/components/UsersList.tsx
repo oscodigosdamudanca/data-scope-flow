@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { 
+import {
   Users, 
   Plus, 
   Search, 
@@ -26,8 +26,18 @@ import {
   Edit, 
   Trash2,
   UserCheck,
-  UserX
+  UserX,
+  Shield,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { UserWithRoles } from '../hooks/useUsers';
@@ -38,6 +48,7 @@ type AppRole = Enums<'app_role'>;
 interface UsersListProps {
   onCreateUser: () => void;
   onEditUser: (user: UserWithRoles) => void;
+  onManagePermissions: (user: UserWithRoles) => void;
   onDeleteUser: (userId: string) => void;
 }
 
@@ -55,13 +66,14 @@ const ROLE_COLORS: Record<AppRole, 'default' | 'secondary' | 'destructive' | 'ou
   interviewer: 'outline'
 };
 
-export const UsersList: React.FC<UsersListProps> = ({ 
-  onCreateUser, 
-  onEditUser,
-  onDeleteUser 
-}) => {
-  const { users = [], loading, error, refetch, deleteUser, isDeleting } = useUsers();
+export function UsersList({ onCreateUser, onEditUser, onManagePermissions, onDeleteUser }: UsersListProps) {
+  const { users = [], loading: isLoading, error, refetch, deleteUser, isDeleting } = useUsers();
   const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Estatísticas dos usuários
   const stats = useMemo(() => {
@@ -139,7 +151,7 @@ export const UsersList: React.FC<UsersListProps> = ({
     return phone;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardContent className="p-6">
@@ -163,6 +175,23 @@ export const UsersList: React.FC<UsersListProps> = ({
     );
   }
 
+  // Aplicar filtro de papel e paginação
+  const filteredByRoleUsers = useMemo(() => {
+    if (roleFilter === 'all') return filteredUsers;
+    return filteredUsers.filter(user => 
+      user.roles?.includes(roleFilter as AppRole)
+    );
+  }, [filteredUsers, roleFilter]);
+
+  // Calcular usuários paginados
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredByRoleUsers.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredByRoleUsers, currentPage, itemsPerPage]);
+
+  // Total de páginas
+  const totalPages = Math.max(1, Math.ceil(filteredByRoleUsers.length / itemsPerPage));
+
   return (
     <>
       <Card>
@@ -179,17 +208,38 @@ export const UsersList: React.FC<UsersListProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          {/* Barra de Busca */}
-          <div className="flex items-center gap-2 mb-6">
-            <div className="relative flex-1">
+          {/* Barra de Busca e Filtros */}
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+            <div className="relative flex-1 w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Buscar por nome, email, telefone ou papel..."
+                placeholder="Buscar por nome, email, telefone..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1); // Reset para primeira página ao buscar
+                }}
+                className="pl-10 w-full"
               />
             </div>
+            <Select
+              value={roleFilter}
+              onValueChange={(value) => {
+                setRoleFilter(value);
+                setCurrentPage(1); // Reset para primeira página ao filtrar
+              }}
+            >
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtrar por papel" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os papéis</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+                <SelectItem value="developer">Desenvolvedor</SelectItem>
+                <SelectItem value="organizer">Organizador</SelectItem>
+                <SelectItem value="interviewer">Entrevistador</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Estatísticas */}
@@ -213,84 +263,125 @@ export const UsersList: React.FC<UsersListProps> = ({
           </div>
 
           {/* Tabela de Usuários */}
-          {filteredUsers.length === 0 ? (
+          {filteredByRoleUsers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              {searchTerm ? 'Nenhum usuário encontrado com os critérios de busca.' : 'Nenhum usuário cadastrado.'}
+              {searchTerm || roleFilter !== 'all' ? 'Nenhum usuário encontrado com os critérios de busca.' : 'Nenhum usuário cadastrado.'}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Telefone</TableHead>
-                    <TableHead>Papéis</TableHead>
-                    <TableHead>Criado em</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        {user.display_name || 'Sem nome'}
-                      </TableCell>
-                      <TableCell>
-                        {user.email || 'Sem email'}
-                      </TableCell>
-                      <TableCell>
-                        {formatPhone(user.phone)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {!user.roles || user.roles.length === 0 ? (
-                            <Badge variant="outline">Sem papéis</Badge>
-                          ) : (
-                            user.roles.map((userRole, index) => (
-                              <Badge 
-                                key={index}
-                                variant={getRoleBadgeVariant(userRole)}
-                                className="text-xs"
-                              >
-                                {getRoleDisplayName(userRole)}
-                              </Badge>
-                            ))
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {user.created_at ? format(new Date(user.created_at), 'dd/MM/yyyy', { locale: ptBR }) : '-'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onEditUser(user)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteUser(user.id, user.display_name || user.email || 'Usuário')}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Telefone</TableHead>
+                      <TableHead>Papéis</TableHead>
+                      <TableHead>Criado em</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedUsers.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          {user.display_name || 'Sem nome'}
+                        </TableCell>
+                        <TableCell>
+                          {user.email || 'Sem email'}
+                        </TableCell>
+                        <TableCell>
+                          {formatPhone(user.phone)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {!user.roles || user.roles.length === 0 ? (
+                              <Badge variant="outline">Sem papéis</Badge>
+                            ) : (
+                              user.roles.map((userRole, index) => (
+                                <Badge 
+                                  key={index}
+                                  variant={getRoleBadgeVariant(userRole)}
+                                  className="text-xs"
+                                >
+                                  {getRoleDisplayName(userRole)}
+                                </Badge>
+                              ))
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {user.created_at ? format(new Date(user.created_at), 'dd/MM/yyyy', { locale: ptBR }) : '-'}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onEditUser(user)}
+                              title="Editar usuário"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onManagePermissions(user)}
+                              title="Gerenciar permissões"
+                            >
+                              <Shield className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.id, user.display_name || user.email || 'Usuário')}
+                              className="text-red-600 hover:text-red-700"
+                              title="Excluir usuário"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              {/* Paginação */}
+              <div className="flex items-center justify-between space-x-2 py-4">
+                <div className="text-sm text-muted-foreground">
+                  Mostrando {filteredByRoleUsers.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+                  {Math.min(currentPage * itemsPerPage, filteredByRoleUsers.length)} de {filteredByRoleUsers.length} registros
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Página anterior</span>
+                  </Button>
+                  <div className="text-sm font-medium">
+                    Página {currentPage} de {totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">Próxima página</span>
+                  </Button>
+                </div>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
-
-
     </>
   );
 };
