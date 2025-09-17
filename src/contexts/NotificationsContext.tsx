@@ -297,11 +297,11 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
       
       dispatch({ type: 'SET_NOTIFICATIONS', payload: filteredNotifications });
-      await fetchStats();
+      // Removida chamada de fetchStats para evitar loop infinito
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: 'Erro ao carregar notificações' });
     }
-  }, []);
+  }, [state.allNotifications, state.filter, state.filters]);
 
   const createNotification = useCallback(async (data: CreateNotificationData): Promise<void> => {
     const newNotification: Notification = {
@@ -313,7 +313,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'ADD_NOTIFICATION', payload: newNotification });
-    await fetchStats();
+    // Removida chamada redundante de fetchStats
   }, []);
 
   const addNotification = useCallback((notification: Notification) => {
@@ -322,27 +322,28 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   const updateNotification = useCallback(async (id: string, data: UpdateNotificationData) => {
     dispatch({ type: 'UPDATE_NOTIFICATION', payload: { id, data } });
-    await fetchStats();
+    // Removida chamada redundante de fetchStats
   }, []);
 
   const deleteNotification = useCallback(async (id: string) => {
     dispatch({ type: 'REMOVE_NOTIFICATION', payload: id });
-    await fetchStats();
+    // Removida chamada redundante de fetchStats
   }, []);
 
   const markAsRead = useCallback(async (id: string) => {
     dispatch({ type: 'MARK_AS_READ', payload: id });
-    await fetchStats();
+    // Removida chamada redundante de fetchStats
   }, []);
 
   const markAllAsRead = useCallback(async () => {
     dispatch({ type: 'MARK_ALL_AS_READ' });
-    await fetchStats();
+    // Removida chamada redundante de fetchStats
   }, []);
 
   const archiveNotification = useCallback(async (id: string) => {
-    await updateNotification(id, { status: 'archived' });
-  }, [updateNotification]);
+    dispatch({ type: 'UPDATE_NOTIFICATION', payload: { id, data: { status: 'archived' } } });
+    // Chamada direta ao dispatch em vez de usar updateNotification para evitar chamadas aninhadas
+  }, []);
 
   // Estatísticas
   const fetchStats = useCallback(async () => {
@@ -373,7 +374,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'SET_STATS', payload: stats });
-  }, [state.notifications]);
+  }, [mockNotifications]); // Removendo state.notifications da dependência para evitar loop infinito
 
   // Configurações
   const fetchSettings = useCallback(async () => {
