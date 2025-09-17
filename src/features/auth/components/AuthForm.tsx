@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff, Shield, AlertCircle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import LgpdConsent from '@/features/leads/components/LgpdConsent';
 
 const AuthForm = () => {
   const { signIn, signUp } = useAuth();
@@ -246,36 +247,17 @@ const AuthForm = () => {
                   )}
                 </div>
                 
-                <div className="flex items-start space-x-2 py-2">
-                  <Checkbox
-                    id="lgpdConsent"
-                    checked={formData.lgpdConsent}
-                    onCheckedChange={(checked) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        lgpdConsent: checked === true
-                      }));
-                    }}
-                  />
-                  <div className="grid gap-1.5 leading-none">
-                    <label
-                      htmlFor="lgpdConsent"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center"
-                    >
-                      <Shield className="h-4 w-4 mr-1 text-primary" />
-                      Consentimento LGPD
-                    </label>
-                    <p className="text-xs text-muted-foreground">
-                      Concordo com a coleta e processamento dos meus dados pessoais de acordo com a Lei Geral de Proteção de Dados (LGPD).
-                    </p>
-                    {formErrors.lgpdConsent && (
-                      <p className="text-xs text-destructive flex items-center">
-                        <AlertCircle className="h-3 w-3 mr-1" />
-                        {formErrors.lgpdConsent}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                <LgpdConsent
+                  checked={formData.lgpdConsent}
+                  onChange={(checked) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      lgpdConsent: checked
+                    }));
+                  }}
+                  error={formErrors.lgpdConsent}
+                  disabled={loading}
+                />
                 
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? (

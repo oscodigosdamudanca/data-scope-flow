@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UsersList } from '../components/UsersList';
 import { UserForm } from '../components/UserForm';
-import { UserPermissions } from '../components/UserPermissions';
+import UserPermissions from '../components/UserPermissions';
 import { useUsers } from '../hooks/useUsers';
 import { CreateUserData, UpdateUserData, UserWithRoles } from '../types';
 import { Button } from '@/components/ui/button';
