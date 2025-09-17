@@ -85,15 +85,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Auth state change:', event, session);
         
         // Handle auth errors by clearing invalid tokens
-         if (event === 'TOKEN_REFRESHED' && !session) {
-           console.log('Token refresh failed, clearing storage');
-           localStorage.removeItem('supabase.auth.token');
-           const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-           if (supabaseUrl) {
-             const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
-             localStorage.removeItem(storageKey);
-           }
-         }
+        if (event === 'TOKEN_REFRESHED' && !session) {
+          console.log('Token refresh failed, clearing storage');
+          // Limpar todos os tokens de autenticação
+          localStorage.removeItem('supabase.auth.token');
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+          if (supabaseUrl) {
+            const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
+            localStorage.removeItem(storageKey);
+          }
+          // Forçar redirecionamento para a página de login após limpar tokens
+          window.location.href = '/login';
+        }
         
         setSession(session);
         const currentUser = session?.user ?? null;
@@ -118,15 +121,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         console.error('Error getting session:', error);
         // Clear potentially corrupted auth data
-         localStorage.removeItem('supabase.auth.token');
-         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-         if (supabaseUrl) {
-           const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
-           localStorage.removeItem(storageKey);
-         }
+        localStorage.removeItem('supabase.auth.token');
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        if (supabaseUrl) {
+          const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
+          localStorage.removeItem(storageKey);
+        }
         setSession(null);
         setUser(null);
         setUserRole(null);
+        
+        // Redirecionar para login se o erro for relacionado a token inválido
+        if (error.message?.includes('Invalid Refresh Token') || 
+            error.message?.includes('JWT expired') ||
+            error.message?.includes('Invalid JWT')) {
+          window.location.href = '/login';
+        }
       } else {
         setSession(session);
         const currentUser = session?.user ?? null;
@@ -213,14 +223,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUserRole(null);
-    // Clear localStorage to prevent auth issues
-     localStorage.removeItem('supabase.auth.token');
-     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-     if (supabaseUrl) {
-       localStorage.removeItem('sb-' + supabaseUrl.split('//')[1] + '-auth-token');
-     }
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+      setUserRole(null);
+      // Clear localStorage to prevent auth issues
+      localStorage.removeItem('supabase.auth.token');
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (supabaseUrl) {
+        const storageKey = `sb-${supabaseUrl.split('//')[1]}-auth-token`;
+        localStorage.removeItem(storageKey);
+      }
+      // Limpar qualquer outro dado de sessão que possa estar armazenado
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('supabase') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error('Error during sign out:', error);
+      // Forçar redirecionamento para login em caso de erro
+      window.location.href = '/login';
+    }
   };
 
   const value = {
