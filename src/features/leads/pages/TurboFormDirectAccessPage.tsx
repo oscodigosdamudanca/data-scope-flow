@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Clipboard, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import TurboLeadForm from '../components/TurboLeadForm';
+import TurboLeadForm from '@/components/TurboLeadForm';
 
 const TurboFormDirectAccessPage: React.FC = () => {
   const navigate = useNavigate();
