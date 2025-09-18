@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,8 @@ const supabase = {
 };
 // Mock temporário do contexto de autenticação
 const useAuth = () => ({ user: { id: 'user-123' } });
-import TurboLeadForm from '@/components/TurboLeadForm';
+// Usando lazy loading para componentes pesados
+const TurboLeadForm = lazy(() => import('@/components/TurboLeadForm'));
 import PageTitle from '@/components/PageTitle';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -82,8 +83,16 @@ export const TurboFormPage: React.FC = () => {
     }
   };
 
+  // Mostra um indicador de carregamento mais leve
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="container mx-auto py-6 flex justify-center items-center">
+        <div className="text-center">
+          <LoadingSpinner />
+          <p className="mt-4 text-muted-foreground">Carregando formulário...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -127,18 +136,15 @@ export const TurboFormPage: React.FC = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Formulário de Captação Rápida</CardTitle>
+          <CardTitle>Acesso Rápido</CardTitle>
         </CardHeader>
         <CardContent>
-          <TurboLeadForm 
-            customQuestions={formData?.questions || []} 
-            onSubmitSuccess={() => {
-              toast({
-                title: 'Lead cadastrado!',
-                description: 'O lead foi cadastrado com sucesso.',
-              });
-            }}
-          />
+          <Suspense fallback={<div className="py-4 text-center">Carregando formulário...</div>}>
+            <TurboLeadForm 
+              formId={formData?.id} 
+              questions={formData?.questions || []} 
+            />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

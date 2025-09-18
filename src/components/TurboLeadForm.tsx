@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -34,12 +34,13 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     company: ''
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Usando useCallback para evitar recriações desnecessárias da função
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!lgpdConsent) {
@@ -48,18 +49,25 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     }
 
     try {
+      // Código para enviar os dados do formulário
+      console.log('Enviando dados:', { ...formData, lgpdConsent });
+      
       setIsSubmitting(true);
       
-      // Simulação de envio de dados
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulação de envio de dados - reduzindo o tempo de espera
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       console.log('Dados enviados:', {
         ...formData,
+        customAnswers: customQuestions.map(q => ({ 
+          questionId: q.id, 
+          answer: '' 
+        })),
         formId,
         lgpdConsent
       });
       
-      // Limpar formulário
+      // Limpar formulário após envio
       setFormData({
         name: '',
         email: '',
@@ -68,17 +76,16 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
       });
       setLgpdConsent(false);
       
-      // Callback de sucesso
       if (onSubmitSuccess) {
         onSubmitSuccess();
       }
     } catch (error) {
-      console.error('Erro ao cadastrar lead:', error);
-      alert("Ocorreu um erro ao salvar os dados. Tente novamente.");
+      console.error('Erro ao enviar formulário:', error);
+      alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [customQuestions, formData, formId, lgpdConsent, onSubmitSuccess]);
 
   return (
     <Card className="w-full">
@@ -163,6 +170,6 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
 
 export default TurboLeadForm;
