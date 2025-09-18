@@ -170,6 +170,6 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
       </CardContent>
     </Card>
   );
-});
+};
 
 export default TurboLeadForm;
