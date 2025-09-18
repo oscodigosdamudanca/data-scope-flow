@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from './AppSidebar';
 import { CompanySelector } from '@/components/core/CompanySelector';
+import { NotificationIndicator } from '@/components/notifications/NotificationIndicator';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -18,7 +19,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               <div className="h-4 w-px bg-sidebar-border" />
               <h1 className="text-lg font-semibold">DataScope Analytics</h1>
             </div>
-            <CompanySelector />
+            <div className="flex items-center gap-4">
+              <NotificationIndicator />
+              <CompanySelector />
+            </div>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
