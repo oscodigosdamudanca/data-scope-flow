@@ -8,6 +8,10 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    fs: {
+      strict: false,
+      allow: ['..']
+    }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
@@ -15,4 +19,15 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['@supabase/supabase-js', '@supabase/postgrest-js']
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true
+    }
+  },
+  ssr: {
+    noExternal: ['@supabase/postgrest-js']
+  }
 }));
