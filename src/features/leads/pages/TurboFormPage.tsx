@@ -22,7 +22,7 @@ import TurboLeadForm from '@/components/TurboLeadForm';
 import PageTitle from '@/components/PageTitle';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const TurboFormPage: React.FC = () => {
+export const TurboFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -144,3 +144,5 @@ const TurboFormPage: React.FC = () => {
     </div>
   );
 };
+
+export default TurboFormPage;
