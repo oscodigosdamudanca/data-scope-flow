@@ -8,6 +8,7 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import PermissionMatrix from '../components/PermissionMatrix';
 
 const roles = [
   { id: 'developer', name: 'Desenvolvedor' },
@@ -227,82 +228,32 @@ const PermissionsPage = () => {
     savePermissions();
   };
   
+  // Adicionando suporte para o componente PermissionMatrix
+  const handleSavePermissionsMatrix = (matrix) => {
+    setPermissions(matrix);
+    savePermissions();
+  };
+  
   return (
     <MainLayout>
-      <div className="container mx-auto py-6">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-2">
-            <Link to="/developer">
-              <Button variant="outline" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
+          <div>
             <h1 className="text-2xl font-bold">Gerenciamento de Permissões</h1>
+            <p className="text-muted-foreground">Configure as permissões de acesso para cada tipo de usuário</p>
           </div>
-          <Button 
-            onClick={handleSaveChanges} 
-            disabled={isSaving || isLoading}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 h-4 w-4" />
-                Salvar Alterações
-              </>
-            )}
+          <Button variant="outline" asChild>
+            <Link to="/developer">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Link>
           </Button>
         </div>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Matriz de Permissões</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex justify-center items-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-2">Carregando permissões...</span>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[250px]">Módulo</TableHead>
-                    {roles.map(role => (
-                      <TableHead key={role.id} className="text-center">{role.name}</TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {modules.map(module => (
-                    <TableRow key={module.id}>
-                      <TableCell className="font-medium">
-                        <div>
-                          <div>{module.name}</div>
-                          <div className="text-sm text-muted-foreground">{module.description}</div>
-                        </div>
-                      </TableCell>
-                      {roles.map(role => (
-                        <TableCell key={role.id} className="text-center">
-                          <Checkbox
-                            checked={permissions[role.id]?.includes(module.id) || false}
-                            onCheckedChange={(checked) => handlePermissionChange(role.id, module.id, checked)}
-                            aria-label={`Permissão de ${role.name} para ${module.name}`}
-                            disabled={isLoading || isSaving}
-                          />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+
+        <div className="space-y-6">
+          {/* Nova matriz de permissões */}
+          <PermissionMatrix onSave={handleSavePermissionsMatrix} />
+        </div>
       </div>
     </MainLayout>
   );

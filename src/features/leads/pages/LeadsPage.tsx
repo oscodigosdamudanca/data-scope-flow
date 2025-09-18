@@ -66,6 +66,27 @@ const LeadsPage: React.FC = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Atalho para Formulário Turbo */}
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 border-blue-400" onClick={() => navigate('/leads/turbo')}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-600" />
+                Formulário Turbo
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-lg font-medium text-blue-600 mb-2">
+                Acesso Rápido
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Formulário simplificado para captação rápida de leads
+              </p>
+              <div className="mt-3">
+                <Button size="sm" className="w-full">Acessar Agora</Button>
+              </div>
+            </CardContent>
+          </Card>
+          
           {/* Quick Stats */}
           <Card>
             <CardHeader className="pb-3">

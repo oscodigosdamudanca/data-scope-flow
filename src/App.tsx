@@ -27,6 +27,9 @@ import QuestionTypesPage from "./features/developer/pages/QuestionTypesPage";
 import PermissionsPage from "./features/developer/pages/PermissionsPage";
 import SystemLogsPage from "./features/developer/pages/SystemLogsPage";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
+import TurboFormDirectAccessPage from "@/features/leads/pages/TurboFormDirectAccessPage";
+import TurboFormAdminPage from "@/features/leads/pages/TurboFormAdminPage";
+import TurboFormPublicPage from "@/features/leads/pages/TurboFormPublicPage";
 import LeadCapturePage from "./features/leads/pages/LeadCapturePage";
 import PublicLeadCapturePage from "./features/leads/pages/PublicLeadCapturePage";
 import PublicSurveyPage from "./features/surveys/pages/PublicSurveyPage";
@@ -53,7 +56,7 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="/turbo-form" element={<TurboFormPage />} />
+            <Route path="/leads/turbo" element={<TurboFormPage />} />
             <Route path="/lead-capture" element={<PublicLeadCapturePage />} />
             <Route path="/lead-capture/qr/:qrId" element={<PublicQRLeadCapturePage />} />
             <Route path="/survey/:surveyId" element={<PublicSurveyPage />} />
@@ -72,6 +75,10 @@ const App = () => (
             <Route path="/leads/list" element={<LeadsListPage />} />
             <Route path="/leads/create" element={<CreateLeadPage />} />
               <Route path="/leads/capture" element={<LeadCapturePage />} />
+              <Route path="/leads/turbo" element={<TurboFormPage />} />
+          <Route path="/leads/turbo/direct" element={<TurboFormDirectAccessPage />} />
+          <Route path="/leads/turbo/admin" element={<TurboFormAdminPage />} />
+          <Route path="/leads/turbo/public/:id" element={<TurboFormPublicPage />} />
               <Route path="/leads/qr-codes" element={<QRCodeLeadsPage />} />
               <Route path="/leads/tags" element={<TagsManagerPage />} />
               <Route path="/leads/tagging" element={<LeadTaggingPage />} />
