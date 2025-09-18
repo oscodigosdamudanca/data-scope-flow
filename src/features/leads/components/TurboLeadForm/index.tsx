@@ -31,7 +31,7 @@ interface TurboLeadFormProps {
   onCancel?: () => void;
 }
 
-const TurboLeadForm: React.FC<TurboLeadFormProps> = ({ onSuccess, onCancel }) => {
+export const TurboLeadForm: React.FC<TurboLeadFormProps> = ({ onSuccess, onCancel }) => {
   const { createLead } = useLeads();
   const { notifyTurboLeadCreated } = useNotifications();
   const [submitting, setSubmitting] = useState(false);
@@ -225,4 +225,4 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({ onSuccess, onCancel }) =>
   );
 };
 
-export default TurboLeadForm;
+export { TurboLeadForm as default };

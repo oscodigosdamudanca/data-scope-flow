@@ -174,7 +174,7 @@ function notificationsReducer(state: NotificationsState, action: NotificationsAc
   }
 }
 
-const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
+export const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(notificationsReducer, initialState);

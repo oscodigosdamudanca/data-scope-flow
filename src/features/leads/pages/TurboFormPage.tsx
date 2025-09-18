@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import TurboLeadForm from '../components/TurboLeadForm';
+import TurboLeadForm from '../components/TurboLeadForm/index';
 import { useToast } from '@/hooks/use-toast';
 
 const TurboFormPage: React.FC = () => {
