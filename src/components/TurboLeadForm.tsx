@@ -172,4 +172,4 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
   );
 };
 
-export default TurboLeadForm;
+export default memo(TurboLeadForm);
