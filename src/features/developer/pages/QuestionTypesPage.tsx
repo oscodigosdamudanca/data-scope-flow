@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ArrowLeft, Plus, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface QuestionType {
   id: string;
@@ -17,6 +17,7 @@ interface QuestionType {
 }
 
 const QuestionTypesPage = () => {
+  const { toast } = useToast();
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,6 +33,7 @@ const QuestionTypesPage = () => {
           throw error;
         }
 
+        // Se não houver dados, definir como array vazio
         setQuestionTypes(data || []);
       } catch (error) {
         console.error('Erro ao buscar tipos de perguntas:', error);
@@ -40,6 +42,8 @@ const QuestionTypesPage = () => {
           description: 'Não foi possível carregar os tipos de perguntas.',
           variant: 'destructive',
         });
+        // Em caso de erro, definir como array vazio para evitar erros de renderização
+        setQuestionTypes([]);
       } finally {
         setIsLoading(false);
       }

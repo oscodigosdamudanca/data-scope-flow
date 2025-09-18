@@ -297,8 +297,33 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
       
       dispatch({ type: 'SET_NOTIFICATIONS', payload: filteredNotifications });
-      // Atualizar stats automaticamente
-      fetchStats();
+      
+      // Calculando stats diretamente em vez de chamar fetchStats
+      const stats: NotificationStats = {
+        total: filteredNotifications.length,
+        unread: filteredNotifications.filter(n => n.status === 'unread').length,
+        read: filteredNotifications.filter(n => n.status === 'read').length,
+        archived: filteredNotifications.filter(n => n.status === 'archived').length,
+        byType: {
+          lead_created: filteredNotifications.filter(n => n.type === 'lead_created').length,
+          lead_updated: filteredNotifications.filter(n => n.type === 'lead_updated').length,
+          lead_status_changed: filteredNotifications.filter(n => n.type === 'lead_status_changed').length,
+          follow_up_reminder: filteredNotifications.filter(n => n.type === 'follow_up_reminder').length,
+          follow_up_overdue: filteredNotifications.filter(n => n.type === 'follow_up_overdue').length,
+          lead_converted: filteredNotifications.filter(n => n.type === 'lead_converted').length,
+          lead_lost: filteredNotifications.filter(n => n.type === 'lead_lost').length,
+          system_alert: filteredNotifications.filter(n => n.type === 'system_alert').length,
+          custom: filteredNotifications.filter(n => n.type === 'custom').length
+        },
+        byPriority: {
+          low: filteredNotifications.filter(n => n.priority === 'low').length,
+          medium: filteredNotifications.filter(n => n.priority === 'medium').length,
+          high: filteredNotifications.filter(n => n.priority === 'high').length,
+          urgent: filteredNotifications.filter(n => n.priority === 'urgent').length
+        }
+      };
+      
+      dispatch({ type: 'SET_STATS', payload: stats });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: 'Erro ao carregar notificações' });
     }
@@ -375,7 +400,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'SET_STATS', payload: stats });
-  }, [state.notifications]);
+  }, []);
 
   // Configurações
   const fetchSettings = useCallback(async () => {
@@ -415,11 +440,19 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   // Carregar dados iniciais
   useEffect(() => {
-    if (currentCompany) {
-      fetchNotifications();
-      fetchSettings();
+    let isMounted = true;
+    if (currentCompany && isMounted) {
+      // Usando setTimeout para evitar loop de renderização
+      const timer = setTimeout(() => {
+        fetchNotifications();
+        fetchSettings();
+      }, 0);
+      return () => {
+        clearTimeout(timer);
+        isMounted = false;
+      };
     }
-  }, [currentCompany, fetchNotifications, fetchSettings]);
+  }, [currentCompany]);
 
   const unreadCount = state.notifications.filter(n => n.status === 'unread').length;
 

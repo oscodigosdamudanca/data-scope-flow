@@ -47,6 +47,20 @@ const PermissionsPage = () => {
     const fetchPermissions = async () => {
       try {
         setIsLoading(true);
+        
+        // Verificar se a tabela existe antes de consultar
+        const { error: tableCheckError } = await supabase
+          .from('module_permissions')
+          .select('count(*)', { count: 'exact', head: true })
+          .limit(1);
+          
+        if (tableCheckError) {
+          console.log('Tabela module_permissions não encontrada, usando permissões padrão');
+          setPermissions(defaultPermissions);
+          setIsLoading(false);
+          return;
+        }
+        
         const { data, error } = await supabase
           .from('module_permissions')
           .select('*')
@@ -56,26 +70,33 @@ const PermissionsPage = () => {
           throw error;
         }
         
+        // Inicializar com as permissões padrão
+        const dbPermissions = JSON.parse(JSON.stringify(defaultPermissions));
+        
         if (data && data.length > 0) {
           // Transformar os dados do banco para o formato da interface
-          const dbPermissions = {};
-          
-          roles.forEach(role => {
-            dbPermissions[role.id] = [];
-          });
-          
           data.forEach(permission => {
             const roleId = permission.role_name;
             const moduleId = permission.module_name;
             const isActive = permission.is_active;
             
-            if (isActive && dbPermissions[roleId] && !dbPermissions[roleId].includes(moduleId)) {
-              dbPermissions[roleId].push(moduleId);
+            // Verificar se o roleId existe no objeto de permissões
+            if (!dbPermissions[roleId]) {
+              dbPermissions[roleId] = [];
+            }
+            
+            // Adicionar ou remover a permissão com base no status isActive
+            if (isActive) {
+              if (!dbPermissions[roleId].includes(moduleId)) {
+                dbPermissions[roleId].push(moduleId);
+              }
+            } else {
+              dbPermissions[roleId] = dbPermissions[roleId].filter(id => id !== moduleId);
             }
           });
-          
-          setPermissions(dbPermissions);
         }
+        
+        setPermissions(dbPermissions);
       } catch (error) {
         console.error('Erro ao carregar permissões:', error);
         toast({
@@ -83,13 +104,15 @@ const PermissionsPage = () => {
           description: 'Não foi possível carregar as permissões do banco de dados.',
           variant: 'destructive'
         });
+        // Em caso de erro, usar as permissões padrão
+        setPermissions(defaultPermissions);
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchPermissions();
-  }, [toast]);
+  }, []);
   
   const handlePermissionChange = (roleId, moduleId, isChecked) => {
     setPermissions(prevPermissions => {
@@ -130,14 +153,48 @@ const PermissionsPage = () => {
         });
       });
       
-      // Primeiro, excluir todas as permissões existentes
-      const { error: deleteError } = await supabase
+      // Verificar se a tabela existe
+      const { error: tableCheckError } = await supabase
         .from('module_permissions')
-        .delete()
-        .eq('role_type', 'app_role');
-      
-      if (deleteError) {
-        throw deleteError;
+        .select('count(*)', { count: 'exact', head: true })
+        .limit(1);
+        
+      // Se a tabela não existir, criar a tabela
+      if (tableCheckError) {
+        console.log('Criando tabela module_permissions...');
+        const createTableSQL = `
+          CREATE TABLE IF NOT EXISTS module_permissions (
+            id SERIAL PRIMARY KEY,
+            role_type TEXT NOT NULL,
+            role_name TEXT NOT NULL,
+            module_name TEXT NOT NULL,
+            is_active BOOLEAN NOT NULL DEFAULT FALSE,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            UNIQUE(role_type, role_name, module_name)
+          );
+        `;
+        
+        const { error: createError } = await supabase.rpc('exec_sql', { sql_query: createTableSQL });
+        if (createError) {
+          console.error('Erro ao criar tabela:', createError);
+          toast({
+            title: 'Erro ao criar tabela',
+            description: 'Não foi possível criar a tabela de permissões.',
+            variant: 'destructive'
+          });
+          return;
+        }
+      } else {
+        // Primeiro, excluir todas as permissões existentes
+        const { error: deleteError } = await supabase
+          .from('module_permissions')
+          .delete()
+          .eq('role_type', 'app_role');
+        
+        if (deleteError) {
+          throw deleteError;
+        }
       }
       
       // Inserir as novas permissões
