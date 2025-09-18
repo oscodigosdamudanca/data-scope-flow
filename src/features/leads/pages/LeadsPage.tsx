@@ -82,7 +82,16 @@ const LeadsPage: React.FC = () => {
                 Formulário simplificado para captação rápida de leads
               </p>
               <div className="mt-3">
-                <Button size="sm" className="w-full">Acessar Agora</Button>
+                <Button 
+                  size="sm" 
+                  className="w-full" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/leads/turbo');
+                  }}
+                >
+                  Acessar Agora
+                </Button>
               </div>
             </CardContent>
           </Card>
