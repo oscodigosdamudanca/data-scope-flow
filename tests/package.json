@@ -1,0 +1,46 @@
+{
+  "name": "datascope-supabase-tests",
+  "version": "1.0.0",
+  "description": "Testes abrangentes para o MCP Supabase do projeto DataScope",
+  "type": "module",
+  "main": "run-comprehensive-tests.js",
+  "scripts": {
+    "test": "node run-comprehensive-tests.js",
+    "test:crud": "node crud-operations-test.js",
+    "test:auth": "node authentication-test.js",
+    "test:security": "node security-rls-test.js",
+    "test:storage": "node storage-test.js",
+    "test:api": "node api-test.js",
+    "test:performance": "node performance-test.js",
+    "test:connectivity": "node supabase-comprehensive-test.js",
+    "install-deps": "npm install @supabase/supabase-js",
+    "clean-reports": "rm -f test-report.json *.log",
+    "help": "echo 'Scripts disponíveis: test, test:crud, test:auth, test:security, test:storage, test:api, test:performance, test:connectivity'"
+  },
+  "keywords": [
+    "supabase",
+    "testing",
+    "datascope",
+    "crud",
+    "authentication",
+    "security",
+    "performance",
+    "api"
+  ],
+  "author": "DataScope Team",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datascope/data-scope-flow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/datascope/data-scope-flow/issues"
+  },
+  "homepage": "https://github.com/datascope/data-scope-flow#readme"
+}
