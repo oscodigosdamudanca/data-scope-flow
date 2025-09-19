@@ -47,7 +47,19 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess, onCancel 
   });
 
   const onSubmit = async (data: CompanyFormData) => {
-    if (!user) return;
+    console.log('🔍 [CompanyForm] Iniciando onSubmit');
+    console.log('🔍 [CompanyForm] Dados do formulário:', data);
+    console.log('🔍 [CompanyForm] Usuário atual:', user);
+    
+    if (!user) {
+      console.error('❌ [CompanyForm] Usuário não autenticado!');
+      toast({
+        title: 'Erro de Autenticação',
+        description: 'Você precisa estar logado para criar uma empresa.',
+        variant: 'destructive',
+      });
+      return;
+    }
     
     setIsLoading(true);
     
@@ -62,34 +74,56 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess, onCancel 
         created_by: user.id,
       };
 
+      console.log('🔍 [CompanyForm] Dados preparados para envio:', companyData);
+
       if (company) {
+        console.log('🔍 [CompanyForm] Atualizando empresa existente:', company.id);
         const { error } = await supabase
           .from('companies')
           .update(companyData)
           .eq('id', company.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ [CompanyForm] Erro ao atualizar empresa:', error);
+          throw error;
+        }
         
+        console.log('✅ [CompanyForm] Empresa atualizada com sucesso');
         toast({
           title: 'Empresa atualizada',
           description: 'As informações da empresa foram atualizadas com sucesso.',
         });
       } else {
-        const { error } = await supabase
+        console.log('🔍 [CompanyForm] Criando nova empresa');
+        const { data: insertedData, error } = await supabase
           .from('companies')
-          .insert([companyData]);
+          .insert([companyData])
+          .select();
 
-        if (error) throw error;
+        console.log('🔍 [CompanyForm] Resposta do Supabase:', { insertedData, error });
+
+        if (error) {
+          console.error('❌ [CompanyForm] Erro ao criar empresa:', error);
+          console.error('❌ [CompanyForm] Detalhes do erro:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          });
+          throw error;
+        }
         
+        console.log('✅ [CompanyForm] Empresa criada com sucesso:', insertedData);
         toast({
           title: 'Empresa criada',
           description: 'A nova empresa foi criada com sucesso.',
         });
       }
 
+      console.log('✅ [CompanyForm] Operação concluída, chamando onSuccess');
       onSuccess?.();
     } catch (error) {
-      console.error('Error saving company:', error);
+      console.error('❌ [CompanyForm] Erro geral:', error);
       toast({
         title: 'Erro',
         description: 'Erro ao salvar empresa. Tente novamente.',
@@ -97,6 +131,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess, onCancel 
       });
     } finally {
       setIsLoading(false);
+      console.log('🔍 [CompanyForm] Finalizando onSubmit');
     }
   };
 
