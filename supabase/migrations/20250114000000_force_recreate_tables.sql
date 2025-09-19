@@ -7,6 +7,40 @@ DROP TABLE IF EXISTS public.survey_questions CASCADE;
 DROP TABLE IF EXISTS public.surveys CASCADE;
 DROP TABLE IF EXISTS public.leads CASCADE;
 
+-- Create app_role enum if not exists
+DO $$ BEGIN
+    CREATE TYPE public.app_role AS ENUM ('developer', 'organizer', 'admin', 'interviewer');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- Recreate companies table first (required for foreign keys)
+CREATE TABLE IF NOT EXISTS public.companies (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  cnpj VARCHAR(18) UNIQUE,
+  email VARCHAR(255),
+  phone VARCHAR(20),
+  address TEXT,
+  city VARCHAR(100),
+  state VARCHAR(50),
+  zip_code VARCHAR(10),
+  website VARCHAR(255),
+  logo_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Recreate user_roles table (required for RLS policies)
+CREATE TABLE IF NOT EXISTS public.user_roles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL,
+  role public.app_role NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (user_id, role)
+);
+ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
+
 -- Recreate leads table with proper structure
 CREATE TABLE public.leads (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

@@ -49,13 +49,27 @@ const PermissionsPage = () => {
       try {
         setIsLoading(true);
         
-        // Tentar carregar do localStorage primeiro (solução temporária)
-        const savedPermissions = localStorage.getItem('module_permissions');
-        if (savedPermissions) {
-          const permissionsData = JSON.parse(savedPermissions);
+        // Carregar permissões do banco de dados
+        const { data, error } = await supabase
+          .from('module_permissions')
+          .select('*');
+        
+        if (error) {
+          console.error('Erro ao carregar permissões do banco:', error);
+          // Em caso de erro, usar permissões padrão
+          setPermissions(defaultPermissions);
+          toast({
+            title: "Aviso",
+            description: "Não foi possível carregar as permissões do banco. Usando configuração padrão.",
+            variant: "default",
+          });
+          return;
+        }
+
+        if (data && data.length > 0) {
           const loadedPermissions = {};
           
-          permissionsData.forEach(perm => {
+          data.forEach(perm => {
             if (!loadedPermissions[perm.role_name]) {
               loadedPermissions[perm.role_name] = [];
             }
@@ -65,18 +79,22 @@ const PermissionsPage = () => {
           });
           
           setPermissions(loadedPermissions);
-          console.log('Permissões carregadas do localStorage:', loadedPermissions);
-          return;
+          console.log('Permissões carregadas do banco:', loadedPermissions);
+        } else {
+          // Se não houver dados no banco, usar permissões padrão
+          setPermissions(defaultPermissions);
+          console.log('Nenhuma permissão encontrada no banco, usando permissões padrão:', defaultPermissions);
         }
-        
-        // Se não houver dados no localStorage, usar permissões padrão
-        setPermissions(defaultPermissions);
-        console.log('Usando permissões padrão:', defaultPermissions);
         
       } catch (error) {
         console.error('Erro ao carregar permissões:', error);
         // Em caso de erro, usar permissões padrão
         setPermissions(defaultPermissions);
+        toast({
+          title: "Erro",
+          description: "Erro ao conectar com o banco de dados. Usando configuração padrão.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -124,24 +142,38 @@ const PermissionsPage = () => {
         });
       });
       
-      console.log('Salvando permissões:', permissionsToSave);
+      console.log('Salvando permissões no banco:', permissionsToSave);
       
-      // Como a tabela module_permissions não existe, vamos usar localStorage temporariamente
-      // e mostrar uma mensagem informativa ao usuário
-      localStorage.setItem('module_permissions', JSON.stringify(permissionsToSave));
-      
+      // Salvar no banco de dados usando upsert
+      const { data, error } = await supabase
+        .from('module_permissions')
+        .upsert(permissionsToSave, { 
+          onConflict: 'role_name,module_name',
+          ignoreDuplicates: false 
+        });
+
+      if (error) {
+        console.error('Erro ao salvar permissões no banco:', error);
+        toast({
+          title: 'Erro ao salvar permissões',
+          description: 'Não foi possível salvar as permissões no banco de dados.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
       toast({
-        title: "Permissões salvas localmente",
-        description: "As permissões foram salvas no navegador. A tabela do banco será criada em breve.",
+        title: "Permissões salvas",
+        description: "As permissões foram salvas com sucesso no banco de dados.",
         variant: "default",
       });
       
-      console.log('Permissões salvas no localStorage:', permissionsToSave);
+      console.log('Permissões salvas no banco com sucesso:', data);
     } catch (error) {
       console.error('Erro ao salvar permissões:', error);
       toast({
         title: 'Erro ao salvar permissões',
-        description: 'Não foi possível salvar as permissões no banco de dados.',
+        description: 'Ocorreu um erro inesperado ao salvar as permissões.',
         variant: 'destructive'
       });
     } finally {
