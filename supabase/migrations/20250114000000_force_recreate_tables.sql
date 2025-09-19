@@ -14,6 +14,13 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+-- Create company_role enum if not exists
+DO $$ BEGIN
+    CREATE TYPE public.company_role AS ENUM ('admin', 'interviewer');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
 -- Recreate companies table first (required for foreign keys)
 CREATE TABLE IF NOT EXISTS public.companies (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -40,6 +47,18 @@ CREATE TABLE IF NOT EXISTS public.user_roles (
   UNIQUE (user_id, role)
 );
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
+
+-- Recreate company_memberships table (required for RLS policies)
+CREATE TABLE IF NOT EXISTS public.company_memberships (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL,
+  role public.company_role NOT NULL,
+  added_by UUID,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (company_id, user_id)
+);
+ALTER TABLE public.company_memberships ENABLE ROW LEVEL SECURITY;
 
 -- Recreate leads table with proper structure
 CREATE TABLE public.leads (
