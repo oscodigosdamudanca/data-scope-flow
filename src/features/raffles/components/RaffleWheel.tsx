@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Share2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
