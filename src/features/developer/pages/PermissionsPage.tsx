@@ -43,76 +43,46 @@ const PermissionsPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Carregar permissões do banco de dados
+  // Carregar permissões do localStorage (solução temporária)
   useEffect(() => {
-    const fetchPermissions = async () => {
+    const loadPermissions = async () => {
       try {
         setIsLoading(true);
         
-        // Verificar se a tabela existe antes de consultar
-        const { error: tableCheckError } = await supabase
-          .from('module_permissions')
-          .select('count(*)', { count: 'exact', head: true })
-          .limit(1);
+        // Tentar carregar do localStorage primeiro (solução temporária)
+        const savedPermissions = localStorage.getItem('module_permissions');
+        if (savedPermissions) {
+          const permissionsData = JSON.parse(savedPermissions);
+          const loadedPermissions = {};
           
-        if (tableCheckError) {
-          console.log('Tabela module_permissions não encontrada, usando permissões padrão');
-          setPermissions(defaultPermissions);
-          setIsLoading(false);
+          permissionsData.forEach(perm => {
+            if (!loadedPermissions[perm.role_name]) {
+              loadedPermissions[perm.role_name] = [];
+            }
+            if (perm.is_active) {
+              loadedPermissions[perm.role_name].push(perm.module_name);
+            }
+          });
+          
+          setPermissions(loadedPermissions);
+          console.log('Permissões carregadas do localStorage:', loadedPermissions);
           return;
         }
         
-        const { data, error } = await supabase
-          .from('module_permissions')
-          .select('*')
-          .eq('role_type', 'app_role');
+        // Se não houver dados no localStorage, usar permissões padrão
+        setPermissions(defaultPermissions);
+        console.log('Usando permissões padrão:', defaultPermissions);
         
-        if (error) {
-          throw error;
-        }
-        
-        // Inicializar com as permissões padrão
-        const dbPermissions = JSON.parse(JSON.stringify(defaultPermissions));
-        
-        if (data && data.length > 0) {
-          // Transformar os dados do banco para o formato da interface
-          data.forEach(permission => {
-            const roleId = permission.role_name;
-            const moduleId = permission.module_name;
-            const isActive = permission.is_active;
-            
-            // Verificar se o roleId existe no objeto de permissões
-            if (!dbPermissions[roleId]) {
-              dbPermissions[roleId] = [];
-            }
-            
-            // Adicionar ou remover a permissão com base no status isActive
-            if (isActive) {
-              if (!dbPermissions[roleId].includes(moduleId)) {
-                dbPermissions[roleId].push(moduleId);
-              }
-            } else {
-              dbPermissions[roleId] = dbPermissions[roleId].filter(id => id !== moduleId);
-            }
-          });
-        }
-        
-        setPermissions(dbPermissions);
       } catch (error) {
         console.error('Erro ao carregar permissões:', error);
-        toast({
-          title: 'Erro ao carregar permissões',
-          description: 'Não foi possível carregar as permissões do banco de dados.',
-          variant: 'destructive'
-        });
-        // Em caso de erro, usar as permissões padrão
+        // Em caso de erro, usar permissões padrão
         setPermissions(defaultPermissions);
       } finally {
         setIsLoading(false);
       }
     };
-    
-    fetchPermissions();
+
+    loadPermissions();
   }, []);
   
   const handlePermissionChange = (roleId, moduleId, isChecked) => {
@@ -154,64 +124,19 @@ const PermissionsPage = () => {
         });
       });
       
-      // Verificar se a tabela existe
-      const { error: tableCheckError } = await supabase
-        .from('module_permissions')
-        .select('count(*)', { count: 'exact', head: true })
-        .limit(1);
-        
-      // Se a tabela não existir, criar a tabela
-      if (tableCheckError) {
-        console.log('Criando tabela module_permissions...');
-        const createTableSQL = `
-          CREATE TABLE IF NOT EXISTS module_permissions (
-            id SERIAL PRIMARY KEY,
-            role_type TEXT NOT NULL,
-            role_name TEXT NOT NULL,
-            module_name TEXT NOT NULL,
-            is_active BOOLEAN NOT NULL DEFAULT FALSE,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-            updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-            UNIQUE(role_type, role_name, module_name)
-          );
-        `;
-        
-        const { error: createError } = await supabase.rpc('exec_sql', { sql_query: createTableSQL });
-        if (createError) {
-          console.error('Erro ao criar tabela:', createError);
-          toast({
-            title: 'Erro ao criar tabela',
-            description: 'Não foi possível criar a tabela de permissões.',
-            variant: 'destructive'
-          });
-          return;
-        }
-      } else {
-        // Primeiro, excluir todas as permissões existentes
-        const { error: deleteError } = await supabase
-          .from('module_permissions')
-          .delete()
-          .eq('role_type', 'app_role');
-        
-        if (deleteError) {
-          throw deleteError;
-        }
-      }
+      console.log('Salvando permissões:', permissionsToSave);
       
-      // Inserir as novas permissões
-      const { error: insertError } = await supabase
-        .from('module_permissions')
-        .insert(permissionsToSave);
-      
-      if (insertError) {
-        throw insertError;
-      }
+      // Como a tabela module_permissions não existe, vamos usar localStorage temporariamente
+      // e mostrar uma mensagem informativa ao usuário
+      localStorage.setItem('module_permissions', JSON.stringify(permissionsToSave));
       
       toast({
-        title: 'Permissões salvas',
-        description: 'As permissões foram atualizadas com sucesso.',
-        variant: 'default'
+        title: "Permissões salvas localmente",
+        description: "As permissões foram salvas no navegador. A tabela do banco será criada em breve.",
+        variant: "default",
       });
+      
+      console.log('Permissões salvas no localStorage:', permissionsToSave);
     } catch (error) {
       console.error('Erro ao salvar permissões:', error);
       toast({
