@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-09-19T19:55:25.374Z",
+  "summary": {
+    "totalTests": 5,
+    "successCount": 5,
+    "failureCount": 0,
+    "successRate": "100.0%",
+    "totalTime": "12759ms"
+  },
+  "results": {
+    "connectionTest": {
+      "status": "success",
+      "time": 1004,
+      "error": null
+    },
+    "crudOperations": {
+      "status": "success",
+      "time": 2609,
+      "error": null
+    },
+    "authentication": {
+      "status": "success",
+      "time": 2207,
+      "error": null
+    },
+    "storage": {
+      "status": "success",
+      "time": 3505,
+      "error": null
+    },
+    "apiCalls": {
+      "status": "success",
+      "time": 3409,
+      "error": null
+    }
+  },
+  "projectId": "test-project-123"
+}
