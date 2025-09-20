@@ -14,7 +14,6 @@ import { Building, Loader2 } from 'lucide-react';
 
 const companySchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  legal_name: z.string().optional(),
   cnpj: z.string().optional(),
   email: z.string().email('Email inválido').optional().or(z.literal('')),
   phone: z.string().optional(),
@@ -38,11 +37,10 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess, onCancel 
     resolver: zodResolver(companySchema),
     defaultValues: {
       name: company?.name || '',
-      legal_name: company?.legal_name || '',
       cnpj: company?.cnpj || '',
       email: company?.email || '',
       phone: company?.phone || '',
-      address: company?.address?.street || '',
+      address: company?.address || '',
     },
   });
 
@@ -66,11 +64,10 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess, onCancel 
     try {
       const companyData = {
         name: data.name,
-        legal_name: data.legal_name || null,
         cnpj: data.cnpj || null,
         email: data.email || null,
         phone: data.phone || null,
-        address: data.address ? { street: data.address } : null,
+        address: data.address || null,
         created_by: user.id,
       };
 
@@ -162,47 +159,31 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ company, onSuccess, onCancel 
 
             <FormField
               control={form.control}
-              name="legal_name"
+              name="cnpj"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Razão Social</FormLabel>
+                  <FormLabel>CNPJ</FormLabel>
                   <FormControl>
-                    <Input placeholder="Razão social completa" {...field} />
+                    <Input placeholder="00.000.000/0000-00" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="cnpj"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CNPJ</FormLabel>
-                    <FormControl>
-                      <Input placeholder="00.000.000/0000-00" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone</FormLabel>
-                    <FormControl>
-                      <Input placeholder="(11) 99999-9999" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(11) 99999-9999" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
