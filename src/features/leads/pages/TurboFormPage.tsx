@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,8 +21,8 @@ const supabase = {
 // Mock temporário do contexto de autenticação
 const useAuth = () => ({ user: { id: 'user-123' } });
 
-// Usando lazy loading para componentes pesados
-const TurboFormOptimized = lazy(() => import('@/features/leads/components/TurboLeadForm/TurboFormOptimized'));
+// Importação direta para evitar problemas de lazy loading
+import TurboFormOptimized from '@/features/leads/components/TurboLeadForm/TurboFormOptimized';
 import PageTitle from '@/components/PageTitle';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -53,43 +53,38 @@ export const TurboFormPage: React.FC = () => {
     navigate('/leads');
   };
 
+  // Carregamento inicial dos dados
   useEffect(() => {
-    const fetchFormData = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
         
-        if (!user) return;
+        // Simular carregamento de dados
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Busca a configuração do formulário Turbo
-        const { data, error } = await supabase
-          .from('form_configurations')
-          .select('*')
-          .eq('type', 'turbo_form')
-          .eq('created_by', user.id)
-          .single();
+        // Gerar URL de compartilhamento
+        const baseUrl = window.location.origin;
+        const publicUrl = `${baseUrl}/leads/turbo/public/${user?.id || 'demo'}`;
+        setShareUrl(publicUrl);
         
-        if (error && error.code !== 'PGRST116') {
-          throw error;
-        }
-        
-        if (data) {
-          setFormData(data);
-          setShareUrl(`${window.location.origin}/leads/turbo/public/${data.id}`);
-        }
+        setFormData({
+          companyId: user?.id || 'demo',
+          formType: 'turbo'
+        });
       } catch (error) {
-        console.error('Erro ao carregar formulário:', error);
+        console.error('Erro ao carregar dados:', error);
         toast({
-          title: 'Erro',
-          description: 'Não foi possível carregar o formulário.',
-          variant: 'destructive',
+          title: "Erro",
+          description: "Erro ao carregar os dados do formulário",
+          variant: "destructive",
         });
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchFormData();
-  }, [user, toast]);
+
+    loadData();
+  }, [user?.id, toast]);
 
   const handleGoToAdmin = () => {
     navigate('/leads/turbo/admin');
@@ -161,14 +156,29 @@ export const TurboFormPage: React.FC = () => {
           <CardTitle>Acesso Rápido</CardTitle>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<div className="py-4 text-center">Carregando formulário...</div>}>
-            <TurboFormOptimized 
-              onSuccess={handleSuccess}
-              onCancel={handleCancel}
-              companyInfo={companyInfo}
-              showAIRecommendations={true}
-            />
-          </Suspense>
+          {/* Botões de navegação */}
+          <div className="flex gap-4 mb-6">
+            <Button 
+              onClick={() => navigate('/leads/turbo/direct')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+            >
+              Acessar Agora
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleGoToAdmin}
+              className="px-6 py-3 rounded-lg font-medium border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+            >
+              Configurar Formulário
+            </Button>
+          </div>
+          
+          <TurboFormOptimized 
+            onSuccess={handleSuccess}
+            onCancel={handleCancel}
+            companyInfo={companyInfo}
+            showAIRecommendations={true}
+          />
         </CardContent>
       </Card>
     </div>
