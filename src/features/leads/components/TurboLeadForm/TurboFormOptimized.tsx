@@ -44,7 +44,7 @@ const formSchema = z.object({
   interest_area: z.array(z.string()).min(1, { message: 'Selecione pelo menos uma área de interesse' }),
   budget_range: z.string().min(1, { message: 'Selecione uma faixa de orçamento' }),
   urgency_level: z.string().min(1, { message: 'Selecione o nível de urgência' }),
-  lead_temperature: z.string().min(1, { message: 'Selecione a temperatura do lead' }),
+
   lgpd_consent: z.boolean().refine(val => val === true, {
     message: 'Você precisa concordar com os termos de uso de dados'
   })
@@ -76,7 +76,7 @@ const FORM_STEPS = [
     id: 'qualification',
     title: 'Qualificação',
     icon: CheckCircle,
-    fields: ['budget_range', 'urgency_level', 'lead_temperature']
+    fields: ['budget_range', 'urgency_level']
   },
   {
     id: 'consent',
@@ -113,11 +113,6 @@ const URGENCY_LEVELS = [
   { value: 'sem-pressa', label: 'Sem pressa', description: 'Apenas explorando', color: 'text-blue-600' }
 ];
 
-const LEAD_TEMPERATURES = [
-  { value: 'quente', label: 'Lead Quente', description: 'Muito interessado, pronto para comprar', color: 'text-red-600', bgColor: 'bg-red-50 border-red-200' },
-  { value: 'morno', label: 'Lead Morno', description: 'Interessado, mas precisa de mais informações', color: 'text-orange-600', bgColor: 'bg-orange-50 border-orange-200' },
-  { value: 'frio', label: 'Lead Frio', description: 'Pouco interesse, apenas explorando', color: 'text-blue-600', bgColor: 'bg-blue-50 border-blue-200' }
-];
 
 interface TurboFormOptimizedProps {
   onSuccess?: (leadId: string) => void;
@@ -214,7 +209,6 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
         ).join(', ')}
 Orçamento: ${BUDGET_RANGES.find(b => b.value === formData.budget_range)?.label || formData.budget_range}
 Urgência: ${URGENCY_LEVELS.find(u => u.value === formData.urgency_level)?.label || formData.urgency_level}
-Temperatura do Lead: ${LEAD_TEMPERATURES.find(t => t.value === formData.lead_temperature)?.label || formData.lead_temperature}
 ${formData.address ? `\nEndereço: ${formData.address}` : ''}
 ${formData.observations ? `\nObservações: ${formData.observations}` : ''}
 
@@ -495,46 +489,6 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
                                   {urgency.label}
                                 </span>
                                 <span className="text-sm text-gray-500">{urgency.description}</span>
-                              </div>
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="lead_temperature"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg font-medium">
-                      Qual é a temperatura do lead? *
-                    </FormLabel>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Avalie o nível de interesse e prontidão para compra do lead
-                    </p>
-                    <FormControl>
-                      <RadioGroup
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        className="space-y-3 mt-4"
-                      >
-                        {LEAD_TEMPERATURES.map((temperature) => (
-                          <div key={temperature.value} className="flex items-center space-x-3">
-                            <RadioGroupItem value={temperature.value} id={temperature.value} />
-                            <Label 
-                              htmlFor={temperature.value} 
-                              className={`flex-1 cursor-pointer p-4 rounded-lg border-2 hover:shadow-md transition-all ${temperature.bgColor}`}
-                            >
-                              <div className="flex flex-col">
-                                <span className={`font-semibold text-base ${temperature.color}`}>
-                                  {temperature.label}
-                                </span>
-                                <span className="text-sm text-gray-600 mt-1">{temperature.description}</span>
                               </div>
                             </Label>
                           </div>
