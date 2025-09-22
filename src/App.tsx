@@ -21,6 +21,7 @@ import SurveysPage from "./features/surveys/pages/SurveysPage";
 import AdminSettings from "./features/admin/pages/AdminSettings";
 import FairFeedback from "@/pages/FairFeedback";
 import CustomSurveys from "@/pages/CustomSurveys";
+import TurboFormConfigPage from "./features/admin/pages/TurboFormConfigPage";
 import Raffles from "@/pages/Raffles";
 import DeveloperDashboard from "./features/developer/pages/DeveloperDashboard";
 import QuestionTypesPage from "./features/developer/pages/QuestionTypesPage";
@@ -97,6 +98,7 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
+              <Route path="/admin/turbo-config" element={<TurboFormConfigPage />} />
               <Route path="/admin/reports" element={<ReportsPage />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>

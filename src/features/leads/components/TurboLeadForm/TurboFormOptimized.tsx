@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -28,16 +29,18 @@ import {
   Target,
   Shield,
   Settings,
-  Lightbulb
+  Lightbulb,
+  MapPin,
+  FileText
 } from 'lucide-react';
 
 // Esquema de validação para o formulário
 const formSchema = z.object({
   name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
-  email: z.string().email({ message: 'Email inválido' }),
+  email: z.string().email({ message: 'Email inválido' }).optional().or(z.literal('')),
   phone: z.string().min(10, { message: 'Telefone deve ter pelo menos 10 dígitos' }),
-  company: z.string().min(2, { message: 'Nome da empresa é obrigatório' }),
-  position: z.string().optional(),
+  address: z.string().optional(),
+  observations: z.string().optional(),
   interest_area: z.string().min(1, { message: 'Selecione uma área de interesse' }),
   budget_range: z.string().min(1, { message: 'Selecione uma faixa de orçamento' }),
   urgency_level: z.string().min(1, { message: 'Selecione o nível de urgência' }),
@@ -57,10 +60,10 @@ const FORM_STEPS = [
     fields: ['name', 'email', 'phone']
   },
   {
-    id: 'company-info',
-    title: 'Informações da Empresa',
+    id: 'additional-info',
+    title: 'Informações Adicionais',
     icon: Building,
-    fields: ['company', 'position']
+    fields: ['address', 'observations']
   },
   {
     id: 'interests',
@@ -140,8 +143,8 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
       name: '',
       email: '',
       phone: '',
-      company: '',
-      position: '',
+      address: '',
+      observations: '',
       interest_area: '',
       budget_range: '',
       urgency_level: '',
@@ -190,10 +193,10 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
       
       const leadData: CreateLeadData = {
         name: formData.name,
-        email: formData.email,
+        email: formData.email || '',
         phone: formData.phone,
-        company: formData.company,
-        position: formData.position || '',
+        company: '',
+        position: '',
         source_type: 'turbo_form',
         source: 'manual',
         priority: formData.urgency_level === 'imediato' ? 'high' : 
@@ -202,6 +205,8 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
         notes: `Área de interesse: ${INTEREST_AREAS.find(a => a.value === formData.interest_area)?.label || formData.interest_area}
 Orçamento: ${BUDGET_RANGES.find(b => b.value === formData.budget_range)?.label || formData.budget_range}
 Urgência: ${URGENCY_LEVELS.find(u => u.value === formData.urgency_level)?.label || formData.urgency_level}
+${formData.address ? `\nEndereço: ${formData.address}` : ''}
+${formData.observations ? `\nObservações: ${formData.observations}` : ''}
 
 ${customQuestionsData.length > 0 ? `
 Perguntas Personalizadas de IA:
@@ -302,10 +307,10 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
                       <Mail className="w-4 h-4" />
-                      Email Profissional *
+                      Email Profissional
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="seu@email.com" {...field} />
+                      <Input placeholder="seu@email.com (opcional)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -334,15 +339,15 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
             <>
               <FormField
                 control={form.control}
-                name="company"
+                name="address"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      <Building className="w-4 h-4" />
-                      Nome da Empresa *
+                      <MapPin className="w-4 h-4" />
+                      Endereço (Opcional)
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Digite o nome da sua empresa" {...field} />
+                      <Input placeholder="Digite seu endereço completo" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -350,12 +355,19 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
               />
               <FormField
                 control={form.control}
-                name="position"
+                name="observations"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cargo/Posição</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      Observações (Opcional)
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Seu cargo na empresa" {...field} />
+                      <Textarea 
+                        placeholder="Compartilhe informações adicionais, necessidades específicas ou comentários que possam nos ajudar a atendê-lo melhor..."
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
