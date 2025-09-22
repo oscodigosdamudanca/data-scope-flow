@@ -26,7 +26,7 @@ export interface Lead {
   next_follow_up_date?: string;
   conversion_date?: string;
   created_by?: string;
-  custom_fields?: Record<string, any>;
+  custom_fields?: Record<string, string | number | boolean | null>;
 }
 
 export interface CreateLeadData {

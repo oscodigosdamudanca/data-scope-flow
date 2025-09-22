@@ -5,7 +5,7 @@ export interface ValidationRule {
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
-  custom?: (value: any) => string | null;
+  custom?: (value: string | number | boolean | null) => string | null;
 }
 
 export interface ValidationRules {
@@ -57,7 +57,7 @@ export function sanitizePhone(phone: string): string {
 /**
  * Valida um campo baseado nas regras fornecidas
  */
-export function validateField(value: any, rules: ValidationRule): string | null {
+export function validateField(value: string | number | boolean | null, rules: ValidationRule): string | null {
   // Converte para string se necessário
   const stringValue = typeof value === 'string' ? value : String(value || '');
   const trimmedValue = stringValue.trim();
@@ -101,7 +101,7 @@ export function validateField(value: any, rules: ValidationRule): string | null 
 /**
  * Valida múltiplos campos de uma vez
  */
-export function validateFields(data: Record<string, any>, rules: ValidationRules): ValidationErrors {
+export function validateFields(data: Record<string, string | number | boolean | null>, rules: ValidationRules): ValidationErrors {
   const errors: ValidationErrors = {};
 
   for (const [fieldName, fieldRules] of Object.entries(rules)) {
@@ -134,7 +134,7 @@ export const ValidationRulePresets = {
   
   phone: {
     required: true,
-    pattern: /^[\+]?[1-9][\d\s\-\(\)]{8,20}$/,
+    pattern: /^[+]?[1-9][\d\s\-()]{8,20}$/,
     custom: (value: string) => {
       const digitsOnly = value.replace(/[^0-9]/g, '');
       if (digitsOnly.length < 8) return 'Telefone deve ter pelo menos 8 dígitos';
@@ -158,7 +158,7 @@ export const ValidationRulePresets = {
     required: true,
     minLength: 2,
     maxLength: 200,
-    pattern: /^[a-zA-ZÀ-ÿ0-9\s\-\.&]+$/
+    pattern: /^[a-zA-ZÀ-ÿ0-9\s\-.&]+$/
   },
   
   message: {
@@ -300,7 +300,7 @@ export class RateLimiter {
 /**
  * Utilitário para logging seguro de erros
  */
-export function logSecurely(message: string, data?: any) {
+export function logSecurely(message: string, data?: Record<string, unknown>) {
   // Em produção, enviaria para serviço de logging
   if (process.env.NODE_ENV === 'development') {
     console.log(`[VALIDATION] ${message}`, data);

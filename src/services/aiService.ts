@@ -164,7 +164,7 @@ class AIService {
       }
 
       // Validação das sugestões
-      parsed.suggestions.forEach((suggestion: any, index: number) => {
+      parsed.suggestions.forEach((suggestion: AIQuestionSuggestion, index: number) => {
         if (!suggestion.question_text || !suggestion.question_type) {
           throw new Error(`Sugestão ${index + 1} inválida: campos obrigatórios ausentes`);
         }

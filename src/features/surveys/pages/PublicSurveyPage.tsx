@@ -18,7 +18,7 @@ interface PublicSurveyFormData {
   respondent_name?: string;
   respondent_email?: string;
   respondent_phone?: string;
-  responses: Record<string, any>;
+  responses: Record<string, string | number | boolean | null>;
   lgpdConsent: boolean;
 }
 
@@ -220,7 +220,7 @@ const PublicSurveyPage: React.FC = () => {
     }
   };
 
-  const handleResponseChange = (questionId: string, value: any) => {
+  const handleResponseChange = (questionId: string, value: string | number | boolean | null) => {
     setFormData(prev => ({
       ...prev,
       responses: {

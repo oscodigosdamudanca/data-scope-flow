@@ -22,7 +22,7 @@ export interface Notification {
   status: NotificationStatus;
   title: string;
   message: string;
-  data?: Record<string, any>; // dados adicionais específicos do tipo
+  data?: Record<string, string | number | boolean | null>; // dados adicionais específicos do tipo
   lead_id?: string; // referência ao lead relacionado
   action_url?: string; // URL para ação relacionada
   scheduled_for?: string; // para notificações agendadas
@@ -39,7 +39,7 @@ export interface CreateNotificationData {
   priority: NotificationPriority;
   title: string;
   message: string;
-  data?: Record<string, any>;
+  data?: Record<string, string | number | boolean | null>;
   lead_id?: string;
   action_url?: string;
   scheduled_for?: string;

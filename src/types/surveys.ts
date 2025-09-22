@@ -29,7 +29,7 @@ export interface SurveyResponse {
   respondent_name?: string;
   respondent_email?: string;
   respondent_phone?: string;
-  responses: Record<string, any>;
+  responses: Record<string, string | number | boolean | null>;
   submitted_at: string;
   submitted_by: string;
   ip_address?: string;
@@ -79,12 +79,12 @@ export interface SubmitSurveyResponseData {
   respondent_email?: string;
   respondent_phone?: string;
   respondent_company?: string;
-  responses: Record<string, any>;
+  responses: Record<string, string | number | boolean | null>;
 }
 
 export interface CreateSurveyResponseData {
   respondent_name?: string;
   respondent_email?: string;
   respondent_phone?: string;
-  responses: Record<string, any>;
+  responses: Record<string, string | number | boolean | null>;
 }

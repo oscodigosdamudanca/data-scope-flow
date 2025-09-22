@@ -84,7 +84,7 @@ const Permissions = () => {
     admin: 'Administrar'
   };
 
-  const getPermissionColor = (permission: string) => {
+  const getPermissionColor = (permission: string): "destructive" | "default" | "secondary" | "outline" => {
     switch (permission) {
       case 'admin': return 'destructive';
       case 'delete': return 'destructive';
@@ -188,7 +188,7 @@ const Permissions = () => {
                         permissions.map((permission) => (
                           <Badge 
                             key={permission} 
-                            variant={getPermissionColor(permission) as any}
+                            variant={getPermissionColor(permission)}
                             className="text-xs"
                           >
                             {permissionLabels[permission as keyof typeof permissionLabels]}
