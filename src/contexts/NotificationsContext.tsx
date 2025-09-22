@@ -24,7 +24,7 @@ export interface NotificationsContextType {
   fetchNotifications: (filters?: NotificationFilters) => Promise<void>;
   loadNotifications: (filters?: NotificationFilters) => Promise<void>; // Adicionando a função loadNotifications
   createNotification: (data: CreateNotificationData) => Promise<void>;
-  addNotification: (notification: Notification) => void;
+  addNotification: (notification: Notification) => Notification;
   updateNotification: (id: string, data: UpdateNotificationData) => Promise<void>;
   deleteNotification: (id: string) => Promise<void>;
   markAsRead: (id: string) => Promise<void>;
@@ -342,8 +342,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     // Removida chamada redundante de fetchStats
   }, []);
 
-  const addNotification = useCallback((notification: Notification) => {
+  const addNotification = useCallback((notification: Notification): Notification => {
     dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+    return notification;
   }, []);
 
   const updateNotification = useCallback(async (id: string, data: UpdateNotificationData) => {
