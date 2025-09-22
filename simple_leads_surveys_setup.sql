@@ -30,8 +30,7 @@ CREATE TABLE IF NOT EXISTS public.leads (
   lead_score INTEGER DEFAULT 0 CHECK (lead_score >= 0 AND lead_score <= 100),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  created_by UUID,
-  company_id UUID REFERENCES public.companies(id) ON DELETE CASCADE
+  created_by UUID
 );
 
 -- Tabela de pesquisas
@@ -49,8 +48,7 @@ CREATE TABLE IF NOT EXISTS public.surveys (
   anonymous_responses BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  created_by UUID,
-  company_id UUID REFERENCES public.companies(id) ON DELETE CASCADE
+  created_by UUID
 );
 
 -- Tabela de perguntas da pesquisa
@@ -93,14 +91,12 @@ SELECT 'Tabelas criadas com sucesso!' as status;
 CREATE INDEX IF NOT EXISTS idx_leads_email ON public.leads(email);
 CREATE INDEX IF NOT EXISTS idx_leads_status ON public.leads(status);
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads(created_at);
-CREATE INDEX IF NOT EXISTS idx_leads_company_id ON public.leads(company_id);
 CREATE INDEX IF NOT EXISTS idx_leads_priority_status ON public.leads(priority, status);
 CREATE INDEX IF NOT EXISTS idx_leads_next_follow_up ON public.leads(next_follow_up_date) WHERE next_follow_up_date IS NOT NULL;
 
 -- Índices para surveys
 CREATE INDEX IF NOT EXISTS idx_surveys_status ON public.surveys(status);
 CREATE INDEX IF NOT EXISTS idx_surveys_type ON public.surveys(survey_type);
-CREATE INDEX IF NOT EXISTS idx_surveys_company_id ON public.surveys(company_id);
 CREATE INDEX IF NOT EXISTS idx_surveys_created_at ON public.surveys(created_at);
 CREATE INDEX IF NOT EXISTS idx_surveys_dates ON public.surveys(start_date, end_date);
 
