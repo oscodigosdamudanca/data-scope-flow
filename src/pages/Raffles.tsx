@@ -1,13 +1,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BackToDashboard } from '@/components/core';
-import { Gift, Plus, Play, Pause, Trophy, Users } from 'lucide-react';
+import { Gift, Plus, Play, Pause, Trophy, Users, Settings } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { AnimatedRaffleWheel } from '@/features/raffles/components/AnimatedRaffleWheel';
+import { useState } from 'react';
 
 const Raffles = () => {
+  const [selectedRaffleId, setSelectedRaffleId] = useState<string | null>(null);
+  const [showWheel, setShowWheel] = useState(false);
+  
   const raffles = [
     {
-      id: 1,
+      id: '1',
       title: 'Sorteio de Brindes',
       description: 'Sorteio de produtos promocionais para participantes',
       status: 'active',
@@ -17,7 +22,7 @@ const Raffles = () => {
       createdAt: '2025-01-15'
     },
     {
-      id: 2,
+      id: '2',
       title: 'Prêmio Principal',
       description: 'Sorteio do prêmio principal do evento',
       status: 'draft',
@@ -37,29 +42,64 @@ const Raffles = () => {
     }
   };
 
+  const handleStartRaffle = (raffleId: string) => {
+    setSelectedRaffleId(raffleId);
+    setShowWheel(true);
+  };
+
+  const handleBackToList = () => {
+    setShowWheel(false);
+    setSelectedRaffleId(null);
+  };
+
   const totalParticipants = raffles.reduce((sum, raffle) => sum + raffle.participants, 0);
   const totalPrizes = raffles.reduce((sum, raffle) => sum + raffle.prizes, 0);
   const activeRaffles = raffles.filter(raffle => raffle.status === 'active').length;
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <BackToDashboard variant="outline" position="header" />
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Sorteios</h1>
-            <p className="text-muted-foreground">
-              Gerencie sorteios e premiações para engajar participantes
-            </p>
+      {showWheel && selectedRaffleId ? (
+        // Tela da Roleta Animada
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" onClick={handleBackToList}>
+              ← Voltar para Lista
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Sorteio em Andamento</h1>
+              <p className="text-muted-foreground">
+                Roleta animada para sorteio de prêmios
+              </p>
+            </div>
           </div>
+          
+          <AnimatedRaffleWheel 
+            raffleId={selectedRaffleId}
+            onWinnersDrawn={(winners) => {
+              console.log('Ganhadores sorteados:', winners);
+            }}
+          />
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Sorteio
-        </Button>
-      </div>
+      ) : (
+        // Tela da Lista de Sorteios
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <BackToDashboard variant="outline" position="header" />
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Sorteios</h1>
+                <p className="text-muted-foreground">
+                  Gerencie sorteios e premiações para engajar participantes
+                </p>
+              </div>
+            </div>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Novo Sorteio
+            </Button>
+          </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -119,9 +159,9 @@ const Raffles = () => {
             </p>
           </CardContent>
         </Card>
-      </div>
+        </div>
 
-      <div className="grid gap-6">
+        <div className="grid gap-6">
         {raffles.length > 0 ? (
           raffles.map((raffle) => (
             <Card key={raffle.id}>
@@ -134,15 +174,35 @@ const Raffles = () => {
                   <div className="flex items-center gap-2">
                     {getStatusBadge(raffle.status)}
                     {raffle.status === 'active' ? (
-                      <Button variant="outline" size="sm">
-                        <Pause className="h-4 w-4 mr-2" />
-                        Pausar
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          onClick={() => handleStartRaffle(raffle.id)}
+                        >
+                          <Play className="h-4 w-4 mr-2" />
+                          Iniciar Sorteio
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Pause className="h-4 w-4 mr-2" />
+                          Pausar
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Configurar
+                        </Button>
+                      </div>
                     ) : (
-                      <Button variant="outline" size="sm">
-                        <Play className="h-4 w-4 mr-2" />
-                        Iniciar
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          <Play className="h-4 w-4 mr-2" />
+                          Ativar
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Configurar
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -208,7 +268,9 @@ const Raffles = () => {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
+      )}
     </div>
   );
 };

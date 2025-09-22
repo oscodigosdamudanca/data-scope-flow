@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeAnalytics } from './useRealtimeAnalytics';
 
 export interface AnalyticsData {
   // Contadores principais
@@ -56,6 +57,18 @@ export const useAnalytics = (companyId?: string, dateRange?: DateRange) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [realtimeData, setRealtimeData] = useState<Partial<AnalyticsData>>({});
+
+  // Integração com Supabase Realtime
+  const { 
+    isConnected: realtimeConnected, 
+    lastUpdate, 
+    events: realtimeEvents,
+    config: realtimeConfig,
+    updateConfig: updateRealtimeConfig 
+  } = useRealtimeAnalytics(companyId, (updatedData) => {
+    setRealtimeData(prev => ({ ...prev, ...updatedData }));
+  });
 
   // Since leads and surveys tables don't exist yet, we'll use mock data
   const { data: leadsData, isLoading: leadsLoading } = useQuery({
@@ -76,7 +89,7 @@ export const useAnalytics = (companyId?: string, dateRange?: DateRange) => {
     enabled: !!user,
   });
 
-  // Processar dados de analytics
+  // Processar dados de analytics com integração Realtime
   const processAnalyticsData = (): AnalyticsData | null => {
     if (!leadsData || !surveysData) return null;
 
@@ -128,17 +141,20 @@ export const useAnalytics = (companyId?: string, dateRange?: DateRange) => {
       });
     }
 
-    const totalLeads = 90;
-    const completedSurveys = 42;
+    // Aplicar dados em tempo real se disponíveis
+    const baseLeadsCount = 90;
+    const baseSurveysResponses = 42;
+    const totalLeads = baseLeadsCount + (realtimeData.leadsCount || 0);
+    const completedSurveys = baseSurveysResponses + (realtimeData.surveysResponses || 0);
     const totalSurveys = 15;
     const conversionRate = 35.5;
     
     return {
-      // Contadores principais
+      // Contadores principais com dados em tempo real
       leadsCount: totalLeads,
-      leadsToday: Math.floor(Math.random() * 10),
-      leadsThisWeek: Math.floor(Math.random() * 50),
-      leadsThisMonth: Math.floor(Math.random() * 200),
+      leadsToday: Math.floor(Math.random() * 10) + (realtimeData.leadsToday || 0),
+      leadsThisWeek: Math.floor(Math.random() * 50) + (realtimeData.leadsThisWeek || 0),
+      leadsThisMonth: Math.floor(Math.random() * 200) + (realtimeData.leadsThisMonth || 0),
       surveysCount: totalSurveys,
       surveysResponses: completedSurveys,
       conversionRate: Number(conversionRate.toFixed(2)),
@@ -210,5 +226,11 @@ export const useAnalytics = (companyId?: string, dateRange?: DateRange) => {
     refetch: () => {
       // Implementar refetch se necessário
     },
+    // Dados do Realtime
+    realtimeConnected,
+    lastUpdate,
+    realtimeEvents,
+    realtimeConfig,
+    updateRealtimeConfig
   };
 };

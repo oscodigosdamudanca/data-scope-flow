@@ -18,6 +18,8 @@ import {
 import { useAnalytics, DateRange, AnalyticsData } from '../hooks/useAnalytics';
 import { useBIConfig, BIConfig } from '../hooks/useBIConfig';
 import { useAuth } from '@/contexts/AuthContext';
+import { RealtimeIndicator } from './RealtimeIndicator';
+import { RealtimeNotifications } from './RealtimeNotifications';
 import LeadsAnalytics from './LeadsAnalytics';
 import SurveysAnalytics from './SurveysAnalytics';
 import OverviewAnalytics from './OverviewAnalytics';
@@ -94,12 +96,19 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [showSettings, setShowSettings] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const { 
     data: analyticsData, 
     loading: analyticsLoading, 
     error: analyticsError,
-    refetch 
+    refetch,
+    // Dados do Realtime
+    realtimeConnected,
+    lastUpdate,
+    realtimeEvents,
+    realtimeConfig,
+    updateRealtimeConfig
   } = useAnalytics(companyId, dateRange);
 
   const { 
@@ -133,7 +142,15 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
   const isLoading = analyticsLoading || configLoading;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Notificações em Tempo Real */}
+      <div className="fixed top-4 right-4 z-50">
+        <RealtimeNotifications
+          companyId={companyId}
+          isVisible={showNotifications}
+          onToggle={() => setShowNotifications(!showNotifications)}
+        />
+      </div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -146,6 +163,12 @@ const ExhibitorDashboard: React.FC<ExhibitorDashboardProps> = ({
         </div>
         
         <div className="flex items-center gap-2">
+          <RealtimeIndicator 
+            isConnected={realtimeConnected}
+            lastUpdate={lastUpdate}
+            eventsCount={realtimeEvents?.length || 0}
+          />
+          
           <Button
             variant="outline"
             size="sm"

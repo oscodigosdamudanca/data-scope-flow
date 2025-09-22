@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Settings, Share2, Copy } from 'lucide-react';
+
 // Importação temporária para desenvolvimento
 const supabase = {
   from: () => ({
@@ -16,10 +17,12 @@ const supabase = {
     })
   })
 };
+
 // Mock temporário do contexto de autenticação
 const useAuth = () => ({ user: { id: 'user-123' } });
+
 // Usando lazy loading para componentes pesados
-const TurboLeadForm = lazy(() => import('@/components/TurboLeadForm'));
+const TurboFormOptimized = lazy(() => import('@/features/leads/components/TurboLeadForm/TurboFormOptimized'));
 import PageTitle from '@/components/PageTitle';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -30,6 +33,25 @@ export const TurboFormPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<any>(null);
   const [shareUrl, setShareUrl] = useState<string>('');
+
+  // Informações da empresa para as recomendações de IA
+  const companyInfo = {
+    name: "DataScope",
+    industry: "Tecnologia e Software",
+    targetAudience: "Empresas que participam de feiras e eventos corporativos"
+  };
+
+  const handleSuccess = (leadId: string) => {
+    toast({
+      title: 'Sucesso!',
+      description: 'Lead cadastrado com sucesso!',
+    });
+    navigate('/leads');
+  };
+
+  const handleCancel = () => {
+    navigate('/leads');
+  };
 
   useEffect(() => {
     const fetchFormData = async () => {
@@ -140,9 +162,11 @@ export const TurboFormPage: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Suspense fallback={<div className="py-4 text-center">Carregando formulário...</div>}>
-            <TurboLeadForm 
-              formId={formData?.id} 
-              questions={formData?.questions || []} 
+            <TurboFormOptimized 
+              onSuccess={handleSuccess}
+              onCancel={handleCancel}
+              companyInfo={companyInfo}
+              showAIRecommendations={true}
             />
           </Suspense>
         </CardContent>
