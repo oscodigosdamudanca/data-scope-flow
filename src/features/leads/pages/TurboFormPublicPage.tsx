@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -62,9 +62,9 @@ const TurboFormPublicPage: React.FC = () => {
     fetchFormData();
   }, [id, toast]);
 
-  const handleSubmitSuccess = () => {
+  const handleSubmitSuccess = useCallback(() => {
     setSubmitted(true);
-  };
+  }, []);
 
   if (loading) {
     return <LoadingSpinner />;

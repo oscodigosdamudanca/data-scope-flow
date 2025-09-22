@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -81,11 +81,11 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     lgpd_consent: false
   });
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = useCallback((field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     const currentField = FORM_STEPS[currentStep].fieldName;
     if (!formData[currentField as keyof typeof formData] && currentField !== 'lgpd_consent') {
       toast({
@@ -101,15 +101,15 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     } else {
       handleSubmitForm();
     }
-  };
+  }, [currentStep, formData, toast]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
     }
-  };
+  }, [currentStep]);
 
-  const handleSubmitForm = async () => {
+  const handleSubmitForm = useCallback(async () => {
     if (!formData.lgpd_consent) {
       toast({
         title: 'Consentimento necessário',
@@ -154,9 +154,9 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData, companyId, toast, onSuccess]);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       name: '',
       email: '',
@@ -167,7 +167,7 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     });
     setCurrentStep(0);
     setSubmitted(false);
-  };
+  }, []);
 
   if (submitted) {
     return (
