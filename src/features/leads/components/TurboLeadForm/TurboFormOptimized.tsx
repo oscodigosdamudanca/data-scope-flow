@@ -41,7 +41,7 @@ const formSchema = z.object({
   phone: z.string().min(10, { message: 'Telefone deve ter pelo menos 10 dígitos' }),
   address: z.string().optional(),
   observations: z.string().optional(),
-  interest_area: z.string().min(1, { message: 'Selecione uma área de interesse' }),
+  interest_area: z.array(z.string()).min(1, { message: 'Selecione pelo menos uma área de interesse' }),
   budget_range: z.string().min(1, { message: 'Selecione uma faixa de orçamento' }),
   urgency_level: z.string().min(1, { message: 'Selecione o nível de urgência' }),
   lgpd_consent: z.boolean().refine(val => val === true, {
@@ -145,7 +145,7 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
       phone: '',
       address: '',
       observations: '',
-      interest_area: '',
+      interest_area: [],
       budget_range: '',
       urgency_level: '',
       lgpd_consent: false
@@ -201,8 +201,10 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
         source: 'manual',
         priority: formData.urgency_level === 'imediato' ? 'high' : 
                  formData.urgency_level === '30-dias' ? 'medium' : 'low',
-        interests: [formData.interest_area],
-        notes: `Área de interesse: ${INTEREST_AREAS.find(a => a.value === formData.interest_area)?.label || formData.interest_area}
+        interests: formData.interest_area,
+        notes: `Áreas de interesse: ${formData.interest_area.map(area => 
+          INTEREST_AREAS.find(a => a.value === area)?.label || area
+        ).join(', ')}
 Orçamento: ${BUDGET_RANGES.find(b => b.value === formData.budget_range)?.label || formData.budget_range}
 Urgência: ${URGENCY_LEVELS.find(u => u.value === formData.urgency_level)?.label || formData.urgency_level}
 ${formData.address ? `\nEndereço: ${formData.address}` : ''}
@@ -383,17 +385,24 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-lg font-medium">
-                    Qual área mais te interessa? *
+                    Quais áreas mais te interessam? * (Selecione uma ou mais opções)
                   </FormLabel>
                   <FormControl>
-                    <RadioGroup
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="grid grid-cols-1 gap-3 mt-4"
-                    >
+                    <div className="grid grid-cols-1 gap-3 mt-4">
                       {INTEREST_AREAS.map((area) => (
                         <div key={area.value} className="flex items-center space-x-3">
-                          <RadioGroupItem value={area.value} id={area.value} />
+                          <Checkbox
+                            id={area.value}
+                            checked={field.value?.includes(area.value) || false}
+                            onCheckedChange={(checked) => {
+                              const currentValue = field.value || [];
+                              if (checked) {
+                                field.onChange([...currentValue, area.value]);
+                              } else {
+                                field.onChange(currentValue.filter((value) => value !== area.value));
+                              }
+                            }}
+                          />
                           <Label 
                             htmlFor={area.value} 
                             className="flex-1 cursor-pointer p-3 rounded-lg border hover:bg-gray-50 transition-colors"
@@ -407,7 +416,7 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
                           </Label>
                         </div>
                       ))}
-                    </RadioGroup>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
