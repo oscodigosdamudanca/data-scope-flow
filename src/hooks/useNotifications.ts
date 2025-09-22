@@ -24,7 +24,7 @@ export function useNotifications() {
     message?: string
   ) => {
     if (!currentCompany?.id) {
-      console.error('Empresa atual não definida');
+      console.warn('Empresa atual não definida para criação de notificação');
       return null;
     }
 

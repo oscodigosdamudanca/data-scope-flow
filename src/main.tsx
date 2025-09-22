@@ -7,19 +7,24 @@ if (typeof MessagePort !== 'undefined') {
   const originalPostMessage = MessagePort.prototype.postMessage;
   MessagePort.prototype.postMessage = function(...args) {
     if (args.length === 0) {
-      throw new Error('Failed to execute "postMessage" on "MessagePort": 1 argument required, but only 0 present.');
+      console.warn('MessagePort.postMessage called without arguments, ignoring call');
+      return;
     }
     try {
       originalPostMessage.apply(this, args);
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('is not a valid transferable object')) {
         // Tenta novamente sem o segundo argumento (transferáveis)
-        originalPostMessage.call(this, args[0]);
+        try {
+          originalPostMessage.call(this, args[0]);
+        } catch (retryError) {
+          console.warn('MessagePort.postMessage failed:', retryError);
+        }
       } else {
-        throw error;
+        console.warn('MessagePort.postMessage error:', error);
       }
     }
-  }
+  };
 }
 
 createRoot(document.getElementById("root")!).render(<App />);

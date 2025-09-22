@@ -80,7 +80,7 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
         onSubmitSuccess();
       }
     } catch (error) {
-      console.error('Erro ao enviar formulário:', error);
+      console.warn('Erro ao enviar formulário:', error);
       alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
