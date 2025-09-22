@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useLeads } from '@/hooks/useLeads';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useCompany } from '@/contexts/CompanyContext';
 import { CreateLeadData } from '@/types/leads';
 import { AIQuestionRecommendations } from '@/components/forms/AIQuestionRecommendations';
 import { LeadQuestionSuggestion } from '@/services/leadAIService';
@@ -133,6 +134,7 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
 }) => {
   const { createLead } = useLeads();
   const { notifyTurboLeadCreated } = useNotifications();
+  const { currentCompany } = useCompany();
   const [currentStep, setCurrentStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -204,6 +206,7 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
         priority: formData.urgency_level === 'imediato' ? 'high' : 
                  formData.urgency_level === '30-dias' ? 'medium' : 'low',
         interests: formData.interest_area,
+        company_id: currentCompany?.id || 'default-company-id',
         notes: `Áreas de interesse: ${formData.interest_area.map(area => 
           INTEREST_AREAS.find(a => a.value === area)?.label || area
         ).join(', ')}
