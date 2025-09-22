@@ -24,7 +24,7 @@ export interface NotificationsContextType {
   fetchNotifications: (filters?: NotificationFilters) => Promise<void>;
   loadNotifications: (filters?: NotificationFilters) => Promise<void>; // Adicionando a função loadNotifications
   createNotification: (data: CreateNotificationData) => Promise<void>;
-  addNotification: (notification: Notification) => Notification;
+  addNotification: (notification: Notification) => void;
   updateNotification: (id: string, data: UpdateNotificationData) => Promise<void>;
   deleteNotification: (id: string) => Promise<void>;
   markAsRead: (id: string) => Promise<void>;

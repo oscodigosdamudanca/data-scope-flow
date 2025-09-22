@@ -54,24 +54,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Configuração do Formulário Turbo */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-medium">Formulário Turbo</CardTitle>
-            <Target className="h-6 w-6 text-indigo-600" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
-              Configure áreas de interesse e opções de qualificação.
-            </p>
-            <Link to="/admin/turbo-config">
-              <Button className="w-full">
-                Configurar Formulário
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
         {/* Configurações do Sistema */}
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

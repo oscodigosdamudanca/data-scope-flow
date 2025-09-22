@@ -206,7 +206,6 @@ export const TurboFormOptimized: React.FC<TurboFormOptimizedProps> = ({
         priority: formData.urgency_level === 'imediato' ? 'high' : 
                  formData.urgency_level === '30-dias' ? 'medium' : 'low',
         interests: formData.interest_area,
-        company_id: currentCompany?.id || 'default-company-id',
         notes: `Áreas de interesse: ${formData.interest_area.map(area => 
           INTEREST_AREAS.find(a => a.value === area)?.label || area
         ).join(', ')}

@@ -91,12 +91,14 @@ SELECT 'Tabelas criadas com sucesso!' as status;
 CREATE INDEX IF NOT EXISTS idx_leads_email ON public.leads(email);
 CREATE INDEX IF NOT EXISTS idx_leads_status ON public.leads(status);
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads(created_at);
+CREATE INDEX IF NOT EXISTS idx_leads_company_id ON public.leads(company_id);
 CREATE INDEX IF NOT EXISTS idx_leads_priority_status ON public.leads(priority, status);
 CREATE INDEX IF NOT EXISTS idx_leads_next_follow_up ON public.leads(next_follow_up_date) WHERE next_follow_up_date IS NOT NULL;
 
 -- Índices para surveys
 CREATE INDEX IF NOT EXISTS idx_surveys_status ON public.surveys(status);
 CREATE INDEX IF NOT EXISTS idx_surveys_type ON public.surveys(survey_type);
+CREATE INDEX IF NOT EXISTS idx_surveys_company_id ON public.surveys(company_id);
 CREATE INDEX IF NOT EXISTS idx_surveys_created_at ON public.surveys(created_at);
 CREATE INDEX IF NOT EXISTS idx_surveys_dates ON public.surveys(start_date, end_date);
 

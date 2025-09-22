@@ -73,7 +73,7 @@ export function useNotifications() {
 
     try {
       // Adicionar notificação ao contexto
-      const notification = context.addNotification(notificationData as Notification);
+      const notification = context.addNotification(notificationData);
       
       // Exibir toast para notificações importantes
       if (['lead_created', 'lead_converted', 'lead_lost'].includes(type)) {
