@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Building, BarChart3, Gift, Plus } from 'lucide-react';
+import { Users, Building, BarChart3, Gift, Plus, Target, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -50,7 +50,15 @@ const Index = () => {
                 <p className="text-xs text-muted-foreground">
                   Leads capturados hoje
                 </p>
-                <Badge variant="secondary" className="mt-2">Em breve</Badge>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="default" className="bg-orange-600 hover:bg-orange-700">Ativo</Badge>
+                  <Link to="/leads">
+                    <Button variant="outline" size="sm">
+                      <Target className="h-3 w-3 mr-1" />
+                      Acessar
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
             
@@ -104,6 +112,45 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Atalho Direto para Formulário Turbo */}
+          <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-600 rounded-lg">
+                    <Zap className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg text-orange-900">Formulário Turbo</CardTitle>
+                    <p className="text-sm text-orange-700">Captação rápida e eficiente de leads</p>
+                  </div>
+                </div>
+                <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-300">
+                  Acesso Rápido
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-orange-800 mb-4">
+                Interface otimizada para captação de visitantes em eventos. Perguntas diretas de múltipla escolha para maximizar a eficiência em campo.
+              </p>
+              <div className="flex gap-3">
+                <Link to="/leads/turbo-form" className="flex-1">
+                  <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                    <Zap className="h-4 w-4 mr-2" />
+                    Abrir Formulário Turbo
+                  </Button>
+                </Link>
+                <Link to="/leads">
+                  <Button variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
+                    <Target className="h-4 w-4 mr-2" />
+                    Ver Leads
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
 
 
         </div>
