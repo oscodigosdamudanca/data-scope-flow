@@ -10,10 +10,11 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Settings, Save, Plus, Trash2, Edit, Eye, Copy, GripVertical } from 'lucide-react';
+import { ArrowLeft, Settings, Save, Plus, Trash2, Edit, Eye, Copy, GripVertical, Download } from 'lucide-react';
 import PageTitle from '@/components/PageTitle';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useCompany } from '@/contexts/CompanyContext';
+import QRCode from 'qrcode';
 
 interface FormQuestion {
   id: string;
@@ -83,6 +84,7 @@ const TurboFormAdminPage: React.FC = () => {
   });
 
   const [shareUrl, setShareUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 
   useEffect(() => {
     const loadFormConfig = async () => {
@@ -96,6 +98,23 @@ const TurboFormAdminPage: React.FC = () => {
         const baseUrl = window.location.origin;
         const publicUrl = `${baseUrl}/leads/turbo/public/${currentCompany?.id || 'demo'}`;
         setShareUrl(publicUrl);
+        
+        // Gerar QR Code
+        if (publicUrl) {
+          try {
+            const qrDataUrl = await QRCode.toDataURL(publicUrl, {
+              width: 256,
+              margin: 2,
+              color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+              }
+            });
+            setQrCodeUrl(qrDataUrl);
+          } catch (qrError) {
+            console.error('Erro ao gerar QR Code:', qrError);
+          }
+        }
         
       } catch (error) {
         console.error('Erro ao carregar configuração:', error);
@@ -201,6 +220,22 @@ const TurboFormAdminPage: React.FC = () => {
       toast({
         title: 'Link copiado!',
         description: 'O link de compartilhamento foi copiado para a área de transferência.',
+      });
+    }
+  };
+
+  const handleDownloadQRCode = () => {
+    if (qrCodeUrl) {
+      const link = document.createElement('a');
+      link.download = `qrcode-formulario-${currentCompany?.name || 'turbo'}.png`;
+      link.href = qrCodeUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: 'QR Code baixado!',
+        description: 'O QR Code foi baixado com sucesso.',
       });
     }
   };
@@ -477,9 +512,23 @@ const TurboFormAdminPage: React.FC = () => {
                     <div className="text-center space-y-2">
                       <h4 className="font-medium">QR Code</h4>
                       <div className="w-32 h-32 bg-muted rounded-lg mx-auto flex items-center justify-center">
-                        <p className="text-sm text-muted-foreground">QR Code será gerado aqui</p>
+                        {qrCodeUrl ? (
+                          <img 
+                            src={qrCodeUrl} 
+                            alt="QR Code do Formulário" 
+                            className="w-full h-full object-contain rounded-lg"
+                          />
+                        ) : (
+                          <p className="text-sm text-muted-foreground">Gerando QR Code...</p>
+                        )}
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleDownloadQRCode}
+                        disabled={!qrCodeUrl}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
                         Baixar QR Code
                       </Button>
                     </div>
