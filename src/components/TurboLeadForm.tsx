@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { useLeads } from '@/hooks/useLeads';
 
 export type QuestionType = {
   id: string;
@@ -18,15 +19,21 @@ interface TurboLeadFormProps {
   customQuestions?: QuestionType[];
   formId?: string;
   onSubmitSuccess?: () => void;
+  onClose?: () => void;
+  companyId?: string;
 }
 
-const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
+export const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
   customQuestions = [],
   formId,
-  onSubmitSuccess
+  onSubmitSuccess,
+  onClose,
+  companyId
 }) => {
+  const { createLead } = useLeads();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [lgpdConsent, setLgpdConsent] = useState(false);
+  const [currentStep, setCurrentStep] = useState<FormStep>('personal');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -49,23 +56,31 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     }
 
     try {
-      // Código para enviar os dados do formulário
-      console.log('Enviando dados:', { ...formData, lgpdConsent });
-      
       setIsSubmitting(true);
       
-      // Simulação de envio de dados - reduzindo o tempo de espera
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      console.log('Dados enviados:', {
-        ...formData,
-        customAnswers: customQuestions.map(q => ({ 
+      // Preparar dados do lead para envio ao banco
+      const leadData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        company_id: companyId || '',
+        source_type: 'turbo_form',
+        priority: 'medium',
+        lgpd_consent: lgpdConsent,
+        custom_answers: customQuestions.map(q => ({ 
           questionId: q.id, 
-          answer: '' 
+          answer: formData[q.id] || '' 
         })),
-        formId,
-        lgpdConsent
-      });
+        form_id: formId
+      };
+      
+      console.log('Enviando dados para o banco:', leadData);
+      
+      // Enviar dados para o banco usando o hook useLeads
+      await createLead(leadData);
+      
+      console.log('Lead criado com sucesso no banco de dados');
       
       // Limpar formulário após envio
       setFormData({
@@ -80,12 +95,12 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
         onSubmitSuccess();
       }
     } catch (error) {
-      console.warn('Erro ao enviar formulário:', error);
+      console.error('Erro ao enviar formulário:', error);
       alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
-  }, [customQuestions, formData, formId, lgpdConsent, onSubmitSuccess]);
+  }, [customQuestions, formData, formId, lgpdConsent, onSubmitSuccess, companyId, createLead]);
 
   return (
     <Card className="w-full">

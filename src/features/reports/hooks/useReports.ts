@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAnalytics } from '@/features/analytics/hooks/useAnalytics';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DateRange {
   from: Date;
@@ -74,14 +76,15 @@ const DEFAULT_FILTERS: ReportFilters = {
 };
 
 export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsReturn => {
-  const [filters, setFiltersState] = useState<ReportFilters>({
-    ...DEFAULT_FILTERS,
-    ...initialFilters
-  });
+  const { user } = useAuth();
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedReports, setSavedReports] = useState<any[]>([]);
+  const [filters, setFiltersState] = useState<ReportFilters>({
+    ...DEFAULT_FILTERS,
+    ...initialFilters
+  });
 
   const { data: analyticsData, loading: analyticsLoading } = useAnalytics();
 
@@ -406,17 +409,17 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
   const saveReport = async (name: string, config: any) => {
     try {
       const report = {
-        id: Date.now().toString(),
+        id: `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name,
         config,
-        filters,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        created_at: new Date().toISOString(),
+        filters: filters,
+        data: data
       };
       
       setSavedReports(prev => [...prev, report]);
       
-      // Aqui seria implementada a persistência real
+      // Por enquanto, salvar apenas no localStorage até a tabela saved_reports ser criada
       localStorage.setItem('savedReports', JSON.stringify([...savedReports, report]));
       
     } catch (err) {
@@ -426,8 +429,9 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
   };
 
   // Função para obter relatórios salvos
-  const getSavedReports = () => {
+  const getSavedReports = (): any[] => {
     try {
+      // Por enquanto, usar apenas localStorage até a tabela saved_reports ser criada
       const saved = localStorage.getItem('savedReports');
       return saved ? JSON.parse(saved) : [];
     } catch (err) {
@@ -436,10 +440,10 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
     }
   };
 
-  // Efeito para carregar relatórios salvos
+  // Carregar relatórios salvos na inicialização
   useEffect(() => {
-    const saved = getSavedReports();
-    setSavedReports(saved);
+    const reports = getSavedReports();
+    setSavedReports(reports);
   }, []);
 
   // Efeito para atualizar dados quando filtros ou analyticsData mudam
@@ -463,6 +467,8 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
     refreshData,
     exportData,
     saveReport,
-    getSavedReports
+    getSavedReports: () => savedReports
   };
 };
+
+// Remover a função duplicada no final do arquivo

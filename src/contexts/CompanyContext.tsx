@@ -63,34 +63,56 @@ export const CompanyProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Efeito para definir empresa padrão quando as empresas são carregadas
   useEffect(() => {
     if (companiesQuery.data && companiesQuery.data.length > 0 && !currentCompany) {
-      // Recuperar empresa salva no localStorage
-      const savedCompanyId = localStorage.getItem('currentCompanyId');
-      
-      if (savedCompanyId) {
-        const savedCompany = companiesQuery.data.find(c => c.id === savedCompanyId);
-        if (savedCompany) {
-          setCurrentCompanyState(savedCompany);
-          return;
+      // Buscar empresa padrão do usuário no banco de dados
+      const getUserDefaultCompany = async () => {
+        if (!user) return;
+        
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('default_company_id')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile?.default_company_id) {
+            const savedCompany = companiesQuery.data.find(c => c.id === profile.default_company_id);
+            if (savedCompany) {
+              setCurrentCompanyState(savedCompany);
+              return;
+            }
+          }
+        } catch (error) {
+          console.log('Erro ao buscar empresa padrão:', error);
         }
-      }
+        
+        // Se não há empresa salva no perfil, usar a primeira empresa (preferencialmente onde é admin)
+        const adminCompany = companiesQuery.data.find(c => 
+          c.company_memberships[0]?.role === 'admin'
+        );
+        
+        setCurrentCompanyState(adminCompany || companiesQuery.data[0]);
+      };
       
-      // Se não há empresa salva, usar a primeira empresa (preferencialmente onde é admin)
-      const adminCompany = companiesQuery.data.find(c => 
-        c.company_memberships[0]?.role === 'admin'
-      );
-      
-      setCurrentCompanyState(adminCompany || companiesQuery.data[0]);
+      getUserDefaultCompany();
     }
-  }, [companiesQuery.data, currentCompany]);
+  }, [companiesQuery.data, currentCompany, user]);
 
-  const setCurrentCompany = (company: Company | null) => {
+  const setCurrentCompany = async (company: Company | null) => {
     setCurrentCompanyState(company);
     
-    if (company) {
-      localStorage.setItem('currentCompanyId', company.id);
-      toast.success(`Empresa alterada para: ${company.name}`);
-    } else {
-      localStorage.removeItem('currentCompanyId');
+    if (company && user) {
+      // Salvar empresa padrão no perfil do usuário
+      try {
+        await supabase
+          .from('profiles')
+          .update({ default_company_id: company.id })
+          .eq('id', user.id);
+        
+        toast.success(`Empresa alterada para: ${company.name}`);
+      } catch (error) {
+        console.error('Erro ao salvar empresa padrão:', error);
+        toast.error('Erro ao salvar preferência de empresa');
+      }
     }
   };
 
