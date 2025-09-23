@@ -52,7 +52,7 @@ const AppSidebar = () => {
 
   const userInitials = user?.user_metadata?.display_name
     ? user.user_metadata.display_name.charAt(0).toUpperCase()
-    : user?.email?.charAt(0).toUpperCase() || 'U';
+    : user?.user_metadata?.full_name?.charAt(0).toUpperCase() || 'U';
 
   // Itens de navegação principais
   const navigationItems = [
@@ -307,10 +307,10 @@ const AppSidebar = () => {
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {user?.user_metadata?.display_name || user?.email?.split('@')[0]}
+                      {user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Usuário'}
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {user?.email}
+                      {user?.user_metadata?.full_name || 'Usuário não identificado'}
                     </span>
                   </div>
                 </SidebarMenuButton>
