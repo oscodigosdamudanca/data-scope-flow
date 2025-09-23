@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-09-23T21:03:40.219Z",
+  "summary": {
+    "total_fixes": 9,
+    "successful_fixes": 0,
+    "success_rate": "0.00%",
+    "total_errors": 16
+  },
+  "diagnostics": {
+    "module_permissions_access": false,
+    "user_module_permissions_view": false
+  },
+  "fixes": {
+    "profiles_email": false,
+    "module_permissions_table": false,
+    "user_module_permissions_view": false,
+    "profiles_rls_enabled": false,
+    "companies_rls_enabled": false,
+    "leads_rls_enabled": false,
+    "surveys_rls_enabled": false,
+    "rls_policies": false,
+    "default_permissions": false
+  },
+  "errors": [
+    "Profiles structure check: Invalid API key",
+    "Module permissions access: Invalid API key",
+    "User module permissions view: Invalid API key",
+    "RLS check profiles: Invalid API key",
+    "RLS check companies: Invalid API key",
+    "RLS check leads: Invalid API key",
+    "RLS check surveys: Invalid API key",
+    "Add email column: Invalid API key",
+    "Create module_permissions: Invalid API key",
+    "Create user_module_permissions view: Invalid API key",
+    "Enable RLS profiles: Invalid API key",
+    "Enable RLS companies: Invalid API key",
+    "Enable RLS leads: Invalid API key",
+    "Enable RLS surveys: Invalid API key",
+    "Create RLS policies: Invalid API key",
+    "Insert default permissions: Invalid API key"
+  ]
+}

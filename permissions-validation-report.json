@@ -1,0 +1,133 @@
+{
+  "timestamp": "2025-09-23T20:56:38.163Z",
+  "summary": {
+    "total": 17,
+    "passed": 4,
+    "failed": 3,
+    "warnings": 5,
+    "info": 5,
+    "successRate": "23.53",
+    "duration": "1.76"
+  },
+  "results": [
+    {
+      "category": "PERMISSÕES",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Verificando sistema de permissões...",
+      "timestamp": "2025-09-23T20:56:36.401Z"
+    },
+    {
+      "category": "PERMISSÕES",
+      "test": "Tabela module_permissions",
+      "status": "FAIL",
+      "details": "Erro: permission denied for table users",
+      "timestamp": "2025-09-23T20:56:36.972Z"
+    },
+    {
+      "category": "PERMISSÕES",
+      "test": "Tabela user_roles",
+      "status": "PASS",
+      "details": "0 registros encontrados",
+      "timestamp": "2025-09-23T20:56:37.194Z"
+    },
+    {
+      "category": "PERMISSÕES",
+      "test": "View user_module_permissions",
+      "status": "FAIL",
+      "details": "Erro: Could not find the table 'public.user_module_permissions' in the schema cache",
+      "timestamp": "2025-09-23T20:56:37.268Z"
+    },
+    {
+      "category": "RBAC",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Testando controle de acesso baseado em roles...",
+      "timestamp": "2025-09-23T20:56:37.270Z"
+    },
+    {
+      "category": "RBAC",
+      "test": "Profiles com Roles",
+      "status": "FAIL",
+      "details": "Erro: column profiles.email does not exist",
+      "timestamp": "2025-09-23T20:56:37.356Z"
+    },
+    {
+      "category": "RBAC",
+      "test": "Company Memberships",
+      "status": "PASS",
+      "details": "0 vínculos empresa-usuário encontrados",
+      "timestamp": "2025-09-23T20:56:37.446Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Verificando políticas Row-Level Security...",
+      "timestamp": "2025-09-23T20:56:37.446Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política profiles",
+      "status": "WARN",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:56:37.538Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política companies",
+      "status": "WARN",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:56:37.601Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política leads",
+      "status": "WARN",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:56:37.665Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política surveys",
+      "status": "WARN",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:56:37.722Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política module_permissions",
+      "status": "PASS",
+      "details": "RLS ativo - acesso negado sem autenticação",
+      "timestamp": "2025-09-23T20:56:37.788Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política user_roles",
+      "status": "WARN",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:56:37.845Z"
+    },
+    {
+      "category": "AUTH",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Testando fluxo de autenticação...",
+      "timestamp": "2025-09-23T20:56:37.845Z"
+    },
+    {
+      "category": "AUTH",
+      "test": "Verificação de Sessão",
+      "status": "INFO",
+      "details": "Nenhuma sessão ativa",
+      "timestamp": "2025-09-23T20:56:37.845Z"
+    },
+    {
+      "category": "AUTH",
+      "test": "Registro de Usuário",
+      "status": "PASS",
+      "details": "Usuário registrado com sucesso",
+      "timestamp": "2025-09-23T20:56:38.028Z"
+    }
+  ]
+}

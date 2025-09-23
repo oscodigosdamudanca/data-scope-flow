@@ -1,0 +1,244 @@
+{
+  "total": 26,
+  "passed": 14,
+  "failed": 2,
+  "skipped": 0,
+  "successRate": 53.84615384615385,
+  "duration": 4952,
+  "results": [
+    {
+      "timestamp": "2025-09-23T20:52:23.552Z",
+      "category": "CONECTIVIDADE",
+      "test": "Conexão Básica",
+      "status": "INFO",
+      "message": "Testando conexão com Supabase...",
+      "details": null,
+      "duration": 78
+    },
+    {
+      "timestamp": "2025-09-23T20:52:23.882Z",
+      "category": "CONECTIVIDADE",
+      "test": "Conexão Básica",
+      "status": "PASS",
+      "message": "Conexão estabelecida com sucesso",
+      "details": null,
+      "duration": 407
+    },
+    {
+      "timestamp": "2025-09-23T20:52:23.883Z",
+      "category": "ESTRUTURA",
+      "test": "Verificação de Tabelas",
+      "status": "INFO",
+      "message": "Verificando estrutura do banco...",
+      "details": null,
+      "duration": 408
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.060Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela profiles",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 585
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.128Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela companies",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 653
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.197Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela company_memberships",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 722
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.270Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela user_roles",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 795
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.335Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela leads",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 860
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.411Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela surveys",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 936
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.478Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela survey_questions",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 1003
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.538Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela survey_responses",
+      "status": "PASS",
+      "message": "Tabela acessível",
+      "details": null,
+      "duration": 1063
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.623Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela notifications",
+      "status": "FAIL",
+      "message": "Erro ao acessar tabela",
+      "details": "Could not find the table 'public.notifications' in the schema cache",
+      "duration": 1148
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.678Z",
+      "category": "ESTRUTURA",
+      "test": "Tabela notification_settings",
+      "status": "FAIL",
+      "message": "Erro ao acessar tabela",
+      "details": "Could not find the table 'public.notification_settings' in the schema cache",
+      "duration": 1203
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.678Z",
+      "category": "ESTRUTURA",
+      "test": "Resumo Estrutura",
+      "status": "INFO",
+      "message": "8/10 tabelas acessíveis (80.0%)",
+      "details": null,
+      "duration": 1203
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.678Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "message": "Iniciando testes de autenticação...",
+      "details": null,
+      "duration": 1203
+    },
+    {
+      "timestamp": "2025-09-23T20:52:24.679Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Registro",
+      "status": "INFO",
+      "message": "Testando registro de usuário...",
+      "details": null,
+      "duration": 1204
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.156Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Registro",
+      "status": "PASS",
+      "message": "Registro realizado com sucesso",
+      "details": null,
+      "duration": 1681
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.156Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Login",
+      "status": "INFO",
+      "message": "Testando login de usuário...",
+      "details": null,
+      "duration": 1681
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.371Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Login",
+      "status": "PASS",
+      "message": "Login realizado com sucesso",
+      "details": null,
+      "duration": 1896
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.371Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Sessão",
+      "status": "INFO",
+      "message": "Testando gerenciamento de sessão...",
+      "details": null,
+      "duration": 1896
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.371Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Sessão",
+      "status": "PASS",
+      "message": "Sessão obtida com sucesso",
+      "details": null,
+      "duration": 1896
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.371Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Logout",
+      "status": "INFO",
+      "message": "Testando logout de usuário...",
+      "details": null,
+      "duration": 1896
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.441Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Logout",
+      "status": "PASS",
+      "message": "Logout realizado com sucesso",
+      "details": null,
+      "duration": 1966
+    },
+    {
+      "timestamp": "2025-09-23T20:52:25.442Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Reset Senha",
+      "status": "INFO",
+      "message": "Testando reset de senha...",
+      "details": null,
+      "duration": 1967
+    },
+    {
+      "timestamp": "2025-09-23T20:52:28.425Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Reset Senha",
+      "status": "PASS",
+      "message": "Reset de senha iniciado com sucesso",
+      "details": null,
+      "duration": 4950
+    },
+    {
+      "timestamp": "2025-09-23T20:52:28.426Z",
+      "category": "AUTENTICAÇÃO",
+      "test": "Resumo",
+      "status": "INFO",
+      "message": "5/5 testes de autenticação aprovados",
+      "details": null,
+      "duration": 4951
+    }
+  ]
+}

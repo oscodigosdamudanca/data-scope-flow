@@ -1,0 +1,254 @@
+{
+  "timestamp": "2025-09-23T20:54:45.728Z",
+  "summary": {
+    "total": 34,
+    "passed": 18,
+    "failed": 0,
+    "successRate": "52.94",
+    "duration": "5.18"
+  },
+  "results": [
+    {
+      "category": "CONECTIVIDADE",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Iniciando testes de conectividade...",
+      "timestamp": "2025-09-23T20:54:40.548Z"
+    },
+    {
+      "category": "CONECTIVIDADE",
+      "test": "Conexão Básica",
+      "status": "PASS",
+      "details": "Conexão estabelecida com sucesso",
+      "timestamp": "2025-09-23T20:54:41.275Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Verificando estrutura das tabelas...",
+      "timestamp": "2025-09-23T20:54:41.276Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela profiles",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.451Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela companies",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.565Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela company_memberships",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.655Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela user_roles",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.728Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela leads",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.809Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela surveys",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.909Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela survey_questions",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:41.987Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Tabela survey_responses",
+      "status": "PASS",
+      "details": "Tabela acessível",
+      "timestamp": "2025-09-23T20:54:42.069Z"
+    },
+    {
+      "category": "ESTRUTURA",
+      "test": "Resumo Estrutura",
+      "status": "INFO",
+      "details": "8/8 tabelas acessíveis (100.0%)",
+      "timestamp": "2025-09-23T20:54:42.069Z"
+    },
+    {
+      "category": "CRUD",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Testando operações CRUD...",
+      "timestamp": "2025-09-23T20:54:42.069Z"
+    },
+    {
+      "category": "CRUD",
+      "test": "Leitura Profiles",
+      "status": "PASS",
+      "details": "0 registros lidos",
+      "timestamp": "2025-09-23T20:54:42.130Z"
+    },
+    {
+      "category": "CRUD",
+      "test": "Leitura companies",
+      "status": "PASS",
+      "details": "0 registros lidos",
+      "timestamp": "2025-09-23T20:54:42.199Z"
+    },
+    {
+      "category": "CRUD",
+      "test": "Leitura leads",
+      "status": "PASS",
+      "details": "0 registros lidos",
+      "timestamp": "2025-09-23T20:54:42.261Z"
+    },
+    {
+      "category": "CRUD",
+      "test": "Leitura surveys",
+      "status": "PASS",
+      "details": "0 registros lidos",
+      "timestamp": "2025-09-23T20:54:42.333Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Iniciando testes de autenticação...",
+      "timestamp": "2025-09-23T20:54:42.334Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Registro",
+      "status": "INFO",
+      "details": "Testando registro de usuário...",
+      "timestamp": "2025-09-23T20:54:42.334Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Registro",
+      "status": "PASS",
+      "details": "Registro realizado com sucesso",
+      "timestamp": "2025-09-23T20:54:42.740Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Login",
+      "status": "INFO",
+      "details": "Testando login de usuário...",
+      "timestamp": "2025-09-23T20:54:42.740Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Login",
+      "status": "PASS",
+      "details": "Login realizado com sucesso",
+      "timestamp": "2025-09-23T20:54:42.921Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Sessão",
+      "status": "INFO",
+      "details": "Testando gerenciamento de sessão...",
+      "timestamp": "2025-09-23T20:54:42.922Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Sessão",
+      "status": "PASS",
+      "details": "Sessão obtida com sucesso",
+      "timestamp": "2025-09-23T20:54:42.922Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Logout",
+      "status": "INFO",
+      "details": "Testando logout de usuário...",
+      "timestamp": "2025-09-23T20:54:42.922Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Logout",
+      "status": "PASS",
+      "details": "Logout realizado com sucesso",
+      "timestamp": "2025-09-23T20:54:43.324Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Reset Senha",
+      "status": "INFO",
+      "details": "Testando reset de senha...",
+      "timestamp": "2025-09-23T20:54:43.325Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Reset Senha",
+      "status": "PASS",
+      "details": "Reset de senha iniciado com sucesso",
+      "timestamp": "2025-09-23T20:54:45.449Z"
+    },
+    {
+      "category": "AUTENTICAÇÃO",
+      "test": "Resumo",
+      "status": "INFO",
+      "details": "5/5 testes de autenticação aprovados",
+      "timestamp": "2025-09-23T20:54:45.450Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Início dos Testes",
+      "status": "INFO",
+      "details": "Verificando políticas RLS...",
+      "timestamp": "2025-09-23T20:54:45.450Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política profiles",
+      "status": "INFO",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:54:45.508Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política companies",
+      "status": "INFO",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:54:45.598Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política leads",
+      "status": "INFO",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:54:45.666Z"
+    },
+    {
+      "category": "RLS",
+      "test": "Política surveys",
+      "status": "INFO",
+      "details": "Acesso permitido - RLS pode estar desabilitado",
+      "timestamp": "2025-09-23T20:54:45.727Z"
+    }
+  ],
+  "configuration": {
+    "supabaseUrl": "https://bhjreswsrfvnzyvmxtwj.supabase.co",
+    "keyPrefix": "eyJhbGciOiJIUzI1NiIs..."
+  }
+}
