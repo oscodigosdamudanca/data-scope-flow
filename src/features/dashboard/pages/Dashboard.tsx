@@ -34,7 +34,7 @@ const Index = () => {
         <div className="space-y-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground">
-              Bem-vindo ao DataScope, <span className="text-orange-600">{user?.user_metadata?.full_name || 'Usuário'}!</span>
+              Bem-vindo ao DataScope, <span className="text-orange-600">{user?.user_metadata?.full_name || 'Nome não disponível'}!</span>
             </h1>
             <p className="text-muted-foreground">
               Hub de inteligência de mercado para eventos corporativos - Sua central de leads e insights.

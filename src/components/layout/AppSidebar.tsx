@@ -307,10 +307,10 @@ const AppSidebar = () => {
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {user?.user_metadata?.display_name || user?.user_metadata?.full_name || 'Usuário'}
+                      {user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.full_name || 'Nome não disponível'}
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {user?.user_metadata?.full_name || 'Usuário não identificado'}
+                      {user?.user_metadata?.full_name || 'Nome não disponível'}
                     </span>
                   </div>
                 </SidebarMenuButton>

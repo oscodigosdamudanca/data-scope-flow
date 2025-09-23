@@ -121,7 +121,7 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
       // Integração com Supabase será implementada aqui
       const leadData = {
         ...formData,
-        user_name: user?.user_metadata?.full_name || 'Usuário não identificado',
+        user_name: user?.user_metadata?.full_name || 'Nome não disponível',
         company_id: companyId,
         source_type: 'turbo_form',
         created_at: new Date().toISOString()
@@ -268,7 +268,7 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
         {/* Exibindo o nome do usuário logado */}
         <div className="text-center text-sm text-muted-foreground mt-2">
           Formulário preenchido por: <span className="font-medium text-orange-600">
-            {user?.user_metadata?.full_name || 'Usuário não identificado'}
+            {user?.user_metadata?.full_name || 'Nome não disponível'}
           </span>
         </div>
       </CardHeader>

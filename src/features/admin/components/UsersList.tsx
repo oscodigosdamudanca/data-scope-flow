@@ -334,7 +334,7 @@ export function UsersList({ onCreateUser, onEditUser, onManagePermissions, onDel
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleDeleteUser(user.id, user.display_name || user.email || 'Usuário')}
+                              onClick={() => handleDeleteUser(user.id, user.display_name || user.email || 'Nome não disponível')}
                               className="text-red-600 hover:text-red-700"
                               title="Excluir usuário"
                             >

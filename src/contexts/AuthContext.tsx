@@ -204,7 +204,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const displayName = user.user_metadata?.display_name || 
                           user.user_metadata?.full_name || 
                           user.email?.split('@')[0] || 
-                          'Usuário';
+                          user.user_metadata?.full_name || 'Usuário não identificado';
 
         const { error: insertError } = await supabase
           .from('profiles')
