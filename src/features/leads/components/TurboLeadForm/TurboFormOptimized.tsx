@@ -353,7 +353,11 @@ ${customQuestionsData.map((q, i) => `${i + 1}. ${q.question} (${q.category}, pri
                       Endereço (Opcional)
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Digite seu endereço completo" {...field} />
+                      <Textarea 
+                        placeholder="Digite seu endereço completo (rua, número, bairro, cidade, estado, CEP)"
+                        className="min-h-[100px] resize-none"
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

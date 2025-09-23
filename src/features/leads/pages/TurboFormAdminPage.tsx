@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Settings, Save, Plus, Trash2, Edit, Eye, Copy } from 'lucide-react';
+import { ArrowLeft, Settings, Save, Plus, Trash2, Edit, Eye, Copy, GripVertical } from 'lucide-react';
 import PageTitle from '@/components/PageTitle';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useCompany } from '@/contexts/CompanyContext';
@@ -17,7 +18,7 @@ import { useCompany } from '@/contexts/CompanyContext';
 interface FormQuestion {
   id: string;
   question: string;
-  type: 'text' | 'email' | 'tel' | 'radio' | 'checkbox' | 'textarea';
+  type: 'text' | 'email' | 'tel' | 'radio' | 'checkbox' | 'textarea' | 'address';
   required: boolean;
   options?: string[];
   order: number;
@@ -152,7 +153,10 @@ const TurboFormAdminPage: React.FC = () => {
   const handleRemoveQuestion = (questionId: string) => {
     setFormConfig(prev => ({
       ...prev,
-      questions: prev.questions.filter(q => q.id !== questionId)
+      questions: prev.questions.filter(q => q.id !== questionId).map((q, index) => ({
+        ...q,
+        order: index + 1
+      }))
     }));
   };
 
@@ -163,6 +167,32 @@ const TurboFormAdminPage: React.FC = () => {
         q.id === questionId ? { ...q, ...updates } : q
       )
     }));
+  };
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const items = Array.from(formConfig.questions);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Atualizar a ordem das perguntas
+    const updatedQuestions = items.map((question, index) => ({
+      ...question,
+      order: index + 1
+    }));
+
+    setFormConfig(prev => ({
+      ...prev,
+      questions: updatedQuestions
+    }));
+
+    toast({
+      title: 'Ordem atualizada!',
+      description: 'A ordem das perguntas foi alterada com sucesso.',
+    });
   };
 
   const handleCopyShareLink = () => {
@@ -331,54 +361,90 @@ const TurboFormAdminPage: React.FC = () => {
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
-              {formConfig.questions.map((question, index) => (
-                <div key={question.id} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline">Pergunta {index + 1}</Badge>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveQuestion(question.id)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Pergunta</Label>
-                      <Input
-                        value={question.question}
-                        onChange={(e) => handleUpdateQuestion(question.id, { question: e.target.value })}
-                      />
+              <div className="text-sm text-muted-foreground mb-4">
+                Arraste e solte as perguntas para reordená-las
+              </div>
+              
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="questions">
+                  {(provided) => (
+                    <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+                      {formConfig.questions
+                        .sort((a, b) => a.order - b.order)
+                        .map((question, index) => (
+                        <Draggable key={question.id} draggableId={question.id} index={index}>
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`border rounded-lg p-4 space-y-3 transition-all ${
+                                snapshot.isDragging 
+                                  ? 'shadow-lg bg-background/95 border-primary' 
+                                  : 'hover:shadow-md'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    className="cursor-grab hover:cursor-grabbing p-1 rounded hover:bg-muted"
+                                  >
+                                    <GripVertical className="h-4 w-4 text-muted-foreground" />
+                                  </div>
+                                  <Badge variant="outline">Pergunta {question.order}</Badge>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemoveQuestion(question.id)}
+                                  className="text-destructive hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                              
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label>Pergunta</Label>
+                                  <Input
+                                    value={question.question}
+                                    onChange={(e) => handleUpdateQuestion(question.id, { question: e.target.value })}
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Tipo</Label>
+                                  <select
+                                    className="w-full p-2 border rounded-md"
+                                    value={question.type}
+                                    onChange={(e) => handleUpdateQuestion(question.id, { type: e.target.value as FormQuestion['type'] })}
+                                  >
+                                    <option value="text">Texto</option>
+                                    <option value="email">E-mail</option>
+                                    <option value="tel">Telefone</option>
+                                    <option value="textarea">Texto longo</option>
+                                    <option value="address">Endereço</option>
+                                    <option value="radio">Múltipla escolha</option>
+                                    <option value="checkbox">Checkbox</option>
+                                  </select>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  checked={question.required}
+                                  onCheckedChange={(checked) => handleUpdateQuestion(question.id, { required: checked })}
+                                />
+                                <Label>Campo obrigatório</Label>
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
                     </div>
-                    <div className="space-y-2">
-                      <Label>Tipo</Label>
-                      <select
-                        className="w-full p-2 border rounded-md"
-                        value={question.type}
-                        onChange={(e) => handleUpdateQuestion(question.id, { type: e.target.value as FormQuestion['type'] })}
-                      >
-                        <option value="text">Texto</option>
-                        <option value="email">E-mail</option>
-                        <option value="tel">Telefone</option>
-                        <option value="textarea">Texto longo</option>
-                        <option value="radio">Múltipla escolha</option>
-                        <option value="checkbox">Checkbox</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={question.required}
-                      onCheckedChange={(checked) => handleUpdateQuestion(question.id, { required: checked })}
-                    />
-                    <Label>Campo obrigatório</Label>
-                  </div>
-                </div>
-              ))}
+                  )}
+                </Droppable>
+              </DragDropContext>
             </CardContent>
           </Card>
         </TabsContent>

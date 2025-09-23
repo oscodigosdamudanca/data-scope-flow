@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, Loader2, ArrowRight } from 'lucide-react';
 
@@ -210,6 +211,28 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
           onChange={(e) => handleInputChange(currentFormStep.fieldName, e.target.value)}
           placeholder={`Digite seu ${currentFormStep.fieldName === 'name' ? 'nome completo' : 
             currentFormStep.fieldName === 'email' ? 'e-mail profissional' : 'telefone com DDD'}`}
+        />
+      );
+    }
+
+    if (currentFormStep.type === 'address') {
+      return (
+        <Textarea
+          value={formData[currentFormStep.fieldName as keyof typeof formData] || ''}
+          onChange={(e) => handleInputChange(currentFormStep.fieldName, e.target.value)}
+          placeholder="Digite seu endereço completo (rua, número, bairro, cidade, estado, CEP)"
+          className="min-h-[100px] resize-none"
+        />
+      );
+    }
+
+    if (currentFormStep.type === 'textarea') {
+      return (
+        <Textarea
+          value={formData[currentFormStep.fieldName as keyof typeof formData] || ''}
+          onChange={(e) => handleInputChange(currentFormStep.fieldName, e.target.value)}
+          placeholder="Digite sua resposta"
+          className="min-h-[100px] resize-none"
         />
       );
     }
