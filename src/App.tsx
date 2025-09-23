@@ -21,7 +21,6 @@ import SurveysPage from "./features/surveys/pages/SurveysPage";
 import AdminSettings from "./features/admin/pages/AdminSettings";
 import FairFeedback from "@/pages/FairFeedback";
 import CustomSurveys from "@/pages/CustomSurveys";
-import TurboFormConfigPage from "./features/admin/pages/TurboFormConfigPage";
 import Raffles from "@/pages/Raffles";
 import DeveloperDashboard from "./features/developer/pages/DeveloperDashboard";
 import QuestionTypesPage from "./features/developer/pages/QuestionTypesPage";
@@ -29,7 +28,8 @@ import PermissionsPage from "./features/developer/pages/PermissionsPage";
 import SystemLogsPage from "./features/developer/pages/SystemLogsPage";
 import TurboFormPage from "@/features/leads/pages/TurboFormPage";
 import TurboFormDirectAccessPage from "@/features/leads/pages/TurboFormDirectAccessPage";
-// import TurboFormAdminPage from "@/features/leads/pages/TurboFormAdminPage";
+import TurboFormAdminPage from "@/features/leads/pages/TurboFormAdminPage";
+import TurboFormConfigPage from "@/features/leads/pages/TurboFormConfigPage";
 import TurboFormPublicPage from "@/features/leads/pages/TurboFormPublicPage";
 import LeadCapturePage from "./features/leads/pages/LeadCapturePage";
 import PublicLeadCapturePage from "./features/leads/pages/PublicLeadCapturePage";
@@ -78,7 +78,8 @@ const App = () => (
               <Route path="/leads/capture" element={<LeadCapturePage />} />
               <Route path="/leads/turbo" element={<TurboFormPage />} />
           <Route path="/leads/turbo/direct" element={<TurboFormDirectAccessPage />} />
-          {/* <Route path="/leads/turbo/admin" element={<TurboFormAdminPage />} /> */}
+          <Route path="/leads/turbo/admin" element={<TurboFormAdminPage />} />
+          <Route path="/leads/turbo/config" element={<TurboFormConfigPage />} />
           <Route path="/leads/turbo/public/:id" element={<TurboFormPublicPage />} />
               <Route path="/leads/qr-codes" element={<QRCodeLeadsPage />} />
               <Route path="/leads/tags" element={<TagsManagerPage />} />

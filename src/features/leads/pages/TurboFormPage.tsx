@@ -90,6 +90,10 @@ export const TurboFormPage: React.FC = () => {
     navigate('/leads/turbo/admin');
   };
 
+  const handleGoToConfig = () => {
+    navigate('/leads/turbo/config');
+  };
+
   const handleCopyShareLink = () => {
     if (shareUrl) {
       navigator.clipboard.writeText(shareUrl);
@@ -124,6 +128,10 @@ export const TurboFormPage: React.FC = () => {
           <Button onClick={handleGoToAdmin}>
             <Settings className="h-4 w-4 mr-2" />
             Administrar
+          </Button>
+          <Button variant="outline" onClick={handleGoToConfig}>
+            <Settings className="h-4 w-4 mr-2" />
+            Configurar Formulário
           </Button>
         </div>
       </div>
@@ -166,10 +174,17 @@ export const TurboFormPage: React.FC = () => {
             </Button>
             <Button 
               variant="outline" 
-              onClick={handleGoToAdmin}
+              onClick={handleGoToConfig}
               className="px-6 py-3 rounded-lg font-medium border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-200"
             >
               Configurar Formulário
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleGoToAdmin}
+              className="px-6 py-3 rounded-lg font-medium border-2 border-green-600 text-green-600 hover:bg-green-50 transition-colors duration-200"
+            >
+              Administrar
             </Button>
           </div>
           
