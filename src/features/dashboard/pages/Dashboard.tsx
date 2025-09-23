@@ -123,6 +123,39 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Formulário Turbo Card - Conforme Imagem 1 */}
+          <div className="mt-6">
+            <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-600 rounded-lg">
+                      <Zap className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg font-semibold text-orange-900">Formulário Turbo</CardTitle>
+                      <p className="text-sm text-orange-700">Acesso Rápido</p>
+                    </div>
+                  </div>
+                  <Badge variant="default" className="bg-orange-600 hover:bg-orange-700 text-white">
+                    Disponível
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-sm text-orange-800 mb-4">
+                  Formulário otimizado para captação rápida e eficiente de leads durante eventos corporativos.
+                </p>
+                <Link to="/leads/turbo-form">
+                  <Button className="bg-orange-600 hover:bg-orange-700 text-white font-medium">
+                    <Zap className="h-4 w-4 mr-2" />
+                    Acessar Agora
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </MainLayout>

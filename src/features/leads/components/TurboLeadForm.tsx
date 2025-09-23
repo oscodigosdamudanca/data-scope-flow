@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle, Loader2, ArrowRight } from 'lucide-react';
 
 interface TurboLeadFormProps {
@@ -25,18 +26,12 @@ const FORM_STEPS = [
   },
   {
     id: 'step-2',
-    question: 'Qual é o seu e-mail profissional?',
-    type: 'email',
-    fieldName: 'email'
-  },
-  {
-    id: 'step-3',
     question: 'Qual é o seu telefone de contato?',
     type: 'tel',
     fieldName: 'phone'
   },
   {
-    id: 'step-4',
+    id: 'step-3',
     question: 'Qual área mais te interessa?',
     type: 'radio',
     fieldName: 'interest',
@@ -49,7 +44,7 @@ const FORM_STEPS = [
     ]
   },
   {
-    id: 'step-5',
+    id: 'step-4',
     question: 'Qual é o seu orçamento aproximado?',
     type: 'radio',
     fieldName: 'budget',
@@ -70,12 +65,12 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
   className = ''
 }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
     interest: '',
     budget: '',
@@ -126,6 +121,7 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
       // Integração com Supabase será implementada aqui
       const leadData = {
         ...formData,
+        user_name: user?.user_metadata?.full_name || user?.email || 'Usuário não identificado',
         company_id: companyId,
         source_type: 'turbo_form',
         created_at: new Date().toISOString()
@@ -155,12 +151,11 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [formData, companyId, toast, onSuccess]);
+  }, [formData, companyId, user, toast, onSuccess]);
 
   const resetForm = useCallback(() => {
     setFormData({
       name: '',
-      email: '',
       phone: '',
       interest: '',
       budget: '',
@@ -203,14 +198,13 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
   const isFirstStep = currentStep === 0;
 
   const renderFormStepContent = () => {
-    if (currentFormStep.type === 'text' || currentFormStep.type === 'email' || currentFormStep.type === 'tel') {
+    if (currentFormStep.type === 'text' || currentFormStep.type === 'tel') {
       return (
         <Input
           type={currentFormStep.type}
           value={formData[currentFormStep.fieldName as keyof typeof formData] || ''}
           onChange={(e) => handleInputChange(currentFormStep.fieldName, e.target.value)}
-          placeholder={`Digite seu ${currentFormStep.fieldName === 'name' ? 'nome completo' : 
-            currentFormStep.fieldName === 'email' ? 'e-mail profissional' : 'telefone com DDD'}`}
+          placeholder={`Digite seu ${currentFormStep.fieldName === 'name' ? 'nome completo' : 'telefone com DDD'}`}
         />
       );
     }
@@ -270,6 +264,12 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentStep + 1) / (FORM_STEPS.length + 1)) * 100}%` }}
           />
+        </div>
+        {/* Exibindo o nome do usuário logado */}
+        <div className="text-center text-sm text-muted-foreground mt-2">
+          Formulário preenchido por: <span className="font-medium text-orange-600">
+            {user?.user_metadata?.full_name || user?.email || 'Usuário não identificado'}
+          </span>
         </div>
       </CardHeader>
       <CardContent>
