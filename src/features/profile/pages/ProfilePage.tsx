@@ -348,7 +348,8 @@ const ProfilePage: React.FC = () => {
     
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      // Organizar arquivos por pasta do usuário para RLS
+      const fileName = `${user.id}/${user.id}-${Date.now()}.${fileExt}`;
       
       // Verificar se o bucket existe antes de tentar o upload
       const { data: buckets, error: listError } = await supabase.storage.listBuckets();
@@ -359,17 +360,9 @@ const ProfilePage: React.FC = () => {
       
       const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
       
-      // Se o bucket não existir, criar primeiro
+      // Se o bucket não existir, mostrar erro específico
       if (!avatarBucketExists) {
-        const { error: bucketError } = await supabase.storage.createBucket('avatars', {
-          public: true,
-          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-          fileSizeLimit: 5242880 // 5MB
-        });
-        
-        if (bucketError) {
-          throw new Error(`Erro ao criar bucket de avatares: ${bucketError.message}`);
-        }
+        throw new Error('Bucket de avatares não configurado. Entre em contato com o suporte.');
       }
       
       // Fazer upload do arquivo
@@ -377,11 +370,22 @@ const ProfilePage: React.FC = () => {
         .from('avatars')
         .upload(fileName, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: true // Permitir substituir arquivo existente
         });
       
       if (uploadError) {
-        throw new Error(`Erro no upload: ${uploadError.message}`);
+        console.error('Erro detalhado do upload:', uploadError);
+        
+        // Tratar erros específicos
+        if (uploadError.message.includes('policy')) {
+          throw new Error('Erro de permissão. Verifique se você está logado corretamente.');
+        } else if (uploadError.message.includes('size')) {
+          throw new Error('Arquivo muito grande. Máximo permitido: 5MB.');
+        } else if (uploadError.message.includes('type')) {
+          throw new Error('Tipo de arquivo não permitido. Use apenas imagens.');
+        } else {
+          throw new Error(`Erro no upload: ${uploadError.message}`);
+        }
       }
       
       if (!uploadData) {
