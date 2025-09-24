@@ -419,3 +419,12 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof (Database["public"]["Enums"])
   ? (Database["public"]["Enums"])[PublicEnumNameOrOptions]
   : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      app_role: ["admin", "user", "viewer"] as const,
+      company_role: ["admin", "member", "viewer"] as const,
+    },
+  },
+} as const
