@@ -41,6 +41,7 @@ import QRCodeLeadsPage from "./features/leads/pages/QRCodeLeadsPage";
 import PrivacyPolicy from "@/features/misc/pages/PrivacyPolicy";
 import { AnalyticsRoutes } from "@/features/analytics";
 import ReportsPage from "@/features/reports/pages/ReportsPage";
+import ProfilePage from "@/features/profile/pages/ProfilePage";
 
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']} />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
 
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />}>
