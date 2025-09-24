@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useAnalytics } from '@/features/analytics/hooks/useAnalytics';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSavedReports } from './useSavedReports';
 
 interface DateRange {
   from: Date;
@@ -80,11 +81,17 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [savedReports, setSavedReports] = useState<any[]>([]);
   const [filters, setFiltersState] = useState<ReportFilters>({
     ...DEFAULT_FILTERS,
     ...initialFilters
   });
+
+  // Usar o hook useSavedReports para gerenciar relatórios salvos
+  const { 
+    reports: savedReports, 
+    createReport, 
+    loading: savedReportsLoading 
+  } = useSavedReports();
 
   const { data: analyticsData, loading: analyticsLoading } = useAnalytics();
 
@@ -405,23 +412,20 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
     }
   };
 
-  // Função para salvar relatório
-  const saveReport = async (name: string, config: any) => {
+  // Função para salvar relatório usando o hook useSavedReports
+  const saveReport = async (name: string, config: any): Promise<void> => {
     try {
-      const report = {
-        id: `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      await createReport({
         name,
+        report_type: 'analytics', // Pode ser determinado dinamicamente
         config,
-        created_at: new Date().toISOString(),
-        filters: filters,
-        data: data
-      };
-      
-      setSavedReports(prev => [...prev, report]);
-      
-      // Por enquanto, salvar apenas no localStorage até a tabela saved_reports ser criada
-      localStorage.setItem('savedReports', JSON.stringify([...savedReports, report]));
-      
+        filters,
+        data: data?.rawData || [],
+        is_public: false,
+        is_favorite: false,
+        tags: [],
+        description: `Relatório gerado em ${new Date().toLocaleDateString()}`
+      });
     } catch (err) {
       console.error('Erro ao salvar relatório:', err);
       throw err;
@@ -430,21 +434,10 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
 
   // Função para obter relatórios salvos
   const getSavedReports = (): any[] => {
-    try {
-      // Por enquanto, usar apenas localStorage até a tabela saved_reports ser criada
-      const saved = localStorage.getItem('savedReports');
-      return saved ? JSON.parse(saved) : [];
-    } catch (err) {
-      console.error('Erro ao carregar relatórios salvos:', err);
-      return [];
-    }
+    return savedReports || [];
   };
 
-  // Carregar relatórios salvos na inicialização
-  useEffect(() => {
-    const reports = getSavedReports();
-    setSavedReports(reports);
-  }, []);
+
 
   // Efeito para atualizar dados quando filtros ou analyticsData mudam
   useEffect(() => {
