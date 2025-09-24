@@ -44,7 +44,7 @@ export const CreateLeadForm: React.FC<CreateLeadFormProps> = ({
     company: '',
     position: '',
     interests: [] as string[],
-    source: 'manual' as 'manual',
+    source: 'manual' as const,
     source_type: '',
     notes: '',
     lgpd_consent: false
