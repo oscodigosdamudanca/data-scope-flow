@@ -350,8 +350,30 @@ const ProfilePage: React.FC = () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       
-      // Tentar fazer upload do arquivo
-      const { error: uploadError } = await supabase.storage
+      // Verificar se o bucket existe antes de tentar o upload
+      const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+      
+      if (listError) {
+        console.warn('Erro ao listar buckets:', listError);
+      }
+      
+      const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
+      
+      // Se o bucket não existir, criar primeiro
+      if (!avatarBucketExists) {
+        const { error: bucketError } = await supabase.storage.createBucket('avatars', {
+          public: true,
+          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+          fileSizeLimit: 5242880 // 5MB
+        });
+        
+        if (bucketError) {
+          throw new Error(`Erro ao criar bucket de avatares: ${bucketError.message}`);
+        }
+      }
+      
+      // Fazer upload do arquivo
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, {
           cacheControl: '3600',
@@ -359,32 +381,11 @@ const ProfilePage: React.FC = () => {
         });
       
       if (uploadError) {
-        // Se o bucket não existir, tentar criá-lo
-        if (uploadError.message.includes('Bucket not found')) {
-          const { error: bucketError } = await supabase.storage.createBucket('avatars', {
-            public: true,
-            allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-            fileSizeLimit: 5242880 // 5MB
-          });
-          
-          if (bucketError) {
-            throw new Error(`Erro ao criar bucket: ${bucketError.message}`);
-          }
-          
-          // Tentar upload novamente após criar o bucket
-          const { error: retryUploadError } = await supabase.storage
-            .from('avatars')
-            .upload(fileName, file, {
-              cacheControl: '3600',
-              upsert: false
-            });
-          
-          if (retryUploadError) {
-            throw retryUploadError;
-          }
-        } else {
-          throw uploadError;
-        }
+        throw new Error(`Erro no upload: ${uploadError.message}`);
+      }
+      
+      if (!uploadData) {
+        throw new Error('Upload não retornou dados válidos');
       }
       
       // Obter URL pública da imagem
@@ -392,18 +393,54 @@ const ProfilePage: React.FC = () => {
         .from('avatars')
         .getPublicUrl(fileName);
       
-      setProfileImage(publicUrl);
+      if (!publicUrl) {
+        throw new Error('Não foi possível obter URL pública da imagem');
+      }
+      
+      // Verificar se o perfil existe antes de fazer upsert
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+      
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.warn('Erro ao verificar perfil existente:', checkError);
+      }
+      
+      // Preparar dados para atualização
+      const profileUpdateData = {
+        id: user.id,
+        avatar_url: publicUrl,
+        updated_at: new Date().toISOString()
+      };
+      
+      // Se o perfil não existe, incluir dados básicos
+      if (!existingProfile) {
+        profileUpdateData.display_name = profileData.display_name || user.user_metadata?.display_name || user.user_metadata?.full_name || '';
+        profileUpdateData.email = profileData.email || user.email || '';
+        profileUpdateData.phone = profileData.phone || user.user_metadata?.phone || '';
+        profileUpdateData.created_at = new Date().toISOString();
+      }
       
       // Atualizar no banco de dados
       const { error: updateError } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          avatar_url: publicUrl,
-          updated_at: new Date().toISOString()
+        .upsert(profileUpdateData, {
+          onConflict: 'id'
         });
       
-      if (updateError) throw updateError;
+      if (updateError) {
+        throw new Error(`Erro ao atualizar perfil: ${updateError.message}`);
+      }
+      
+      // Atualizar estado local
+      setProfileImage(publicUrl);
+      
+      // Atualizar contexto de autenticação se disponível
+      if (updateProfile) {
+        await updateProfile({ avatar_url: publicUrl });
+      }
       
       toast({
         title: 'Foto atualizada',
@@ -419,6 +456,10 @@ const ProfilePage: React.FC = () => {
       });
     } finally {
       setUploadingImage(false);
+      // Limpar o input file para permitir re-upload do mesmo arquivo
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 
