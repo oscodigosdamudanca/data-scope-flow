@@ -20,18 +20,185 @@ if (!supabaseUrl || !supabaseKey) {
 // Cria cliente Supabase
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Função para gerar tipos básicos para tabelas conhecidas
+async function generateBasicTypes(tableNames) {
+  console.log('Gerando tipos básicos para tabelas conhecidas...');
+  
+  let typesContent = `// Tipos gerados automaticamente a partir do banco de dados
+// Gerado em: ${new Date().toISOString()}
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+`;
+
+  // Adiciona definições básicas para cada tabela
+  for (const tableName of tableNames) {
+    typesContent += `      ${tableName}: {
+        Row: {
+          id: string
+          created_at: string
+          updated_at: string
+          [key: string]: any
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          [key: string]: any
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          updated_at?: string
+          [key: string]: any
+        }
+        Relationships: []
+      }
+`;
+  }
+
+  typesContent += `    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      app_role: "admin" | "user" | "viewer"
+      company_role: "admin" | "member" | "viewer"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"])
+  ? (Database["public"]["Tables"])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"])[TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"])
+  ? (Database["public"]["Tables"])[PublicTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"])[TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"])
+  ? (Database["public"]["Tables"])[PublicTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof (Database["public"]["Enums"])
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicEnumNameOrOptions["schema"]]["Enums"])
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicEnumNameOrOptions["schema"]]["Enums"])[EnumName]
+  : PublicEnumNameOrOptions extends keyof (Database["public"]["Enums"])
+  ? (Database["public"]["Enums"])[PublicEnumNameOrOptions]
+  : never
+`;
+
+  // Salva o arquivo
+  const outputPath = './src/integrations/supabase/types.ts';
+  fs.writeFileSync(outputPath, typesContent);
+  console.log(`✅ Tipos básicos gerados com sucesso em: ${outputPath}`);
+}
+
 // Função para gerar tipos TypeScript
 async function generateTypes() {
   try {
     console.log('Gerando tipos TypeScript a partir do banco de dados...');
     
-    // Obtém metadados das tabelas
-    const { data: tables, error: tablesError } = await supabase
-      .from('pg_tables')
-      .select('*')
-      .eq('schemaname', 'public');
+    // Obtém metadados das tabelas usando information_schema
+    const { data: tables, error: tablesError } = await supabase.rpc('get_table_info');
     
-    if (tablesError) throw new Error(`Erro ao obter tabelas: ${tablesError.message}`);
+    if (tablesError) {
+      console.log('Tentando abordagem alternativa para obter informações das tabelas...');
+      
+      // Abordagem alternativa: usar SQL direto
+      const { data: tablesAlt, error: tablesAltError } = await supabase
+        .from('information_schema.tables')
+        .select('table_name')
+        .eq('table_schema', 'public')
+        .eq('table_type', 'BASE TABLE');
+      
+      if (tablesAltError) {
+        console.log('Usando lista de tabelas conhecidas...');
+        // Lista de tabelas conhecidas baseada na estrutura atual
+        const knownTables = [
+          'companies', 'leads', 'surveys', 'survey_questions', 'survey_responses',
+          'company_memberships', 'profiles', 'raffles', 'raffle_prizes', 
+          'raffle_participants', 'user_roles', 'notifications', 'notification_settings',
+          'bi_configs', 'follow_up_rules'
+        ];
+        
+        // Gera tipos básicos para as tabelas conhecidas
+        await generateBasicTypes(knownTables);
+        return;
+      }
+    }
     
     // Gera tipos TypeScript
     let typesContent = `// Tipos gerados automaticamente a partir do banco de dados
