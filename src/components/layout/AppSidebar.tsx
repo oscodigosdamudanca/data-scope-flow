@@ -61,7 +61,7 @@ const AppSidebar = () => {
       icon: Home,
       url: '/',
       isActive: location.pathname === '/',
-      roles: ['developer', 'organizer', 'admin', 'interviewer', 'fair_organizer']
+      roles: ['developer', 'organizer', 'admin', 'interviewer']
     },
   ];
 
@@ -100,14 +100,14 @@ const AppSidebar = () => {
       icon: MessageSquare,
       url: '/fair-feedback',
       isActive: location.pathname === '/fair-feedback',
-      roles: ['developer', 'fair_organizer']
+      roles: ['developer', 'organizer']
     },
     {
       title: 'Pesquisas Personalizadas',
       icon: FileText,
       url: '/custom-surveys',
       isActive: location.pathname === '/custom-surveys',
-      roles: ['developer', 'fair_organizer']
+      roles: ['developer', 'organizer']
     },
   ];
 

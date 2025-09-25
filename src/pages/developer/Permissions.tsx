@@ -12,34 +12,31 @@ const Permissions = () => {
       description: 'Gerenciamento de leads e prospects',
       permissions: {
         developer: ['create', 'read', 'update', 'delete', 'admin'],
-        organizer: ['create', 'read', 'update'],
-        admin: ['read', 'update'],
-        interviewer: ['create', 'read'],
-        fair_organizer: []
+        organizer: ['read'],
+        admin: ['create', 'read', 'update', 'delete'],
+        interviewer: []
       }
     },
     {
       id: 2,
-      name: 'Pesquisas',
-      description: 'Sistema de pesquisas e questionários',
-      permissions: {
-        developer: ['create', 'read', 'update', 'delete', 'admin'],
-        organizer: ['create', 'read', 'update'],
-        admin: ['read', 'update'],
-        interviewer: ['read'],
-        fair_organizer: []
-      }
-    },
-    {
-      id: 3,
       name: 'Sorteios',
       description: 'Gerenciamento de sorteios e premiações',
       permissions: {
         developer: ['create', 'read', 'update', 'delete', 'admin'],
-        organizer: ['create', 'read', 'update'],
-        admin: ['read', 'update'],
-        interviewer: [],
-        fair_organizer: []
+        organizer: ['read'],
+        admin: ['create', 'read', 'update', 'delete'],
+        interviewer: []
+      }
+    },
+    {
+      id: 3,
+      name: 'Analytics',
+      description: 'Sistema de análises e relatórios',
+      permissions: {
+        developer: ['create', 'read', 'update', 'delete', 'admin'],
+        organizer: ['read'],
+        admin: ['read'],
+        interviewer: []
       }
     },
     {
@@ -48,10 +45,9 @@ const Permissions = () => {
       description: 'Coleta de feedback sobre eventos',
       permissions: {
         developer: ['create', 'read', 'update', 'delete', 'admin'],
-        organizer: [],
+        organizer: ['create', 'read', 'update', 'delete'],
         admin: [],
-        interviewer: [],
-        fair_organizer: ['create', 'read', 'update', 'delete']
+        interviewer: []
       }
     },
     {
@@ -60,20 +56,18 @@ const Permissions = () => {
       description: 'Criação de pesquisas customizadas',
       permissions: {
         developer: ['create', 'read', 'update', 'delete', 'admin'],
-        organizer: [],
+        organizer: ['create', 'read', 'update', 'delete'],
         admin: [],
-        interviewer: [],
-        fair_organizer: ['create', 'read', 'update', 'delete']
+        interviewer: []
       }
     }
   ];
 
   const roleLabels = {
     developer: 'Desenvolvedor',
-    organizer: 'Organizador',
+    organizer: 'Organizador da Feira',
     admin: 'Administrador',
-    interviewer: 'Entrevistador',
-    fair_organizer: 'Organizador da Feira'
+    interviewer: 'Entrevistador'
   };
 
   const permissionLabels = {
