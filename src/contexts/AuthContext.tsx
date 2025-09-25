@@ -56,25 +56,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const ensureDefaultUserRole = async (userId: string) => {
     try {
-      // Tenta inserir o papel 'user' para novos usuários (válido no enum app_role)
+      // Tenta inserir o papel 'interviewer' para novos usuários (válido no enum app_role)
       const { error: insertError } = await supabase
         .from('profiles')
-        .update({ app_role: 'user' })
+        .update({ app_role: 'interviewer' })
         .eq('id', userId);
 
       if (insertError) {
         console.error('Error creating default role:', insertError);
         // Se falhar, define papel padrão localmente
-        setUserRole('user');
+        setUserRole('interviewer');
         return;
       }
 
       // Define o papel localmente
-      setUserRole('user');
+      setUserRole('interviewer');
     } catch (error) {
       console.error('Error in ensureDefaultUserRole:', error);
       // Define papel padrão em caso de erro
-      setUserRole('user');
+      setUserRole('interviewer');
     }
   };
 
