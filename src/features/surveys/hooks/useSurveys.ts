@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Survey, CreateSurveyData } from '@/types/surveys';
 
@@ -45,18 +45,22 @@ export function useSurveys() {
     }
   ];
 
-  const fetchSurveys = async () => {
+  const fetchSurveys = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      setLoading(true);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Simular delay da API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Dados mockados
       setSurveys(mockSurveys);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar pesquisas');
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const createSurvey = async (surveyData: CreateSurveyData): Promise<boolean> => {
     try {
@@ -115,7 +119,7 @@ export function useSurveys() {
 
   useEffect(() => {
     fetchSurveys();
-  }, []);
+  }, [fetchSurveys]);
 
   return {
     surveys,

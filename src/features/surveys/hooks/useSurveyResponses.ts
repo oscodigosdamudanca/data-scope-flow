@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { SurveyResponse, CreateSurveyResponseData } from '@/types/surveys';
 
@@ -36,27 +36,23 @@ export function useSurveyResponses(surveyId?: string) {
     }
   ];
 
-  const fetchResponses = async () => {
-    if (!surveyId) {
-      setResponses([]);
-      setLoading(false);
-      return;
-    }
-
+  const fetchResponses = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      setLoading(true);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 400));
+      // Simular delay da API
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Filter mock responses by surveyId
+      // Filtrar respostas por surveyId
       const filteredResponses = mockResponses.filter(r => r.survey_id === surveyId);
       setResponses(filteredResponses);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar respostas');
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [surveyId]);
 
   const createResponse = async (responseData: CreateSurveyResponseData): Promise<SurveyResponse | null> => {
     if (!surveyId) {
@@ -112,7 +108,7 @@ export function useSurveyResponses(surveyId?: string) {
 
   useEffect(() => {
     fetchResponses();
-  }, [surveyId]);
+  }, [surveyId, fetchResponses]);
 
   const deleteResponse = async (id: string): Promise<boolean> => {
     try {

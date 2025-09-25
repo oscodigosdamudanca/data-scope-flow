@@ -97,7 +97,7 @@ const TurboLeadForm: React.FC<TurboLeadFormProps> = ({
     } else {
       handleSubmitForm();
     }
-  }, [currentStep, formData, toast]);
+  }, [currentStep, formData, toast, handleSubmitForm]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 0) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { SurveyQuestion, CreateSurveyQuestionData } from '@/types/surveys';
 
 // Mock implementation since survey_questions table doesn't exist yet
@@ -31,27 +31,23 @@ export function useSurveyQuestions(surveyId?: string) {
     }
   ];
 
-  const fetchQuestions = async () => {
-    if (!surveyId) {
-      setQuestions([]);
-      setLoading(false);
-      return;
-    }
-
+  const fetchQuestions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      setLoading(true);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Simular delay da API
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Filter mock questions by surveyId
+      // Filtrar perguntas por surveyId
       const filteredQuestions = mockQuestions.filter(q => q.survey_id === surveyId);
       setQuestions(filteredQuestions);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar perguntas');
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [surveyId]);
 
   const createQuestion = async (questionData: CreateSurveyQuestionData): Promise<SurveyQuestion | null> => {
     if (!surveyId) {
@@ -117,7 +113,7 @@ export function useSurveyQuestions(surveyId?: string) {
 
   useEffect(() => {
     fetchQuestions();
-  }, [surveyId]);
+  }, [surveyId, fetchQuestions]);
 
   return {
     questions,

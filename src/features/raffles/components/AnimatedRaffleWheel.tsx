@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -63,9 +63,9 @@ export function AnimatedRaffleWheel({ raffleId, onWinnersDrawn }: AnimatedRaffle
 
   useEffect(() => {
     loadRaffleData();
-  }, [raffleId]);
+  }, [loadRaffleData]);
 
-  const loadRaffleData = async () => {
+  const loadRaffleData = useCallback(async () => {
     try {
       // Carregar dados do sorteio
       const { data: raffleData, error: raffleError } = await supabase
@@ -104,7 +104,7 @@ export function AnimatedRaffleWheel({ raffleId, onWinnersDrawn }: AnimatedRaffle
         variant: 'destructive',
       });
     }
-  };
+  }, [raffleId, supabase]);
 
   const startSequentialDraw = async () => {
     if (leads.length === 0) {

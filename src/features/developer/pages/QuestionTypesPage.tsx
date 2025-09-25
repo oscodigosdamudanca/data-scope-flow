@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,7 +39,7 @@ export default function QuestionTypesPage() {
     input_type: 'text'
   });
 
-  const fetchQuestionTypes = async () => {
+  const fetchQuestionTypes = useCallback(async () => {
     try {
       // Dados mockados para evitar erro de conexão com o banco
       const mockData = [
@@ -132,7 +132,7 @@ export default function QuestionTypesPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   const handleCreateQuestionType = async () => {
     try {
@@ -223,7 +223,7 @@ export default function QuestionTypesPage() {
 
   useEffect(() => {
     fetchQuestionTypes();
-  }, []);
+  }, [fetchQuestionTypes]);
 
   return (
     <MainLayout>

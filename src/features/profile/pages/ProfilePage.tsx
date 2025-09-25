@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,9 +55,9 @@ const ProfilePage: React.FC = () => {
     if (user) {
       loadProfileData();
     }
-  }, [user]);
+  }, [user, loadProfileData]);
 
-  const loadProfileData = async () => {
+  const loadProfileData = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -94,7 +94,7 @@ const ProfilePage: React.FC = () => {
         variant: 'destructive'
       });
     }
-  };
+  }, [user, toast]);
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAnalytics } from '@/features/analytics/hooks/useAnalytics';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -88,9 +88,9 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
 
   // Usar o hook useSavedReports para gerenciar relatórios salvos
   const { 
-    reports: savedReports, 
+    savedReports, 
     createReport, 
-    loading: savedReportsLoading 
+    isLoading: savedReportsLoading 
   } = useSavedReports();
 
   const { data: analyticsData, loading: analyticsLoading } = useAnalytics();
@@ -187,13 +187,13 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
     return filtered;
   };
 
-  // Função para gerar métricas
+  // Função para gerar métricas (movida para fora do hook)
   const generateMetrics = (data: any[], filters: ReportFilters): MetricData[] => {
     const totalRecords = data.length;
     const previousPeriodData = getPreviousPeriodData(data, filters.dateRange);
     const previousTotal = previousPeriodData.length;
     const change = previousTotal > 0 ? ((totalRecords - previousTotal) / previousTotal) * 100 : 0;
-
+  
     // Métricas básicas
     const metrics: MetricData[] = [
       {
@@ -222,7 +222,7 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
         color: 'default'
       }
     ];
-
+  
     // Métricas específicas por categoria
     const categories = [...new Set(data.map(item => item.category || item.type))];
     categories.forEach(category => {
@@ -235,14 +235,14 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
         });
       }
     });
-
+  
     return metrics;
   };
-
-  // Função para gerar dados de gráficos
+  
+  // Função para gerar dados de gráficos (movida para fora do hook)
   const generateCharts = (data: any[], filters: ReportFilters): ChartData[] => {
     const charts: ChartData[] = [];
-
+  
     // Gráfico de linha - Tendência temporal
     charts.push({
       id: 'timeline-trend',
@@ -250,7 +250,7 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
       type: 'line',
       data: generateTimelineData(data, filters.dateRange)
     });
-
+  
     // Gráfico de pizza - Distribuição por categoria
     charts.push({
       id: 'category-distribution',
@@ -258,7 +258,7 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
       type: 'pie',
       data: generateCategoryDistribution(data)
     });
-
+  
     // Gráfico de barras - Status
     charts.push({
       id: 'status-breakdown',
@@ -266,7 +266,7 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
       type: 'bar',
       data: generateStatusBreakdown(data)
     });
-
+  
     // Gráfico de área - Volume acumulado
     charts.push({
       id: 'cumulative-volume',
@@ -274,7 +274,7 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
       type: 'area',
       data: generateCumulativeData(data, filters.dateRange)
     });
-
+  
     // Funil de conversão
     charts.push({
       id: 'conversion-funnel',
@@ -282,7 +282,7 @@ export const useReports = (initialFilters?: Partial<ReportFilters>): UseReportsR
       type: 'funnel',
       data: generateFunnelData(data)
     });
-
+  
     return charts;
   };
 
