@@ -1,6 +1,3 @@
-// Tipos gerados automaticamente a partir do banco de dados
-// Gerado em: 2025-09-24T20:07:14.203Z
-
 export type Json =
   | string
   | number
@@ -9,334 +6,590 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.5"
+  }
   public: {
     Tables: {
       companies: {
         Row: {
+          address: string | null
+          city: string | null
+          cnpj: string | null
+          created_at: string | null
+          created_by: string
+          email: string | null
           id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
+          logo_url: string | null
+          name: string
+          phone: string | null
+          state: string | null
+          updated_at: string | null
+          website: string | null
+          zip_code: string | null
         }
         Insert: {
+          address?: string | null
+          city?: string | null
+          cnpj?: string | null
+          created_at?: string | null
+          created_by?: string
+          email?: string | null
           id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          state?: string | null
+          updated_at?: string | null
+          website?: string | null
+          zip_code?: string | null
         }
         Update: {
+          address?: string | null
+          city?: string | null
+          cnpj?: string | null
+          created_at?: string | null
+          created_by?: string
+          email?: string | null
           id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      leads: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      surveys: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      survey_questions: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      survey_responses: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          state?: string | null
+          updated_at?: string | null
+          website?: string | null
+          zip_code?: string | null
         }
         Relationships: []
       }
       company_memberships: {
         Row: {
-          id: string
+          added_by: string | null
+          company_id: string
           created_at: string
-          updated_at: string
-          [key: string]: any
+          id: string
+          role: Database["public"]["Enums"]["company_role"]
+          user_id: string
         }
         Insert: {
-          id?: string
+          added_by?: string | null
+          company_id: string
           created_at?: string
-          updated_at?: string
-          [key: string]: any
+          id?: string
+          role: Database["public"]["Enums"]["company_role"]
+          user_id: string
         }
         Update: {
-          id?: string
+          added_by?: string | null
+          company_id?: string
           created_at?: string
-          updated_at?: string
-          [key: string]: any
+          id?: string
+          role?: Database["public"]["Enums"]["company_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_memberships_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          created_by: string | null
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          position: string | null
+          priority: string | null
+          source: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          priority?: string | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          priority?: string | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      module_permissions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          module_name: string
+          permission_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          module_name: string
+          permission_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          module_name?: string
+          permission_name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       profiles: {
         Row: {
-          id: string
+          app_role: string | null
+          avatar_url: string | null
+          company_id: string | null
           created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          phone: string | null
           updated_at: string
-          [key: string]: any
+          user_id: string | null
         }
         Insert: {
-          id?: string
+          app_role?: string | null
+          avatar_url?: string | null
+          company_id?: string | null
           created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
           updated_at?: string
-          [key: string]: any
+          user_id?: string | null
         }
         Update: {
-          id?: string
+          app_role?: string | null
+          avatar_url?: string | null
+          company_id?: string | null
           created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      raffles: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
+          display_name?: string | null
+          email?: string | null
           id?: string
-          created_at?: string
+          phone?: string | null
           updated_at?: string
-          [key: string]: any
+          user_id?: string | null
         }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      raffle_prizes: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       raffle_participants: {
         Row: {
           id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
+          lead_id: string
+          participated_at: string | null
+          raffle_id: string
         }
         Insert: {
           id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
+          lead_id: string
+          participated_at?: string | null
+          raffle_id: string
         }
         Update: {
           id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
+          lead_id?: string
+          participated_at?: string | null
+          raffle_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "raffle_participants_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "raffle_participants_raffle_id_fkey"
+            columns: ["raffle_id"]
+            isOneToOne: false
+            referencedRelation: "raffles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      raffle_prizes: {
+        Row: {
+          created_at: string | null
+          drawn_at: string | null
+          id: string
+          prize_description: string | null
+          prize_name: string
+          prize_order: number
+          raffle_id: string
+          updated_at: string | null
+          winner_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          drawn_at?: string | null
+          id?: string
+          prize_description?: string | null
+          prize_name: string
+          prize_order: number
+          raffle_id: string
+          updated_at?: string | null
+          winner_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          drawn_at?: string | null
+          id?: string
+          prize_description?: string | null
+          prize_name?: string
+          prize_order?: number
+          raffle_id?: string
+          updated_at?: string | null
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "raffle_prizes_raffle_id_fkey"
+            columns: ["raffle_id"]
+            isOneToOne: false
+            referencedRelation: "raffles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "raffle_prizes_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      raffles: {
+        Row: {
+          allow_multiple_wins: boolean | null
+          company_id: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean | null
+          max_participants: number | null
+          social_sharing_enabled: boolean | null
+          start_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          allow_multiple_wins?: boolean | null
+          company_id: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          max_participants?: number | null
+          social_sharing_enabled?: boolean | null
+          start_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          allow_multiple_wins?: boolean | null
+          company_id?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          max_participants?: number | null
+          social_sharing_enabled?: boolean | null
+          start_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "raffles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "raffles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "raffles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_module_permissions"
+            referencedColumns: ["profile_id"]
+          },
+        ]
+      }
+      survey_questions: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_required: boolean | null
+          options: Json | null
+          order_index: number
+          question_text: string
+          question_type: string | null
+          survey_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_required?: boolean | null
+          options?: Json | null
+          order_index: number
+          question_text: string
+          question_type?: string | null
+          survey_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_required?: boolean | null
+          options?: Json | null
+          order_index?: number
+          question_text?: string
+          question_type?: string | null
+          survey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_questions_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_responses: {
+        Row: {
+          created_at: string | null
+          id: string
+          question_id: string
+          respondent_email: string | null
+          response_data: Json | null
+          response_text: string | null
+          survey_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          question_id: string
+          respondent_email?: string | null
+          response_data?: Json | null
+          response_text?: string | null
+          survey_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          question_id?: string
+          respondent_email?: string | null
+          response_data?: Json | null
+          response_text?: string | null
+          survey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "survey_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_responses_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "surveys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      surveys: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "surveys_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
-          id: string
           created_at: string
-          updated_at: string
-          [key: string]: any
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Insert: {
-          id?: string
           created_at?: string
-          updated_at?: string
-          [key: string]: any
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Update: {
-          id?: string
           created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      notifications: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
           id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      notification_settings: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      bi_configs: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Relationships: []
-      }
-      follow_up_rules: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          [key: string]: any
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          [key: string]: any
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      user_module_permissions: {
+        Row: {
+          app_role: string | null
+          company_id: string | null
+          description: string | null
+          email: string | null
+          has_permission: boolean | null
+          module_name: string | null
+          permission_name: string | null
+          profile_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      check_module_permission: {
+        Args: { p_module_name: string; p_role_name: string }
+        Returns: boolean
+      }
+      get_role_permissions: {
+        Args: { p_role_name: string }
+        Returns: {
+          is_active: boolean
+          module_name: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_company_admin: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_company_admin_safe: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_company_member: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      validate_company_role: {
+        Args: { role_value: string }
+        Returns: Database["public"]["Enums"]["company_role"]
+      }
     }
     Enums: {
-      app_role: "admin" | "user" | "viewer"
-      company_role: "admin" | "member" | "viewer"
+      app_role: "developer" | "organizer" | "admin" | "interviewer"
+      company_role: "admin" | "interviewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -344,87 +597,128 @@ export interface Database {
   }
 }
 
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"])
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"])[TableName] extends {
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"])
-  ? (Database["public"]["Tables"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"])
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"])[TableName] extends {
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"])
-  ? (Database["public"]["Tables"])[PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"])
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"])[TableName] extends {
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"])
-  ? (Database["public"]["Tables"])[PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof (Database["public"]["Enums"])
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicEnumNameOrOptions["schema"]]["Enums"])
-    : never = never
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicEnumNameOrOptions["schema"]]["Enums"])[EnumName]
-  : PublicEnumNameOrOptions extends keyof (Database["public"]["Enums"])
-  ? (Database["public"]["Enums"])[PublicEnumNameOrOptions]
-  : never
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user", "viewer"] as const,
-      company_role: ["admin", "member", "viewer"] as const,
+      app_role: ["developer", "organizer", "admin", "interviewer"],
+      company_role: ["admin", "interviewer"],
     },
   },
 } as const

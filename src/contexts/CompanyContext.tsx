@@ -48,6 +48,7 @@ export const CompanyProvider: React.FC<{ children: ReactNode }> = ({ children })
             user_id
           )
         `)
+        .eq('company_memberships.user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {

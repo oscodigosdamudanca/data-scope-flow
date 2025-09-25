@@ -55,38 +55,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const ensureDefaultUserRole = async (userId: string) => {
     try {
-      // Tenta inserir o papel 'organizer' para novos usuários (mais apropriado que developer)
+      // Tenta inserir o papel 'user' para novos usuários (válido no enum app_role)
       const { error: insertError } = await supabase
-        .from('user_roles')
-        .insert([{ user_id: userId, role: 'organizer' }]);
+        .from('profiles')
+        .update({ app_role: 'user' })
+        .eq('id', userId);
 
-      if (insertError && insertError.code !== '23505') { // 23505 é violation de unique constraint
+      if (insertError) {
         console.error('Error creating default role:', insertError);
         // Se falhar, define papel padrão localmente
-        setUserRole('organizer');
+        setUserRole('user');
         return;
       }
 
-      // Agora busca o papel atual (deve existir)
-      await fetchUserRole(userId);
+      // Define o papel localmente
+      setUserRole('user');
     } catch (error) {
       console.error('Error in ensureDefaultUserRole:', error);
       // Define papel padrão em caso de erro
-      setUserRole('organizer');
+      setUserRole('user');
     }
   };
 
   const fetchUserRole = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
+        .from('profiles')
+        .select('app_role')
+        .eq('id', userId)
         .single();
 
       if (error) {
         if (error.code === 'PGRST116') {
-          console.log('No role found for user, attempting to create default role');
+          console.log('No profile found for user, attempting to create default role');
           // Chama ensureDefaultUserRole de forma assíncrona
           setTimeout(() => {
             ensureDefaultUserRole(userId);
@@ -98,8 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      if (data) {
-        setUserRole(data.role as AppRole);
+      if (data && data.app_role) {
+        setUserRole(data.app_role as AppRole);
+      } else {
+        // Se não tem role definido, define um padrão
+        ensureDefaultUserRole(userId);
       }
     } catch (error) {
       console.error('Error in fetchUserRole:', error);
