@@ -82,6 +82,13 @@ const AppSidebar = () => {
       roles: ['developer', 'organizer', 'admin', 'interviewer']
     },
     {
+      title: 'Analytics',
+      icon: BarChart3,
+      url: '/analytics',
+      isActive: location.pathname.startsWith('/analytics'),
+      roles: ['developer', 'organizer', 'admin']
+    },
+    {
       title: 'Sorteios',
       icon: Gift,
       url: '/raffles',
