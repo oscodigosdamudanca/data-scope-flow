@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { UserPlus, ArrowLeft } from 'lucide-react';
 import LeadsList from '../components/LeadsList';
 import LeadModal from '../components/LeadModal';
+import { useCompany } from '@/contexts/CompanyContext';
 import type { Lead } from '@/types/leads';
 
 const LeadsListPage: React.FC = () => {
   const navigate = useNavigate();
+  const { currentCompany } = useCompany();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit'>('view');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,6 +78,7 @@ const LeadsListPage: React.FC = () => {
 
         {/* Lista de Leads */}
         <LeadsList 
+          companyId={currentCompany?.id}
           onLeadSelect={handleLeadSelect}
           onLeadEdit={handleLeadEdit}
           className="mb-8"

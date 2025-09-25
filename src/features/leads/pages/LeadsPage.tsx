@@ -7,10 +7,12 @@ import { BackToDashboard } from '@/components/core';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLeads } from '../hooks/useLeads';
+import { useCompany } from '@/contexts/CompanyContext';
 
 const LeadsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { leads, loading, fetchLeads } = useLeads();
+  const { currentCompany } = useCompany();
+  const { leads, loading, fetchLeads } = useLeads(currentCompany?.id);
 
   useEffect(() => {
     fetchLeads();
