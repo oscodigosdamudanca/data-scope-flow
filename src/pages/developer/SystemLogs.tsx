@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 
-const SystemLogs = () => {
+export const SystemLogs = () => {
   const [levelFilter, setLevelFilter] = useState('all');
   const [moduleFilter, setModuleFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');

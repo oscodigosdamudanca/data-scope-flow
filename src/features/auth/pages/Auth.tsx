@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/features/auth/components/AuthForm';
 
-const Auth = () => {
+export const Auth = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 

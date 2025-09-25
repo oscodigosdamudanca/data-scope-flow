@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { logError, logInfo } from '@/utils/logger';
 import { useToast } from '@/hooks/use-toast';
 import type { CreateLeadData, UpdateLeadData, Lead } from '@/types/leads';
 
@@ -40,7 +41,7 @@ export const useLeads = (companyId?: string) => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao criar lead';
       setError(message);
-      console.error('Erro ao criar lead:', err);
+      logError('Erro ao criar lead:', err);
       throw err;
     } finally {
       setIsLoading(false);
@@ -64,7 +65,7 @@ export const useLeads = (companyId?: string) => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao atualizar lead';
       setError(message);
-      console.error('Erro ao atualizar lead:', err);
+      logError('Erro ao atualizar lead:', err);
       throw err;
     } finally {
       setIsLoading(false);
@@ -85,7 +86,7 @@ export const useLeads = (companyId?: string) => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao excluir lead';
       setError(message);
-      console.error('Erro ao excluir lead:', err);
+      logError('Erro ao excluir lead:', err);
       throw err;
     } finally {
       setIsLoading(false);
@@ -109,7 +110,7 @@ export const useLeads = (companyId?: string) => {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao buscar lead';
       setError(message);
-      console.error('Erro ao buscar lead:', err);
+      logError('Erro ao buscar lead:', err);
       return null;
     } finally {
       setIsLoading(false);

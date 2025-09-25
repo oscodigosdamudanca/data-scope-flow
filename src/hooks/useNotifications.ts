@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCompany } from '@/contexts/CompanyContext';
 import { CreateNotificationData, Notification, NotificationType } from '@/types/notifications';
 import { Lead } from '@/types/leads';
+import { logError, logWarn } from '@/utils/logger';
 
 export function useNotifications() {
   const context = useContext<NotificationsContextType | null>(NotificationsContext);
@@ -86,7 +87,7 @@ export function useNotifications() {
       
       return notification;
     } catch (error) {
-      console.error('Erro ao criar notificação:', error);
+      logError('Erro ao criar notificação', error, 'useNotifications');
       return null;
     }
   };

@@ -4,7 +4,7 @@ import { BackToDashboard } from '@/components/core';
 import { FileText, Plus, Edit, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-const CustomSurveys = () => {
+export const CustomSurveys = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">

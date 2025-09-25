@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { AnimatedRaffleWheel } from '@/features/raffles/components/AnimatedRaffleWheel';
 import { useState } from 'react';
 
-const Raffles = () => {
+export const Raffles = () => {
   const [selectedRaffleId, setSelectedRaffleId] = useState<string | null>(null);
   const [showWheel, setShowWheel] = useState(false);
   

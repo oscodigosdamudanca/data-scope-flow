@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { BackToDashboard } from '@/components/core';
 import { MessageSquare, Plus } from 'lucide-react';
 
-const FairFeedback = () => {
+export const FairFeedback = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">

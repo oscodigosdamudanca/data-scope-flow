@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logError } from '@/utils/logger';
 
 // Tipos para o sistema de permissões
 export interface UserPermission {
@@ -49,15 +50,15 @@ export class PermissionsService {
       const { error } = await supabase.rpc('create_user_permissions_table');
       
       if (error) {
-        console.error('Erro ao criar tabela user_permissions:', error);
+        logError('Erro ao criar tabela user_permissions', error, 'PermissionsService');
         return false;
       }
       
       return true;
     } catch (error) {
-      console.error('Erro ao executar função de criação da tabela:', error);
-      return false;
-    }
+        logError('Erro ao executar função de criação da tabela', error, 'PermissionsService');
+        return false;
+      }
   }
 
   /**
@@ -68,15 +69,15 @@ export class PermissionsService {
       const { error } = await supabase.rpc('create_module_permissions_table');
       
       if (error) {
-        console.error('Erro ao criar tabela module_permissions:', error);
+        logError('Erro ao criar tabela module_permissions', error, 'PermissionsService');
         return false;
       }
       
       return true;
     } catch (error) {
-      console.error('Erro ao executar função de criação da tabela:', error);
-      return false;
-    }
+        logError('Erro ao executar função de criação da tabela', error, 'PermissionsService');
+        return false;
+      }
   }
 
   /**
@@ -103,7 +104,7 @@ export class PermissionsService {
 
       return success;
     } catch (error) {
-      console.error('Erro ao inicializar tabelas de permissões:', error);
+      logError('Erro ao inicializar tabelas de permissões', error, 'PermissionsService');
       return false;
     }
   }
@@ -132,7 +133,7 @@ export class PermissionsService {
 
       return data || [];
     } catch (error) {
-      console.error('Erro ao buscar permissões do usuário:', error);
+      logError('Erro ao verificar permissões do usuário', error, 'PermissionsService');
       return [];
     }
   }

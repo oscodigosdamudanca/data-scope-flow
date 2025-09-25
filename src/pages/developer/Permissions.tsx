@@ -4,7 +4,7 @@ import { BackToDashboard } from '@/components/core';
 import { Shield, Plus, Edit, Trash2, Users, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-const Permissions = () => {
+export const Permissions = () => {
   const modules = [
     {
       id: 1,

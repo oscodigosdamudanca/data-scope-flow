@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
+import { logError } from '@/utils/logger';
 
 interface Company {
   id: string;
@@ -52,7 +53,7 @@ export const CompanyProvider: React.FC<{ children: ReactNode }> = ({ children })
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Erro ao buscar empresas:', error);
+        logError('Erro ao buscar empresas', error, 'CompanyContext');
         throw error;
       }
 

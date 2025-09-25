@@ -46,7 +46,7 @@ import ProfilePage from "@/features/profile/pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+export const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
@@ -87,17 +87,17 @@ const App = () => (
               <Route path="/leads/tags" element={<TagsManagerPage />} />
               <Route path="/leads/tagging" element={<LeadTaggingPage />} />
               <Route path="/surveys" element={<SurveysPage />} />
+
               <Route path="/analytics/*" element={<AnalyticsRoutes />} />
             </Route>
 
-            {/* Rotas específicas do Organizador da Feira */}
             <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />}>
               <Route path="/fair-feedback" element={<FairFeedback />} />
               <Route path="/custom-surveys" element={<CustomSurveys />} />
               <Route path="/raffles" element={<Raffles />} />
             </Route>
 
-            {/* Rotas de Administração */}
+            {/* Admin Routes */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UsersManagement />} />
@@ -105,7 +105,7 @@ const App = () => (
               <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
 
-            {/* Área do Desenvolvedor */}
+            {/* Developer Routes */}
             <Route element={<ProtectedRoute allowedRoles={['developer']} />}>
               <Route path="/developer" element={<DeveloperDashboard />} />
               <Route path="/developer/question-types" element={<QuestionTypesPage />} />
@@ -113,7 +113,7 @@ const App = () => (
               <Route path="/developer/logs" element={<SystemLogsPage />} />
             </Route>
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            {/* Catch all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
             </BrowserRouter>

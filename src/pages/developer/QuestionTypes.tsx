@@ -4,7 +4,7 @@ import { BackToDashboard } from '@/components/core';
 import { Code, Plus, Edit, Trash2, Type } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-const QuestionTypes = () => {
+export const QuestionTypes = () => {
   const questionTypes = [
     {
       id: 1,

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Enums } from '@/integrations/supabase/types';
+import { logError, logInfo, logWarn } from '@/utils/logger';
 
 type AppRole = Enums<'app_role'>;
 
@@ -87,14 +88,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         if (error.code === 'PGRST116') {
-          console.log('No profile found for user, attempting to create default role');
+          logInfo('No profile found for user, attempting to create default role');
           // Chama ensureDefaultUserRole de forma assíncrona
           setTimeout(() => {
             ensureDefaultUserRole(userId);
           }, 0);
           return;
         }
-        console.error('Error fetching user role:', error);
+        logError('Error fetching user role:', error);
         setUserRole(null);
         return;
       }
@@ -106,14 +107,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ensureDefaultUserRole(userId);
       }
     } catch (error) {
-      console.error('Error in fetchUserRole:', error);
+      logError('Error in fetchUserRole:', error);
       setUserRole(null);
     }
   };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session);
+        logInfo('Auth state change:', event, session);
         
         // Handle auth errors by clearing invalid tokens
         if ((event === 'TOKEN_REFRESHED' && !session) || 
