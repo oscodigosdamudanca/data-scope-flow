@@ -363,8 +363,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
         </Card>
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow" 
--              onClick={() => navigate('/reports')}>
-+              onClick={() => navigate('/analytics/reports')}>
+              onClick={() => navigate('/reports')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
