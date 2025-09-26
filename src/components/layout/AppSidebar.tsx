@@ -72,7 +72,7 @@ const AppSidebar = () => {
       icon: Building,
       url: '/companies',
       isActive: location.pathname === '/companies',
-      roles: ['developer', 'organizer']
+      roles: ['developer', 'organizer', 'admin']
     },
     {
       title: 'Captação de Leads',

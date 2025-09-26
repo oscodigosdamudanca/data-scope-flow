@@ -69,7 +69,7 @@ export const App = () => (
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
 
-            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin']} />}>
               <Route path="/companies" element={<Companies />} />
             </Route>
 
