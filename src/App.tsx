@@ -58,7 +58,7 @@ export const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="/leads/turbo" element={<TurboFormPage />} />
+
             <Route path="/lead-capture" element={<PublicLeadCapturePage />} />
             <Route path="/lead-capture/qr/:qrId" element={<PublicQRLeadCapturePage />} />
             <Route path="/survey/:surveyId" element={<PublicSurveyPage />} />
@@ -77,8 +77,6 @@ export const App = () => (
               <Route path="/leads" element={<LeadsPage />} />
             <Route path="/leads/list" element={<LeadsListPage />} />
             <Route path="/leads/create" element={<CreateLeadPage />} />
-              <Route path="/leads/capture" element={<LeadCapturePage />} />
-              <Route path="/leads/turbo" element={<TurboFormPage />} />
           <Route path="/leads/turbo/direct" element={<TurboFormDirectAccessPage />} />
           <Route path="/leads/turbo/admin" element={<TurboFormAdminPage />} />
           <Route path="/leads/turbo/config" element={<TurboFormConfigPage />} />
@@ -91,7 +89,12 @@ export const App = () => (
               <Route path="/analytics/*" element={<AnalyticsRoutes />} />
             </Route>
 
-            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer', 'admin', 'interviewer']} />}>
+              <Route path="/leads/capture" element={<LeadCapturePage />} />
+              <Route path="/leads/turbo" element={<TurboFormPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute allowedRoles={['developer', 'organizer']} />} >
               <Route path="/fair-feedback" element={<FairFeedback />} />
               <Route path="/custom-surveys" element={<CustomSurveys />} />
               <Route path="/raffles" element={<Raffles />} />

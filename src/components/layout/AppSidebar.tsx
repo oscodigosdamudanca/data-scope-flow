@@ -77,8 +77,8 @@ const AppSidebar = () => {
     {
       title: 'Captação de Leads',
       icon: UserCheck,
-      url: '/leads',
-      isActive: location.pathname === '/leads',
+      url: userRole === 'interviewer' ? '/leads/capture' : '/leads',
+      isActive: userRole === 'interviewer' ? location.pathname === '/leads/capture' : location.pathname === '/leads',
       roles: ['developer', 'organizer', 'admin', 'interviewer']
     },
     {
