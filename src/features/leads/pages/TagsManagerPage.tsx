@@ -4,9 +4,11 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Tag } from 'lucide-react';
 import TagsManager from '../components/TagsManager';
+import { useAuth } from '@/contexts/AuthContext';
 
-const TagsManagerPage: React.FC = () => {
+export function TagsManagerPage() {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   return (
     <MainLayout>
@@ -17,11 +19,11 @@ const TagsManagerPage: React.FC = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate('/leads')}
+              onClick={() => navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads')}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Voltar para Leads
+              Voltar
             </Button>
           </div>
           

@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import MainLayout from '@/components/layout/MainLayout';
 import { BackToDashboard } from '@/components/core';
 import QRCodeLeadCapture from '../components/QRCodeLeadCapture';
+import { useAuth } from '@/contexts/AuthContext';
 
 const QRCodeLeadsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   return (
     <MainLayout>
@@ -19,7 +21,7 @@ const QRCodeLeadsPage: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/leads')}
+              onClick={() => navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads')}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />

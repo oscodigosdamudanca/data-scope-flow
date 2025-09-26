@@ -16,7 +16,7 @@ import AdminDashboard from "./features/admin/pages/AdminDashboard";
 import UsersManagement from "./features/admin/pages/AdminUsers";
 import LeadsPage from "./features/leads/pages/LeadsPage";
 import LeadsListPage from "./features/leads/pages/LeadsListPage";
-import { CreateLeadPage } from "./features/leads/pages/CreateLeadPage";
+import CreateLeadPage from "./features/leads/pages/CreateLeadPage";
 import SurveysPage from "./features/surveys/pages/SurveysPage";
 import AdminSettings from "./features/admin/pages/AdminSettings";
 import FairFeedback from "@/pages/FairFeedback";

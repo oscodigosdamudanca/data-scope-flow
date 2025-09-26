@@ -4,9 +4,11 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Users, Tag } from 'lucide-react';
 import LeadTagging from '../components/LeadTagging';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LeadTaggingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   const handleLeadsUpdate = (updatedLeads: any[]) => {
     // Em produção, aqui faria a atualização no backend
@@ -22,7 +24,7 @@ const LeadTaggingPage: React.FC = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate('/leads')}
+              onClick={() => navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads')}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />

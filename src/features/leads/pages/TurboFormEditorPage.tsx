@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { ArrowLeft } from 'lucide-react';
 import TurboFormEditor, { FormQuestion } from '../components/TurboFormEditor';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Perguntas de exemplo para demonstração
 const sampleQuestions: FormQuestion[] = [
@@ -48,6 +49,7 @@ const sampleQuestions: FormQuestion[] = [
 const TurboFormEditorPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { userRole } = useAuth();
   
   // Simulação de verificação de permissão de administrador
   const isAdmin = true;
@@ -59,11 +61,11 @@ const TurboFormEditorPage: React.FC = () => {
       title: 'Formulário atualizado',
       description: 'As perguntas do formulário Turbo foram atualizadas com sucesso.',
     });
-    navigate('/leads');
+    navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
   };
 
   const handleCancel = () => {
-    navigate('/leads');
+    navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
   };
 
   return (

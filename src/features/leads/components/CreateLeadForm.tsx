@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useLeads } from '../hooks/useLeads';
 import { Lead, CreateLeadData } from '@/types/leads';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CreateLeadFormProps {
   onSuccess?: () => void;
@@ -34,6 +35,7 @@ export const CreateLeadForm: React.FC<CreateLeadFormProps> = ({
   onCancel
 }) => {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
   const { createLead, loading } = useLeads();
   const { toast } = useToast();
 
@@ -120,7 +122,7 @@ export const CreateLeadForm: React.FC<CreateLeadFormProps> = ({
       if (onSuccess) {
         onSuccess();
       } else {
-        navigate('/leads/list');
+        navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads/list');
       }
     } catch (error) {
       console.error('Erro ao criar lead:', error);
@@ -136,7 +138,7 @@ export const CreateLeadForm: React.FC<CreateLeadFormProps> = ({
     if (onCancel) {
       onCancel();
     } else {
-      navigate('/leads');
+      navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
     }
   };
 

@@ -6,19 +6,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LeadCaptureForm } from '../components';
 import MainLayout from '@/components/layout/MainLayout';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LeadCapturePage: React.FC = () => {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
 
   const handleSuccess = () => {
-    // Redirect to leads list after successful creation
+    // Redirect to appropriate page after successful creation
     setTimeout(() => {
-      navigate('/leads');
+      navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
     }, 2000);
   };
 
   const handleCancel = () => {
-    navigate('/leads');
+    navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
   };
 
   return (
@@ -30,7 +32,7 @@ const LeadCapturePage: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/leads')}
+              onClick={() => navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads')}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />

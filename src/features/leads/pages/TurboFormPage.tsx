@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Settings, Share2, Copy } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Importação temporária para desenvolvimento
 const supabase = {
@@ -18,8 +19,7 @@ const supabase = {
   })
 };
 
-// Mock temporário do contexto de autenticação
-const useAuth = () => ({ user: { id: 'user-123' } });
+
 
 // Importação direta para evitar problemas de lazy loading
 import TurboFormOptimized from '@/features/leads/components/TurboLeadForm/TurboFormOptimized';
@@ -29,7 +29,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 export const TurboFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<any>(null);
   const [shareUrl, setShareUrl] = useState<string>('');
@@ -46,13 +46,13 @@ export const TurboFormPage: React.FC = () => {
       title: 'Sucesso!',
       description: 'Lead cadastrado com sucesso!',
     });
-    navigate('/leads');
+    // Sucesso do envio
+    navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
   };
 
   const handleCancel = () => {
-    navigate('/leads');
+    navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads');
   };
-
   // Carregamento inicial dos dados
   useEffect(() => {
     const loadData = async () => {

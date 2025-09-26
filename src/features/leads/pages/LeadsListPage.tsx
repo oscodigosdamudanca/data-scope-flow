@@ -7,11 +7,13 @@ import { UserPlus, ArrowLeft } from 'lucide-react';
 import LeadsList from '../components/LeadsList';
 import LeadModal from '../components/LeadModal';
 import { useCompany } from '@/contexts/CompanyContext';
+import { useAuth } from '@/contexts/AuthContext';
 import type { Lead } from '@/types/leads';
 
 const LeadsListPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentCompany } = useCompany();
+  const { userRole } = useAuth();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit'>('view');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,11 +50,11 @@ const LeadsListPage: React.FC = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => navigate('/leads')}
+              onClick={() => navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads')}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Voltar
+              Voltar para Leads
             </Button>
           </div>
           

@@ -3,16 +3,18 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CreateLeadForm } from '../components/CreateLeadForm';
+import { useAuth } from '@/contexts/AuthContext';
 
-export const CreateLeadPage: React.FC = () => {
+const CreateLeadPage: React.FC = () => {
+  const { userRole } = useAuth();
   return (
     <div className="container mx-auto py-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/leads">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+          <Link to={userRole === 'interviewer' ? '/leads/capture' : '/leads'}>
+            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" />
               Voltar
             </Button>
           </Link>

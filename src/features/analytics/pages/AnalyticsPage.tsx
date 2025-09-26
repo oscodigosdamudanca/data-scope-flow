@@ -38,7 +38,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   
   // Estados
   const [activeTab, setActiveTab] = useState(defaultTab);
@@ -333,7 +333,7 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-shadow" 
-              onClick={() => navigate('/leads')}>
+              onClick={() => navigate(userRole === 'interviewer' ? '/leads/capture' : '/leads')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -363,7 +363,8 @@ const AnalyticsPage: React.FC<AnalyticsPageProps> = ({
         </Card>
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow" 
-              onClick={() => navigate('/reports')}>
+-              onClick={() => navigate('/reports')}>
++              onClick={() => navigate('/analytics/reports')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>

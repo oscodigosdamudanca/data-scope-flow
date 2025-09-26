@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
 
   const { data: companies } = useQuery({
     queryKey: ['companies-count', user?.id],
@@ -56,13 +56,13 @@ const Index = () => {
                 <div className="flex items-center gap-2 mt-2">
                   <Badge variant="default" className="bg-orange-600 hover:bg-orange-700">Ativo</Badge>
                   <div className="flex gap-1">
-                    <Link to="/leads">
+                    <Link to={userRole === 'interviewer' ? '/leads/capture' : '/leads'}>
                       <Button variant="outline" size="sm">
                         <Target className="h-3 w-3 mr-1" />
                         Ver Leads
                       </Button>
                     </Link>
-                    <Link to="/leads/turbo-form">
+                    <Link to="/leads/turbo">
                       <Button variant="outline" size="sm">
                         <Zap className="h-3 w-3 mr-1" />
                         Formulário Turbo
