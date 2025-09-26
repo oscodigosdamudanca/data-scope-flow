@@ -145,4 +145,4 @@ export const useCompany = () => {
   return context;
 };
 
-export type { Company };
+export type { Company, CompanyContextType };

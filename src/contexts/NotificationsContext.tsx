@@ -500,3 +500,5 @@ export function useNotifications() {
   }
   return context;
 }
+
+export type { NotificationsContextType };
