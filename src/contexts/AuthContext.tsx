@@ -56,24 +56,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const ensureDefaultUserRole = async (userId: string) => {
     try {
-      // Tenta inserir o papel 'interviewer' para novos usuários (válido no enum app_role)
-      const { error: insertError } = await supabase
+      const { error: upsertError } = await supabase
         .from('profiles')
-        .update({ app_role: 'interviewer' })
-        .eq('id', userId);
+        .upsert(
+          [{ id: userId, app_role: 'interviewer' }],
+          { onConflict: 'id' }
+        );
 
-      if (insertError) {
-        console.error('Error creating default role:', insertError);
-        // Se falhar, define papel padrão localmente
+      if (upsertError) {
+        console.error('Error creating default role with upsert:', upsertError);
         setUserRole('interviewer');
         return;
       }
 
-      // Define o papel localmente
       setUserRole('interviewer');
     } catch (error) {
       console.error('Error in ensureDefaultUserRole:', error);
-      // Define papel padrão em caso de erro
       setUserRole('interviewer');
     }
   };
@@ -192,38 +190,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createOrUpdateProfile = async (user: User) => {
     try {
-      // Check if profile exists
-      const { data: profile, error: fetchError } = await supabase
+      const displayName = user.user_metadata?.display_name ||
+        user.user_metadata?.full_name ||
+        user.email?.split('@')[0] ||
+        'Usuário';
+
+      const { error: upsertError } = await supabase
         .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+        .upsert(
+          [{
+            id: user.id,
+            display_name: displayName,
+            phone: user.user_metadata?.phone || null,
+            app_role: 'interviewer'
+          }],
+          { onConflict: 'id' }
+        );
 
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error('Error fetching profile:', fetchError);
-        return;
-      }
-
-      // If profile doesn't exist, create it
-      if (!profile) {
-        const displayName = user.user_metadata?.display_name || 
-                          user.user_metadata?.full_name || 
-                          user.email?.split('@')[0] || 
-                          user.user_metadata?.full_name || 'Usuário não identificado';
-
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: user.id,
-              display_name: displayName,
-              phone: user.user_metadata?.phone || null,
-            }
-          ]);
-
-        if (insertError) {
-          console.error('Error creating profile:', insertError);
-        }
+      if (upsertError) {
+        console.error('Error upserting profile:', upsertError);
       }
     } catch (error) {
       console.error('Error in createOrUpdateProfile:', error);

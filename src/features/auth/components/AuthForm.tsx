@@ -93,10 +93,19 @@ const AuthForm = () => {
       );
       
       if (error) {
-        if (error.message.includes('User already registered')) {
-          toast.error('Este email já está cadastrado');
+        const msg = error.message || '';
+        if (msg.includes('User already registered') || msg.includes('already registered') || msg.includes('already exists')) {
+          toast.error('Este email já está cadastrado. Tentando login...');
+          const { error: signInErr } = await signIn(formData.email, formData.password);
+          if (signInErr) {
+            toast.error(signInErr.message || 'Não foi possível entrar.');
+          } else {
+            toast.success('Login realizado com sucesso!');
+          }
+        } else if (msg.includes('Email not confirmed')) {
+          toast.error('Confirme seu email antes de fazer login');
         } else {
-          toast.error(error.message);
+          toast.error(msg);
         }
       } else {
         toast.success('Conta criada com sucesso! Verifique seu email.');
